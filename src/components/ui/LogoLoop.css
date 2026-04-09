@@ -1,0 +1,118 @@
+.logoloop {
+  overflow: hidden;
+  position: relative;
+}
+
+.logoloop--horizontal {
+  width: 100%;
+}
+
+.logoloop--vertical {
+  overflow: hidden;
+}
+
+.logoloop--fade.logoloop--horizontal::before,
+.logoloop--fade.logoloop--horizontal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.logoloop--fade.logoloop--horizontal::before {
+  left: 0;
+  background: linear-gradient(to right, var(--logoloop-fadeColor, #000), transparent);
+}
+
+.logoloop--fade.logoloop--horizontal::after {
+  right: 0;
+  background: linear-gradient(to left, var(--logoloop-fadeColor, #000), transparent);
+}
+
+.logoloop--fade.logoloop--vertical::before,
+.logoloop--fade.logoloop--vertical::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 10%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.logoloop--fade.logoloop--vertical::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--logoloop-fadeColor, #000), transparent);
+}
+
+.logoloop--fade.logoloop--vertical::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--logoloop-fadeColor, #000), transparent);
+}
+
+.logoloop__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.logoloop--vertical .logoloop__track {
+  flex-direction: column;
+  width: 100%;
+}
+
+.logoloop__list {
+  display: flex;
+  align-items: center;
+  gap: var(--logoloop-gap, 32px);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.logoloop--vertical .logoloop__list {
+  flex-direction: column;
+  width: 100%;
+}
+
+.logoloop__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logoloop__item img {
+  height: var(--logoloop-logoHeight, 28px);
+  width: auto;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.logoloop--scale-hover .logoloop__item img,
+.logoloop--scale-hover .logoloop__node {
+  transition: transform 0.3s ease;
+}
+
+.logoloop--scale-hover .logoloop__item:hover img,
+.logoloop--scale-hover .logoloop__item:hover .logoloop__node {
+  transform: scale(1.1);
+}
+
+.logoloop__link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logoloop__node {
+  display: flex;
+  align-items: center;
+}

@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+/* ── Reset for landing page ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; overflow-x: hidden; max-width: 100vw; }
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: left;
+  border: none;
+  min-height: 100svh;
+  display: block;
+  overflow-x: hidden;
+}
+
+/* ── Global list reset (fixes SpotlightNavbar bullets) ── */
+ul, ol, li { list-style: none !important; margin: 0; padding: 0; }
+
+/* ── PixelatedImageTrail ── */
+.pixelated-trail-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+.pixelated-trail-img {
+  position: absolute;
+  width: 175px; height: 175px;
+  pointer-events: none;
+  will-change: transform, left, top;
+}
+.pixelated-mask-layer {
+  position: absolute; inset: 0;
+  will-change: clip-path;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.pixelated-image-layer {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+}
+.pixelated-trail-img.animate-out {
+  opacity: 0;
+  transform: scale(0.85) !important;
+  transition: opacity 300ms ease-out, transform 300ms ease-out !important;
+}
+
+/* ── GlassDock ── */
+.glass-dock button {
+  background: none; border: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px;
+}
+.glass-dock button svg {
+  width: 22px; height: 22px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  color: #6b7280; transition: color 0.2s;
+}
+.glass-dock button.active svg,
+.glass-dock button:hover svg { color: #111; }
+.glass-border { border: 1px solid rgba(0,0,0,0.08); }
+
+/* ── SpotlightNavbar ── */
+.spotlight-nav {
+  display: flex;
+  padding: 0 4px;
+  overflow: hidden;
+}
+.spotlight-nav ul {
+  list-style: none !important;
+  margin: 0; padding: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  z-index: 10;
+}
+.spotlight-nav li {
+  list-style: none !important;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spotlight-nav-bg {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.spotlight-nav-shadow {
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+/* ── 3D transforms for InteractiveBook ── */
+/* Force preserve-3d and backface-hidden regardless of Tailwind compile */
+[class~="preserve-3d"],
+.preserve-3d {
+  transform-style: preserve-3d !important;
+}
+[class~="backface-hidden"],
+.backface-hidden {
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+/* perspective on the outer wrapper */
+[class~="perspective-[2000px]"] {
+  perspective: 2000px !important;
+}
+/* rotate-y-180 used on back face */
+[class~="rotate-y-180"],
+.rotate-y-180 {
+  transform: rotateY(180deg) !important;
+}
+
+/* ── StaggeredGrid / font-alt ── */
+.font-alt { font-family: 'Cormorant Garamond', serif; }

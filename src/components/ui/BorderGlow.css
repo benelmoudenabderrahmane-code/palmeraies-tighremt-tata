@@ -1,0 +1,74 @@
+.border-glow-card {
+  position: relative;
+  border-radius: var(--border-radius, 28px);
+  padding: var(--glow-padding, 40px);
+  background: var(--card-bg, #060010);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.border-glow-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from calc(var(--cursor-angle, 0deg) - calc(var(--cone-spread, 25) * 1deg)),
+    transparent,
+    var(--glow-color-10, transparent),
+    var(--glow-color-20, transparent),
+    var(--glow-color-30, transparent),
+    var(--glow-color-40, transparent),
+    var(--glow-color-50, transparent),
+    var(--glow-color-60, transparent),
+    var(--glow-color, transparent),
+    var(--glow-color-60, transparent),
+    var(--glow-color-50, transparent),
+    var(--glow-color-40, transparent),
+    var(--glow-color-30, transparent),
+    var(--glow-color-20, transparent),
+    var(--glow-color-10, transparent),
+    transparent
+  );
+  opacity: calc(var(--edge-proximity, 0) / 100);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.border-glow-card.sweep-active::before {
+  opacity: 1;
+}
+
+.edge-light {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.border-glow-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.border-glow-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    var(--gradient-one),
+    var(--gradient-two),
+    var(--gradient-three),
+    var(--gradient-four),
+    var(--gradient-five),
+    var(--gradient-six),
+    var(--gradient-seven),
+    var(--gradient-base);
+  opacity: var(--fill-opacity, 0.5);
+  pointer-events: none;
+}
