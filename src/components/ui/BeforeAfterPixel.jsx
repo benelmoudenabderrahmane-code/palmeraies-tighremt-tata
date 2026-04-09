@@ -7,6 +7,8 @@ const NOISE = 0.10;     // ± noise amplitude (fraction of width)
 export default function BeforeAfterPixel({
   beforeSrc,
   afterSrc,
+  beforeFallback,
+  afterFallback,
   beforeLabel = 'AVANT',
   afterLabel  = 'APRÈS',
   height      = 420,
@@ -83,14 +85,22 @@ export default function BeforeAfterPixel({
 
     const b = new window.Image();
     b.crossOrigin = 'anonymous';
-    b.onload      = onLoad;
-    b.src         = beforeSrc;
+    b.onload  = onLoad;
+    b.onerror = () => {
+      if (beforeFallback) { b.onerror = null; b.src = beforeFallback; }
+      else onLoad();
+    };
+    b.src = beforeSrc;
     beforeImgRef.current = b;
 
     const a = new window.Image();
     a.crossOrigin = 'anonymous';
-    a.onload      = onLoad;
-    a.src         = afterSrc;
+    a.onload  = onLoad;
+    a.onerror = () => {
+      if (afterFallback) { a.onerror = null; a.src = afterFallback; }
+      else onLoad();
+    };
+    a.src = afterSrc;
     afterImgRef.current = a;
 
     return () => { mounted = false; };

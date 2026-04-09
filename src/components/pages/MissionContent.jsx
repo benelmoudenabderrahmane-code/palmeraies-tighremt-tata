@@ -56,7 +56,12 @@ export default function MissionContent() {
 
         <div className="reveal reveal-delay-2" style={{ position: 'relative' }}>
           <div style={{ position: 'relative', borderRadius: '2rem', overflow: 'hidden', aspectRatio: '4/5' }}>
-            <img src="https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=800&q=80" alt="Palmeraie de Tata, Maroc" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img
+              src="/images/tighremt/palmeraie-ksar.jpg"
+              alt="Palmeraie et ksar de Tighremt, Maroc"
+              onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=800&q=80'; }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
             <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${C.greenDeep}60 0%, transparent 55%)` }} />
           </div>
           <div style={{ position: 'absolute', bottom: '-1.5rem', left: '-1.5rem', background: C.ochre, color: '#fff', borderRadius: '1.25rem', padding: '1.25rem 1.5rem', boxShadow: '0 12px 32px rgba(164,84,40,0.35)' }}>

@@ -10,6 +10,22 @@ const BeforeAfterPixel = dynamic(
 );
 
 /* ── Project data ──────────────────────────────────────────────────────── */
+// Unsplash fallbacks used until real photos are in public/images/tighremt/
+const UNS = {
+  desert:    'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=900&q=75&auto=format&fit=crop',
+  palms:     'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=900&q=75&auto=format&fit=crop',
+  oasis:     'https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=900&q=75&auto=format&fit=crop',
+  water:     'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=900&q=75&auto=format&fit=crop',
+  ruins:     'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=900&q=75&auto=format&fit=crop',
+  mosque:    'https://images.unsplash.com/photo-1548783300-b68b0e0a2c98?w=900&q=75&auto=format&fit=crop',
+  road:      'https://images.unsplash.com/photo-1473580464609-7b29c7b6f1ff?w=480&q=70&auto=format&fit=crop',
+  palmSm:    'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=480&q=70&auto=format&fit=crop',
+  oasisSm:   'https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=480&q=70&auto=format&fit=crop',
+  ruinsSm:   'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=480&q=70&auto=format&fit=crop',
+  corridor:  'https://images.unsplash.com/photo-1606166325683-e6debb023e3b?w=480&q=70&auto=format&fit=crop',
+  panorama:  'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=480&q=70&auto=format&fit=crop',
+};
+
 const PROJECTS = [
   {
     id: 'palmeraie',
@@ -24,13 +40,15 @@ const PROJECTS = [
       { value: '18',    label: 'familles impliquées' },
       { value: '4 ha',  label: 'surface restaurée' },
     ],
-    before: '/images/tighremt/oued-sec.jpg',
-    after:  '/images/tighremt/palmeraie-sol.jpg',
+    before:         '/images/tighremt/oued-sec.jpg',
+    beforeFallback: UNS.desert,
+    after:          '/images/tighremt/palmeraie-sol.jpg',
+    afterFallback:  UNS.palms,
     gallery: [
-      { src: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Vue panoramique de la palmeraie de Tighremt' },
-      { src: '/images/tighremt/dattes.jpg',             alt: 'Régimes de dattes sur les palmiers' },
-      { src: '/images/tighremt/palmeraie-chemin.jpg',   alt: 'Chemin dans la palmeraie' },
-      { src: '/images/tighremt/palmeraie-ciel.jpg',     alt: 'Palmiers de Tighremt' },
+      { src: '/images/tighremt/palmeraie-panorama.jpg', fallback: UNS.oasisSm,  alt: 'Vue panoramique de la palmeraie de Tighremt' },
+      { src: '/images/tighremt/dattes.jpg',             fallback: UNS.palmSm,   alt: 'Régimes de dattes sur les palmiers' },
+      { src: '/images/tighremt/palmeraie-chemin.jpg',   fallback: UNS.road,     alt: 'Chemin dans la palmeraie' },
+      { src: '/images/tighremt/palmeraie-ciel.jpg',     fallback: UNS.palmSm,   alt: 'Palmiers de Tighremt' },
     ],
   },
   {
@@ -46,12 +64,14 @@ const PROJECTS = [
       { value: '6',      label: 'foggaras réhabilitées' },
       { value: '30+',    label: 'agriculteurs formés' },
     ],
-    before: '/images/tighremt/oued-sec.jpg',
-    after:  '/images/tighremt/palmeraie-panorama.jpg',
+    before:         '/images/tighremt/oued-sec.jpg',
+    beforeFallback: UNS.desert,
+    after:          '/images/tighremt/palmeraie-panorama.jpg',
+    afterFallback:  UNS.oasis,
     gallery: [
-      { src: '/images/tighremt/route-tighremt.jpg',  alt: 'Route vers Tighremt longeant la palmeraie' },
-      { src: '/images/tighremt/palmeraie-ksar.jpg',  alt: 'Palmiers et ksar de Tighremt' },
-      { src: '/images/tighremt/palmeraie-chemin.jpg', alt: 'Chemin irrigué dans la palmeraie' },
+      { src: '/images/tighremt/route-tighremt.jpg',   fallback: UNS.road,    alt: 'Route vers Tighremt longeant la palmeraie' },
+      { src: '/images/tighremt/palmeraie-ksar.jpg',   fallback: UNS.palmSm,  alt: 'Palmiers et ksar de Tighremt' },
+      { src: '/images/tighremt/palmeraie-chemin.jpg', fallback: UNS.oasisSm, alt: 'Chemin irrigué dans la palmeraie' },
     ],
   },
   {
@@ -89,12 +109,14 @@ const PROJECTS = [
       { value: '4',     label: 'parcelles pilotes' },
       { value: '2 500', label: 'plants de tamaris' },
     ],
-    before: '/images/tighremt/oued-sec.jpg',
-    after:  '/images/tighremt/palmeraie-sol.jpg',
+    before:         '/images/tighremt/oued-sec.jpg',
+    beforeFallback: UNS.desert,
+    after:          '/images/tighremt/palmeraie-sol.jpg',
+    afterFallback:  UNS.palms,
     gallery: [
-      { src: '/images/tighremt/route-tighremt.jpg',   alt: 'Piste longeant la palmeraie aride' },
-      { src: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Oasis de Tighremt vue de loin' },
-      { src: '/images/tighremt/palmeraie-ksar.jpg',   alt: 'Palmiers résistants au bord du ksar' },
+      { src: '/images/tighremt/route-tighremt.jpg',     fallback: UNS.road,    alt: 'Piste longeant la palmeraie aride' },
+      { src: '/images/tighremt/palmeraie-panorama.jpg', fallback: UNS.oasisSm, alt: 'Oasis de Tighremt vue de loin' },
+      { src: '/images/tighremt/palmeraie-ksar.jpg',     fallback: UNS.palmSm,  alt: 'Palmiers résistants au bord du ksar' },
     ],
   },
   {
@@ -132,13 +154,15 @@ const PROJECTS = [
       { value: '1',     label: 'grenier restauré' },
       { value: '200 h', label: 'de témoignages enregistrés' },
     ],
-    before: '/images/tighremt/ksar-ruines.jpg',
-    after:  '/images/tighremt/minaret.jpg',
+    before:         '/images/tighremt/ksar-ruines.jpg',
+    beforeFallback: UNS.ruins,
+    after:          '/images/tighremt/minaret.jpg',
+    afterFallback:  UNS.mosque,
     gallery: [
-      { src: '/images/tighremt/ksar-silhouette.jpg', alt: 'Silhouette dans les ruelles du vieux ksar' },
-      { src: '/images/tighremt/ksar-poutres.jpg',    alt: 'Couloir avec poutres en bois de palmier' },
-      { src: '/images/tighremt/ksar-couloir.jpg',    alt: 'Architecture en terre du ksar de Tighremt' },
-      { src: '/images/tighremt/tighremt-panorama.jpg', alt: 'Panorama de Tighremt — minaret et montagne' },
+      { src: '/images/tighremt/ksar-silhouette.jpg',    fallback: UNS.ruinsSm,  alt: 'Silhouette dans les ruelles du vieux ksar' },
+      { src: '/images/tighremt/ksar-poutres.jpg',       fallback: UNS.corridor, alt: 'Couloir avec poutres en bois de palmier' },
+      { src: '/images/tighremt/ksar-couloir.jpg',       fallback: UNS.corridor, alt: 'Architecture en terre du ksar de Tighremt' },
+      { src: '/images/tighremt/tighremt-panorama.jpg',  fallback: UNS.panorama, alt: 'Panorama de Tighremt — minaret et montagne' },
     ],
   },
 ];
@@ -153,7 +177,7 @@ function MasonryGallery({ images }) {
     }}
     className="masonry-gallery"
     >
-      {images.map(({ src, alt }, i) => (
+      {images.map(({ src, fallback, alt }, i) => (
         <motion.div
           key={src}
           initial={{ opacity: 0, y: 24 }}
@@ -166,6 +190,7 @@ function MasonryGallery({ images }) {
             src={src}
             alt={alt}
             loading="lazy"
+            onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
             style={{
               display: 'block',
               width: '100%',
@@ -292,6 +317,8 @@ function ProjectBlock({ project, index }) {
             <BeforeAfterPixel
               beforeSrc={project.before}
               afterSrc={project.after}
+              beforeFallback={project.beforeFallback}
+              afterFallback={project.afterFallback}
               height={380}
             />
           </div>
