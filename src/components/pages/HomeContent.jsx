@@ -125,24 +125,25 @@ function Hero() {
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(to top, rgba(6,20,10,0.75) 0%, transparent 45%)' }} />
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 200, zIndex: 1, background: 'linear-gradient(to bottom, rgba(6,20,10,0.45) 0%, transparent 100%)' }} />
 
-        <div ref={contentRef} style={{ position: 'relative', zIndex: 2, maxWidth: 1200, margin: '0 auto', width: '100%', paddingTop: '7rem', willChange: 'transform' }}>
-          <div className="hero-eyebrow" style={{ fontSize: '0.68rem', letterSpacing: '0.32em', textTransform: 'uppercase', color: 'rgba(232,163,80,0.95)', fontWeight: 500, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div ref={contentRef} style={{ position: 'relative', zIndex: 2, maxWidth: 1200, margin: '0 auto', width: '100%', paddingTop: '7rem', willChange: 'transform', textAlign: 'center' }}>
+          <div className="hero-eyebrow" style={{ fontSize: '0.68rem', letterSpacing: '0.32em', textTransform: 'uppercase', color: 'rgba(232,163,80,0.95)', fontWeight: 500, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
             <span style={{ display: 'block', width: 32, height: 1, background: 'rgba(232,163,80,0.7)' }} />
             Province de Tata · Maroc · Fondée 2010
+            <span style={{ display: 'block', width: 32, height: 1, background: 'rgba(232,163,80,0.7)' }} />
           </div>
 
-          <h1 className="hero-h1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(3.2rem, 9.5vw, 7.5rem)', fontWeight: 300, lineHeight: 0.97, color: '#fff', letterSpacing: '-0.025em', maxWidth: '13ch', marginBottom: '2rem', textShadow: '0 2px 60px rgba(0,0,0,0.5)' }}>
+          <h1 className="hero-h1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(3.2rem, 9.5vw, 7.5rem)', fontWeight: 300, lineHeight: 0.97, color: '#fff', letterSpacing: '-0.025em', marginBottom: '2rem', textShadow: '0 2px 60px rgba(0,0,0,0.5)' }}>
             Agir pour<br />nous aider<br />
             <em style={{ fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,245,220,1)' }}>à grandir</em>
           </h1>
 
-          <div className="hero-divider" style={{ width: 80, height: 1.5, background: 'linear-gradient(to right, rgba(232,163,80,0.9), transparent)', marginBottom: '1.75rem' }} />
+          <div className="hero-divider" style={{ width: 80, height: 1.5, background: 'linear-gradient(to right, transparent, rgba(232,163,80,0.9), transparent)', margin: '0 auto 1.75rem' }} />
 
-          <p className="hero-sub" style={{ color: 'rgba(255,255,255,0.70)', fontWeight: 300, fontSize: 'clamp(0.95rem, 2vw, 1.18rem)', lineHeight: 1.8, maxWidth: 460, marginBottom: '2.75rem', textShadow: '0 1px 16px rgba(0,0,0,0.5)' }}>
+          <p className="hero-sub" style={{ color: 'rgba(255,255,255,0.70)', fontWeight: 300, fontSize: 'clamp(0.95rem, 2vw, 1.18rem)', lineHeight: 1.8, maxWidth: 460, marginBottom: '2.75rem', textShadow: '0 1px 16px rgba(0,0,0,0.5)', margin: '0 auto 2.75rem' }}>
             Ensemble pour la sauvegarde de la palmeraie et le développement du village de Tighremt (Tata, Maroc).
           </p>
 
-          <div className="hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '4.5rem', alignItems: 'center' }}>
+          <div className="hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '4.5rem', alignItems: 'center', justifyContent: 'center' }}>
             <a href="/don" className="btn-hero-primary">
               <Heart size={18} />
               Faire un don
@@ -152,7 +153,7 @@ function Hero() {
             </a>
           </div>
 
-          <div className="hero-stats" style={{ display: 'flex', flexWrap: 'wrap' }}>
+          <div className="hero-stats" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
             {[
               { val: '2010',     label: 'Année de fondation' },
               { val: 'Loi 1901', label: 'Statut juridique' },
