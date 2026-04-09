@@ -170,6 +170,29 @@ const PROJECTS = [
       { src: '/images/tighremt/tighremt-panorama.jpg',  fallback: UNS.panorama, alt: 'Panorama de Tighremt — minaret et montagne' },
     ],
   },
+  {
+    id: 'sidi-brahim',
+    bg: C.sand,
+    category: 'Infrastructure',
+    categoryColor: C.green,
+    title: 'Vestiaire de Sidi Brahim — Tighremt',
+    subtitle: 'Douar Tighremt, Province de Tata · 2018 – 2019',
+    desc: "L'association a financé et supervisé la construction d'un vestiaire à Sidi Brahim, au cœur du douar de Tighremt. Ce bâtiment, entièrement construit en parpaings et enduit, offre aux habitants un espace fonctionnel et durable. Les travaux ont mobilisé des artisans locaux et se sont achevés par la livraison d'un bâtiment peint et équipé, renforçant les infrastructures collectives du village.",
+    stats: [
+      { value: '2018',  label: 'début des travaux' },
+      { value: '100%',  label: 'main-d\'œuvre locale' },
+      { value: '1',     label: 'bâtiment livré' },
+    ],
+    before: '/images/tighremt/sidi-avant.jpg',
+    after:  '/images/tighremt/sidi-apres.jpg',
+    gallery: [
+      { src: '/images/tighremt/sidi-g1.jpg', alt: 'Structure en construction — façade principale' },
+      { src: '/images/tighremt/sidi-g2.jpg', alt: 'Chantier en cours — vue extérieure' },
+      { src: '/images/tighremt/sidi-g3.jpg', alt: 'Coulage du plancher intérieur' },
+      { src: '/images/tighremt/sidi-g4.jpg', alt: 'Travaux de nuit — finitions extérieures' },
+      { src: '/images/tighremt/sidi-g5.jpg', alt: 'Bâtiment livré — portes vertes et façade peinte' },
+    ],
+  },
 ];
 
 /* ── Masonry gallery ───────────────────────────────────────────────────── */
