@@ -348,16 +348,16 @@ function PageHero() {
       overflow: 'hidden',
     }}>
       <SoftAurora
-        color1="#2a7a3e"
-        color2="#c4703f"
-        speed={0.45}
-        brightness={1.5}
+        color1="#3d7a52"
+        color2="#8fc47a"
+        speed={0.3}
+        brightness={0.6}
         bandHeight={0.5}
-        bandSpread={1.1}
-        scale={1.6}
-        noiseAmplitude={0.95}
-        layerOffset={2.0}
-        mouseInfluence={0.2}
+        bandSpread={0.9}
+        scale={1.5}
+        noiseAmplitude={0.85}
+        layerOffset={2.2}
+        mouseInfluence={0.15}
       />
       {/* Decorative dot grid */}
       <div className="dot-grid" style={{

@@ -11,16 +11,16 @@ export default function DonContent() {
   return (
     <section id="don" style={{ background: C.ochre, padding: 'clamp(7rem,12vw,10rem) 1.5rem clamp(5rem,10vw,8rem)', position: 'relative', overflow: 'hidden' }}>
       <SoftAurora
-        color1="#ff9a4a"
-        color2="#ffe0a0"
-        speed={0.5}
-        brightness={1.4}
+        color1="#f5a050"
+        color2="#fcd480"
+        speed={0.35}
+        brightness={0.55}
         bandHeight={0.5}
-        bandSpread={1.2}
-        scale={1.8}
-        noiseAmplitude={0.9}
-        layerOffset={1.5}
-        mouseInfluence={0.18}
+        bandSpread={0.85}
+        scale={1.6}
+        noiseAmplitude={0.85}
+        layerOffset={1.8}
+        mouseInfluence={0.15}
       />
       <div className="dot-grid" style={{ position: 'absolute', inset: 0, opacity: 0.4 }} />
 
