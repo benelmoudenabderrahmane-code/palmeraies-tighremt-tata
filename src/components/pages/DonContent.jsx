@@ -1,28 +1,15 @@
 'use client';
-import dynamic from 'next/dynamic';
 import { Heart } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-
-const SoftAurora = dynamic(() => import('@/components/ui/SoftAurora'), { ssr: false });
 
 export default function DonContent() {
   useScrollReveal();
   return (
     <section id="don" style={{ background: C.ochre, padding: 'clamp(7rem,12vw,10rem) 1.5rem clamp(5rem,10vw,8rem)', position: 'relative', overflow: 'hidden' }}>
-      <SoftAurora
-        color1="#f5a050"
-        color2="#fcd480"
-        speed={0.35}
-        brightness={0.55}
-        bandHeight={0.5}
-        bandSpread={0.85}
-        scale={1.6}
-        noiseAmplitude={0.85}
-        layerOffset={1.8}
-        mouseInfluence={0.15}
-      />
-      <div className="dot-grid" style={{ position: 'absolute', inset: 0, opacity: 0.4 }} />
+      <div className="dot-grid" style={{ position: 'absolute', inset: 0 }} />
+      <div style={{ position: 'absolute', right: '-5rem', top: '50%', transform: 'translateY(-50%)', width: 420, height: 420, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.12)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', right: '-7rem', top: '50%', transform: 'translateY(-50%)', width: 560, height: 560, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.07)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: 780, margin: '0 auto', textAlign: 'center', position: 'relative' }}>
         <div className="reveal" style={{ fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)', fontWeight: 500, marginBottom: '1.5rem' }}>

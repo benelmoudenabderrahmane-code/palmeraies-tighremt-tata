@@ -9,7 +9,6 @@ const BeforeAfterPixel = dynamic(
   { ssr: false },
 );
 
-const SoftAurora = dynamic(() => import('@/components/ui/SoftAurora'), { ssr: false });
 
 /* ── Project data ──────────────────────────────────────────────────────── */
 // Unsplash fallbacks used until real photos are in public/images/tighremt/
@@ -347,18 +346,6 @@ function PageHero() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      <SoftAurora
-        color1="#3d7a52"
-        color2="#8fc47a"
-        speed={0.3}
-        brightness={0.6}
-        bandHeight={0.5}
-        bandSpread={0.9}
-        scale={1.5}
-        noiseAmplitude={0.85}
-        layerOffset={2.2}
-        mouseInfluence={0.15}
-      />
       {/* Decorative dot grid */}
       <div className="dot-grid" style={{
         position: 'absolute',
