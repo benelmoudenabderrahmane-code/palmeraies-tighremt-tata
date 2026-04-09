@@ -9,6 +9,8 @@ const BeforeAfterPixel = dynamic(
   { ssr: false },
 );
 
+const SoftAurora = dynamic(() => import('@/components/ui/SoftAurora'), { ssr: false });
+
 /* ── Project data ──────────────────────────────────────────────────────── */
 // Unsplash fallbacks used until real photos are in public/images/tighremt/
 const UNS = {
@@ -345,14 +347,26 @@ function PageHero() {
       position: 'relative',
       overflow: 'hidden',
     }}>
+      <SoftAurora
+        color1="#2a7a3e"
+        color2="#c4703f"
+        speed={0.45}
+        brightness={1.5}
+        bandHeight={0.5}
+        bandSpread={1.1}
+        scale={1.6}
+        noiseAmplitude={0.95}
+        layerOffset={2.0}
+        mouseInfluence={0.2}
+      />
       {/* Decorative dot grid */}
       <div className="dot-grid" style={{
         position: 'absolute',
         inset: 0,
-        opacity: 0.35,
+        opacity: 0.25,
       }} />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', textAlign: 'center' }}>
         <div className="reveal" style={{
           fontSize: '0.66rem',
           letterSpacing: '0.28em',
@@ -362,10 +376,12 @@ function PageHero() {
           marginBottom: '1.1rem',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center',
           gap: '0.75rem',
         }}>
           <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
           Association Palmeraies Tighremt
+          <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
         </div>
 
         <h1 className="reveal reveal-delay-1" style={{
@@ -374,8 +390,7 @@ function PageHero() {
           fontWeight: 400,
           lineHeight: 1.1,
           color: '#fff',
-          maxWidth: 680,
-          margin: '0 0 1.5rem',
+          margin: '0 auto 1.5rem',
         }}>
           Nos projets pour<br />
           <em style={{ color: C.ochre }}>Tighremt &amp; la région</em>
@@ -387,6 +402,7 @@ function PageHero() {
           lineHeight: 1.75,
           maxWidth: 520,
           fontWeight: 300,
+          margin: '0 auto',
         }}>
           Six projets concrets au service des habitants : environnement, eau, éducation,
           solidarité et mémoire du territoire.
@@ -398,6 +414,7 @@ function PageHero() {
           flexWrap: 'wrap',
           gap: '0.6rem',
           marginTop: '2.5rem',
+          justifyContent: 'center',
         }}>
           {PROJECTS.map((p) => (
             <a
