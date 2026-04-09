@@ -37,7 +37,7 @@ export default function BeforeAfterPixel({
     const canvas = canvasRef.current;
     const before = beforeImgRef.current;
     const after  = afterImgRef.current;
-    if (!canvas || !before?.complete || !after?.complete) return;
+    if (!containerRef.current || !canvas || !before?.complete || !after?.complete) return;
 
     const ctx  = canvas.getContext('2d');
     const W    = canvas.width;

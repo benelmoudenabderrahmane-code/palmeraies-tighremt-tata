@@ -24,10 +24,11 @@ export default function FloatingDock() {
 
   return (
     <div style={{
-      position: 'fixed', bottom: '1.5rem', left: '50%',
+      position: 'fixed', bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))', left: '50%',
       transform: `translateX(-50%) translateY(${visible ? 0 : 100}px)`,
       opacity: visible ? 1 : 0,
       transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease',
+      willChange: 'transform, opacity',
       zIndex: 200,
     }}>
       <GlassDock items={DOCK_ITEMS} />

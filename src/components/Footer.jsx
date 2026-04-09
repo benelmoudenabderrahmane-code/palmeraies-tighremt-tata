@@ -34,12 +34,12 @@ export default function Footer() {
             </p>
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               {[{ Icon: Share2, label: 'Facebook' }, { Icon: Globe, label: 'Instagram' }, { Icon: Send, label: 'Twitter/X' }].map(({ Icon, label }) => (
-                <a key={label} href="#" aria-label={label}
-                  style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s', textDecoration: 'none' }}
+                <button key={label} aria-label={label}
+                  style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s', border: 'none', cursor: 'pointer', flexShrink: 0 }}
                   onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.16)')}
                   onMouseOut={e  => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}>
                   <Icon size={15} color="rgba(255,255,255,0.7)" />
-                </a>
+                </button>
               ))}
             </div>
           </div>
@@ -79,9 +79,10 @@ export default function Footer() {
             </p>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <input type="email" placeholder="Votre e-mail"
+                autoComplete="email" inputMode="email"
                 style={{ flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '0.65rem 0.9rem', color: '#fff', fontSize: '0.85rem', outline: 'none' }}
               />
-              <button className="btn-accent" style={{ padding: '0.65rem 1rem', borderRadius: 8, flexShrink: 0 }}>
+              <button className="btn-accent" aria-label="S'abonner à la newsletter" style={{ padding: '0.65rem 1rem', borderRadius: 8, flexShrink: 0 }}>
                 <ArrowRight size={16} />
               </button>
             </div>

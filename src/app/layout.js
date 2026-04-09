@@ -3,6 +3,13 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingDock from '@/components/FloatingDock';
 import ClientTrail from '@/components/ClientTrail';
+import ScrollReset from '@/components/ScrollReset';
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata = {
   title: 'Association Palmeraies Tighremt | TATA · Maroc',
@@ -37,6 +44,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {/* Cursor trail — client only */}
+        <ScrollReset />
         <ClientTrail />
 
         {/* Skip link for accessibility — CSS-only via .skip-link:focus */}

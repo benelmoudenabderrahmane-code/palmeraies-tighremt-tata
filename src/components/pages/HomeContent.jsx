@@ -27,6 +27,7 @@ function Hero() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const onScroll = () => {
       if (!sectionRef.current) return;
       const scrollY  = window.scrollY;
@@ -106,7 +107,7 @@ function Hero() {
       `}</style>
 
       <section ref={sectionRef} style={{
-        position: 'relative', minHeight: '100svh',
+        position: 'relative', minHeight: '100vh', minHeight: '100svh',
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
         padding: '0 1.5rem 5rem', overflow: 'hidden',
       }}>
