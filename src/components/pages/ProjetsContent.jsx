@@ -175,9 +175,9 @@ const PROJECTS = [
     bg: C.sand,
     category: 'Infrastructure',
     categoryColor: C.green,
-    title: 'Vestiaire de Sidi Brahim — Tighremt',
+    title: 'Vestiaire du terrain de football — Sidi Brahim',
     subtitle: 'Douar Tighremt, Province de Tata · 2018 – 2019',
-    desc: "L'association a financé et supervisé la construction d'un vestiaire à Sidi Brahim, au cœur du douar de Tighremt. Ce bâtiment, entièrement construit en parpaings et enduit, offre aux habitants un espace fonctionnel et durable. Les travaux ont mobilisé des artisans locaux et se sont achevés par la livraison d'un bâtiment peint et équipé, renforçant les infrastructures collectives du village.",
+    desc: "Notre association a réalisé la construction d'un nouveau vestiaire avec sanitaires sur le terrain de football du village, améliorant ainsi le confort et les conditions de jeu des joueurs locaux. Un pas en avant concret pour les infrastructures sportives de Tighremt, entièrement porté par la mobilisation de nos bénévoles et de la communauté.",
     stats: [
       { value: '2018',  label: 'début des travaux' },
       { value: '100%',  label: 'main-d\'œuvre locale' },
