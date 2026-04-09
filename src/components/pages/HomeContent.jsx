@@ -11,14 +11,14 @@ const CircularGallery = dynamic(
 );
 
 const CIRCULAR_GALLERY_ITEMS = [
-  { image: 'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=800&q=80', text: 'Palmeraie de Tighremt' },
-  { image: 'https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=800&q=80',    text: 'Oasis de Tata' },
-  { image: 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800&q=80', text: 'Désert marocain' },
-  { image: 'https://images.unsplash.com/photo-1526976668912-1a811878dd37?w=800&q=80', text: 'Mission humanitaire' },
-  { image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80', text: 'Éducation locale' },
-  { image: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80', text: 'Culture berbère' },
-  { image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80',    text: 'Maroc traditionnel' },
-  { image: 'https://images.unsplash.com/photo-1489493887464-892be6d1daae?w=800&q=80', text: 'Paysage du sud' },
+  { image: '/images/tighremt/palmeraie-panorama.jpg', text: 'Palmeraie de Tighremt' },
+  { image: '/images/tighremt/palmeraie-sol.jpg',      text: 'Oasis en fleur' },
+  { image: '/images/tighremt/dattes.jpg',             text: 'Dattes de Tighremt' },
+  { image: '/images/tighremt/minaret.jpg',            text: 'Mosquée de Tighremt' },
+  { image: '/images/tighremt/ksar-silhouette.jpg',    text: 'Ksar ancestral' },
+  { image: '/images/tighremt/tighremt-panorama.jpg',  text: 'Village de Tighremt' },
+  { image: '/images/tighremt/route-tighremt.jpg',     text: 'Paysage du sud marocain' },
+  { image: '/images/tighremt/palmeraie-chemin.jpg',   text: 'Chemin de la palmeraie' },
 ];
 
 function Hero() {
