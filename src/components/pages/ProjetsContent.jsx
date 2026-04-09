@@ -193,6 +193,32 @@ const PROJECTS = [
       { src: '/images/tighremt/sidi-g5.jpg', alt: 'Bâtiment livré — portes vertes et façade peinte' },
     ],
   },
+  {
+    id: 'cimetiere',
+    bg: C.sandMid,
+    category: 'Mémoire & Dignité',
+    categoryColor: C.greenDeep,
+    title: 'Clôture du cimetière — Aslda',
+    subtitle: 'Douar Tighremt, Province de Tata · 2017 – 2018',
+    desc: "Notre association a érigé une clôture autour d'un premier cimetière pour protéger les tombes des parasites, préservant ainsi le lieu de repos des défunts et assurant le respect de leur mémoire. Ce projet, porté avec beaucoup de soin et de considération, témoigne de l'engagement de l'association pour la dignité et le patrimoine mémoriel du douar de Tighremt.",
+    stats: [
+      { value: '1',     label: 'cimetière clôturé' },
+      { value: '2018',  label: 'année de livraison' },
+      { value: '100%',  label: 'financé par l\'association' },
+    ],
+    before: '/images/tighremt/cimetiere-avant.jpg',
+    after:  '/images/tighremt/cimetiere-apres.jpg',
+    gallery: [
+      { src: '/images/tighremt/cimetiere-g1.jpg', alt: 'Début des travaux de fondation' },
+      { src: '/images/tighremt/cimetiere-g2.jpg', alt: 'Construction du mur de clôture' },
+      { src: '/images/tighremt/cimetiere-g3.jpg', alt: 'Élévation des murs en parpaings' },
+      { src: '/images/tighremt/cimetiere-g4.jpg', alt: 'Avancement du chantier' },
+      { src: '/images/tighremt/cimetiere-g5.jpg', alt: 'Pose du portail d\'entrée' },
+      { src: '/images/tighremt/cimetiere-g6.jpg', alt: 'Finitions du mur d\'enceinte' },
+      { src: '/images/tighremt/cimetiere-g7.jpg', alt: 'Vue d\'ensemble de la clôture achevée' },
+      { src: '/images/tighremt/cimetiere-g8.jpg', alt: 'Cimetière protégé et aménagé' },
+    ],
+  },
 ];
 
 /* ── Masonry gallery ───────────────────────────────────────────────────── */
