@@ -9,6 +9,11 @@ const BeforeAfterPixel = dynamic(
   { ssr: false },
 );
 
+const Grainient = dynamic(
+  () => import('@/components/ui/Grainient'),
+  { ssr: false },
+);
+
 
 /* ── Project data ──────────────────────────────────────────────────────── */
 // Unsplash fallbacks used until real photos are in public/images/tighremt/
@@ -390,17 +395,27 @@ function ProjectBlock({ project, index }) {
 function PageHero() {
   return (
     <section style={{
-      background: C.greenDeep,
       padding: 'clamp(8rem,14vw,11rem) clamp(1.25rem,4vw,2rem) clamp(5rem,9vw,7rem)',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Decorative dot grid */}
-      <div className="dot-grid" style={{
-        position: 'absolute',
-        inset: 0,
-        opacity: 0.25,
-      }} />
+      {/* Grainient WebGL background */}
+      <Grainient
+        color1="#8EC9A2"
+        color2="#133D20"
+        color3="#0A1F10"
+        timeSpeed={0.15}
+        warpStrength={0.9}
+        warpFrequency={4.5}
+        warpAmplitude={55}
+        grainAmount={0.07}
+        contrast={1.45}
+        saturation={1.0}
+        zoom={0.88}
+        blendAngle={25}
+      />
+      {/* Dark overlay for legibility */}
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,15,8,0.35)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', textAlign: 'center' }}>
         <div className="reveal" style={{
@@ -421,21 +436,22 @@ function PageHero() {
         </div>
 
         <h1 className="reveal reveal-delay-1" style={{
-          fontFamily: 'Cormorant Garamond, serif',
-          fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
-          fontWeight: 400,
+          fontFamily: "'Archivo Black', sans-serif",
+          fontSize: 'clamp(2.4rem, 6vw, 4.2rem)',
+          fontWeight: 900,
           lineHeight: 1.1,
           color: '#fff',
           margin: '0 auto 1.5rem',
         }}>
           Nos projets pour<br />
-          <em style={{ color: C.ochre }}>Tighremt &amp; la région</em>
+          <em style={{ fontFamily: "'Literata', serif", fontWeight: 400, fontStyle: 'italic', color: C.ochre }}>Tighremt &amp; la région</em>
         </h1>
 
         <p className="reveal reveal-delay-2" style={{
-          fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
-          color: 'rgba(255,255,255,0.72)',
-          lineHeight: 1.75,
+          fontFamily: "'Literata', serif",
+          fontSize: 'clamp(1rem, 1.5vw, 1.15rem)',
+          color: 'rgba(255,255,255,0.78)',
+          lineHeight: 1.85,
           maxWidth: 520,
           fontWeight: 300,
           margin: '0 auto',
