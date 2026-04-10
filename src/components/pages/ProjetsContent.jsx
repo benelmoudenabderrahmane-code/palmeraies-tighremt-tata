@@ -436,22 +436,21 @@ function PageHero() {
         </div>
 
         <h1 className="reveal reveal-delay-1" style={{
-          fontFamily: "'Archivo Black', sans-serif",
-          fontSize: 'clamp(2.4rem, 6vw, 4.2rem)',
-          fontWeight: 900,
+          fontFamily: 'Cormorant Garamond, serif',
+          fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
+          fontWeight: 400,
           lineHeight: 1.1,
           color: '#fff',
           margin: '0 auto 1.5rem',
         }}>
           Nos projets pour<br />
-          <em style={{ fontFamily: "'Literata', serif", fontWeight: 400, fontStyle: 'italic', color: C.ochre }}>Tighremt &amp; la région</em>
+          <em style={{ color: C.ochre }}>Tighremt &amp; la région</em>
         </h1>
 
         <p className="reveal reveal-delay-2" style={{
-          fontFamily: "'Literata', serif",
-          fontSize: 'clamp(1rem, 1.5vw, 1.15rem)',
-          color: 'rgba(255,255,255,0.78)',
-          lineHeight: 1.85,
+          fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
+          color: 'rgba(255,255,255,0.72)',
+          lineHeight: 1.75,
           maxWidth: 520,
           fontWeight: 300,
           margin: '0 auto',

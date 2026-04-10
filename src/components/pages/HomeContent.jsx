@@ -134,7 +134,7 @@ function Hero() {
           </div>
 
           <h1 className="hero-h1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(3.2rem, 9.5vw, 7.5rem)', fontWeight: 300, lineHeight: 0.97, color: '#fff', letterSpacing: '-0.025em', marginBottom: '2rem', textShadow: '0 2px 60px rgba(0,0,0,0.5)' }}>
-            Agir pour<br />nous aider<br />
+            Agir pour nous aider<br />
             <em style={{ fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,245,220,1)' }}>à grandir</em>
           </h1>
 
