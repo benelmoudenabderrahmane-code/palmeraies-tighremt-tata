@@ -174,10 +174,10 @@ export default function DonContent() {
         overflow: 'hidden', textAlign: 'center',
       }}>
         <Grainient
-          color1="#FFD080" color2="#C96818" color3="#3D1A04"
-          timeSpeed={0.18} warpStrength={0.8} warpFrequency={4.0}
-          warpAmplitude={60} grainAmount={0.06} contrast={1.4}
-          saturation={1.1} zoom={0.85}
+          color1="#FFE8A0" color2="#D4500A" color3="#1A0800"
+          timeSpeed={0.14} warpStrength={1.1} warpFrequency={3.5}
+          warpAmplitude={70} grainAmount={0.08} contrast={1.55}
+          saturation={1.2} zoom={0.80} blendAngle={35} blendSoftness={0.12}
         />
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,5,0,0.32)', pointerEvents: 'none' }} />
 
