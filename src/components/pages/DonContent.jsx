@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Heart, ChevronDown } from 'lucide-react';
+import { Heart, ChevronDown, CalendarDays, FolderCheck, Users, Droplets } from 'lucide-react';
 import { C } from '@/lib/tokens';
 
 const Grainient = dynamic(() => import('@/components/ui/Grainient'), { ssr: false });
@@ -17,10 +17,10 @@ const AMOUNTS = [
 ];
 
 const STATS = [
-  { value: 2010, suffix: '',  label: 'Fondée',           icon: '🌴', from: 2000 },
-  { value: 6,    suffix: '',  label: 'Projets réalisés', icon: '🏗️', from: 0 },
-  { value: 150,  suffix: '+', label: 'Familles aidées',  icon: '👨‍👩‍👧', from: 0 },
-  { value: 12,   suffix: '',  label: 'Hectares irrigués',icon: '💧', from: 0 },
+  { value: 2010, suffix: '',  label: 'Fondée',           Icon: CalendarDays, from: 2000 },
+  { value: 6,    suffix: '',  label: 'Projets réalisés', Icon: FolderCheck,  from: 0 },
+  { value: 150,  suffix: '+', label: 'Familles aidées',  Icon: Users,        from: 0 },
+  { value: 12,   suffix: '',  label: 'Hectares irrigués',Icon: Droplets,     from: 0 },
 ];
 
 const MODES = [
@@ -84,9 +84,14 @@ function CounterItem({ stat, inView }) {
     requestAnimationFrame(animate);
   }, [inView, stat]);
 
+  const { Icon } = stat;
   return (
     <div style={{ textAlign: 'center', padding: '2rem 1.25rem' }}>
-      <div style={{ fontSize: '2rem', marginBottom: '0.75rem', lineHeight: 1 }}>{stat.icon}</div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.85rem' }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', background: `linear-gradient(135deg, ${C.green}22, ${C.greenDeep}18)`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${C.green}30` }}>
+          <Icon size={22} color={C.green} strokeWidth={1.6} />
+        </div>
+      </div>
       <div style={{
         fontFamily: 'Cormorant Garamond, serif',
         fontSize: 'clamp(2.4rem, 5vw, 3.4rem)',
@@ -539,8 +544,8 @@ export default function DonContent() {
               width: 50, height: 50, borderRadius: '50%',
               background: `linear-gradient(135deg, ${C.green}, ${C.greenDeep})`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.3rem', flexShrink: 0,
-            }}>🌴</div>
+              flexShrink: 0,
+            }}><Users size={22} color="#fff" strokeWidth={1.5} /></div>
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontWeight: 600, fontSize: '0.88rem', color: C.greenDeep }}>
                 Un habitant de Tighremt
