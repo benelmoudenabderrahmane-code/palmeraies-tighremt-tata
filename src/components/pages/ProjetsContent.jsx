@@ -9,8 +9,8 @@ const BeforeAfterPixel = dynamic(
   { ssr: false },
 );
 
-const LightRays = dynamic(
-  () => import('@/components/ui/LightRays'),
+const Grainient = dynamic(
+  () => import('@/components/ui/Grainient'),
   { ssr: false },
 );
 
@@ -399,24 +399,23 @@ function PageHero() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Solid dark-green base */}
-      <div style={{ position: 'absolute', inset: 0, background: C.greenDeep }} />
-      {/* LightRays WebGL overlay */}
-      <LightRays
-        raysOrigin="top-center"
-        raysColor="#a8e6bc"
-        raysSpeed={0.55}
-        lightSpread={1.4}
-        rayLength={2.8}
-        fadeDistance={1.2}
-        saturation={0.9}
-        followMouse={true}
-        mouseInfluence={0.12}
-        noiseAmount={0.02}
-        distortion={0.08}
+      {/* Grainient WebGL background */}
+      <Grainient
+        color1="#8EC9A2"
+        color2="#133D20"
+        color3="#0A1F10"
+        timeSpeed={0.15}
+        warpStrength={0.9}
+        warpFrequency={4.5}
+        warpAmplitude={55}
+        grainAmount={0.07}
+        contrast={1.45}
+        saturation={1.0}
+        zoom={0.88}
+        blendAngle={25}
       />
-      {/* Legibility overlay */}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,18,8,0.42)', pointerEvents: 'none' }} />
+      {/* Dark overlay for legibility */}
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,15,8,0.35)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', textAlign: 'center' }}>
         <div className="reveal" style={{
