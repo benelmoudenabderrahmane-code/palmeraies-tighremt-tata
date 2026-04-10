@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Heart, ChevronDown, CalendarDays, FolderCheck, Users, Droplets } from 'lucide-react';
+import { Heart, ChevronDown, CalendarDays, FolderCheck, Users, Droplets, CreditCard, Mail, HandHelping, ShieldCheck, Check } from 'lucide-react';
 import { C } from '@/lib/tokens';
 
 const Grainient = dynamic(() => import('@/components/ui/Grainient'), { ssr: false });
@@ -25,7 +25,7 @@ const STATS = [
 
 const MODES = [
   {
-    icon: '💳',
+    Icon: CreditCard,
     title: 'Don en ligne',
     desc: 'Via HelloAsso — sécurisé, 0% de commission',
     cta: 'Faire un don maintenant →',
@@ -33,7 +33,7 @@ const MODES = [
     external: true,
   },
   {
-    icon: '📧',
+    Icon: Mail,
     title: 'Don par virement ou chèque',
     desc: 'Contactez-nous pour les coordonnées bancaires',
     cta: 'palmeraies.tighremt.tata@gmail.com',
@@ -41,7 +41,7 @@ const MODES = [
     external: false,
   },
   {
-    icon: '🤝',
+    Icon: HandHelping,
     title: 'Devenir bénévole',
     desc: 'Ingénieurs, médecins, enseignants — chaque compétence compte',
     cta: 'Nous contacter →',
@@ -433,7 +433,7 @@ export default function DonContent() {
             fontSize: '0.75rem', color: C.inkLight,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
           }}>
-            <span>🔒</span> HelloAsso · Paiement sécurisé · 0% de commission
+            <ShieldCheck size={13} color={C.green} strokeWidth={2} /> HelloAsso · Paiement sécurisé · 0% de commission
           </p>
         </div>
       </section>
@@ -467,7 +467,9 @@ export default function DonContent() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(19,61,32,0.1)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)'; }}
               >
-                <span style={{ fontSize: '2rem', flexShrink: 0 }}>{m.icon}</span>
+                <div style={{ width: 46, height: 46, borderRadius: '0.75rem', background: `${C.green}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `1px solid ${C.green}25` }}>
+                  <m.Icon size={22} color={C.green} strokeWidth={1.6} />
+                </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600, color: C.greenDeep, fontSize: '0.95rem', marginBottom: '0.2rem' }}>
                     {m.title}
@@ -598,7 +600,7 @@ export default function DonContent() {
           <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.5rem', color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>
             {['Association loi 1901', 'À but non lucratif', 'Don déductible des impôts*'].map(t => (
               <span key={t} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <span style={{ color: C.ochre }}>✓</span> {t}
+                <Check size={12} color={C.ochre} strokeWidth={2.5} /> {t}
               </span>
             ))}
           </div>
