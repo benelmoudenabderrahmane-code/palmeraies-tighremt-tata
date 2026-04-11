@@ -10,6 +10,11 @@ const CircularGallery = dynamic(
   { ssr: false }
 );
 
+const TextType = dynamic(
+  () => import('@/components/ui/TextType'),
+  { ssr: false }
+);
+
 const CIRCULAR_GALLERY_ITEMS = [
   { image: '/images/tighremt/palmeraie-panorama.jpg', text: 'Palmeraie de Tighremt' },
   { image: '/images/tighremt/palmeraie-sol.jpg',      text: 'Oasis en fleur' },
@@ -140,8 +145,24 @@ function Hero() {
 
           <div className="hero-divider" style={{ width: 80, height: 1.5, background: 'linear-gradient(to right, transparent, rgba(232,163,80,0.9), transparent)', margin: '0 auto 1.75rem' }} />
 
-          <p className="hero-sub" style={{ color: 'rgba(255,255,255,0.70)', fontWeight: 300, fontSize: 'clamp(0.95rem, 2vw, 1.18rem)', lineHeight: 1.8, maxWidth: 460, marginBottom: '2.75rem', textShadow: '0 1px 16px rgba(0,0,0,0.5)', margin: '0 auto 2.75rem' }}>
-            Ensemble pour la sauvegarde de la palmeraie et le développement du village de Tighremt (Tata, Maroc).
+          <p className="hero-sub" style={{ color: 'rgba(255,255,255,0.70)', fontWeight: 300, fontSize: 'clamp(0.95rem, 2vw, 1.18rem)', lineHeight: 1.8, maxWidth: 520, marginBottom: '2.75rem', textShadow: '0 1px 16px rgba(0,0,0,0.5)', margin: '0 auto 2.75rem', minHeight: '3.5em' }}>
+            <TextType
+              text={[
+                'Sauvegarde de la palmeraie de Tighremt',
+                'Développement du village de Tata, Maroc',
+                'Soutien aux familles depuis 2010',
+                'Réhabilitation des foggaras ancestrales',
+                'Ensemble pour faire grandir Tighremt',
+              ]}
+              typingSpeed={45}
+              deletingSpeed={25}
+              pauseDuration={2400}
+              initialDelay={1800}
+              loop={true}
+              showCursor={true}
+              cursorCharacter="|"
+              cursorBlinkDuration={0.55}
+            />
           </p>
 
           <div className="hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '4.5rem', alignItems: 'center', justifyContent: 'center' }}>

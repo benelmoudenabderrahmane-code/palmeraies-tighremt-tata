@@ -1,0 +1,26 @@
+.text-type {
+  display: inline;
+}
+
+.text-type__content {
+  display: inline;
+}
+
+.text-type__cursor {
+  display: inline-block;
+  margin-left: 1px;
+  font-weight: 300;
+  opacity: 1;
+  will-change: opacity;
+}
+
+.text-type__cursor--hidden {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-type__cursor {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
