@@ -5,6 +5,8 @@ import FloatingDock from '@/components/FloatingDock';
 import ScrollReset from '@/components/ScrollReset';
 import PageTransition from '@/components/ui/PageTransition';
 import ChatbotClient from '@/components/ui/ChatbotClient';
+import WhatsAppButton from '@/components/ui/WhatsAppButton';
+import BackToTop from '@/components/ui/BackToTop';
 
 export const viewport = {
   width: 'device-width',
@@ -65,6 +67,8 @@ export default function RootLayout({ children }) {
         <Footer />
         <FloatingDock />
         <ChatbotClient />
+        <WhatsAppButton />
+        <BackToTop />
       </body>
     </html>
   );
