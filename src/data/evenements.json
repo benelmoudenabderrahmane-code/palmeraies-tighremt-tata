@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ag-2025",
+    "titre": "Assemblée Générale 2025",
+    "date": "2025-11-22",
+    "heure": "14h00",
+    "lieu": "Salle polyvalente, Hulluch (62410)",
+    "description": "Assemblée générale annuelle de l'association. Bilan 2025, élection du bureau, vote du budget 2026. Tous les membres sont invités.",
+    "lien": null,
+    "type": "association"
+  },
+  {
+    "id": "vente-dattes-2025",
+    "titre": "Vente de dattes de Tighremt",
+    "date": "2025-12-06",
+    "heure": "10h00 – 18h00",
+    "lieu": "Marché de Noël, Lens (62300)",
+    "description": "Stand de vente de dattes Medjool de Tighremt. Toutes les recettes financent directement les familles de cultivateurs.",
+    "lien": "mailto:palmeraies.tighremt.tata@gmail.com",
+    "type": "collecte"
+  },
+  {
+    "id": "plantation-2025",
+    "titre": "Campagne de plantation 2025",
+    "date": "2025-12-20",
+    "heure": "À définir",
+    "lieu": "Tighremt, province de Tata, Maroc",
+    "description": "Nouvelle campagne de plantation de palmiers dattiers. Des bénévoles sur place sont les bienvenus. Contactez-nous pour participer.",
+    "lien": "mailto:palmeraies.tighremt.tata@gmail.com",
+    "type": "projet"
+  }
+]

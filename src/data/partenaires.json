@@ -1,0 +1,6 @@
+[
+  { "id": "ccfd", "nom": "CCFD-Terre Solidaire", "logo": "/images/partenaires/ccfd.png", "url": "https://ccfd-terresolidaire.org", "description": "Partenaire solidarité internationale" },
+  { "id": "mairie-hulluch", "nom": "Mairie de Hulluch", "logo": "/images/partenaires/mairie-hulluch.png", "url": "#", "description": "Soutien institutionnel local" },
+  { "id": "fondation-ocp", "nom": "Fondation OCP", "logo": "/images/partenaires/ocp.png", "url": "https://www.ocpgroup.ma", "description": "Partenaire agricole au Maroc" },
+  { "id": "communaute-tighremt", "nom": "Communauté de Tighremt", "logo": "/images/tighremt/minaret.jpg", "url": "#", "description": "Nos partenaires sur le terrain" }
+]

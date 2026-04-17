@@ -1,0 +1,34 @@
+[
+  {
+    "id": "communication",
+    "titre": "Responsable communication",
+    "lieu": "France (télétravail)",
+    "type": "permanent",
+    "competences": ["Réseaux sociaux", "Rédaction", "Photo/Vidéo"],
+    "description": "Gérer les réseaux sociaux, rédiger les actualités du site, créer des supports de communication pour sensibiliser le public."
+  },
+  {
+    "id": "terrain-irrigation",
+    "titre": "Technicien irrigation",
+    "lieu": "Tighremt, Maroc (mission 2 semaines)",
+    "type": "mission",
+    "competences": ["Plomberie", "Agriculture", "Physique"],
+    "description": "Participer à l'installation et la maintenance du réseau d'irrigation goutte-à-goutte dans la palmeraie."
+  },
+  {
+    "id": "soutien-scolaire",
+    "titre": "Soutien scolaire",
+    "lieu": "Tighremt, Maroc (mission 1 mois)",
+    "type": "mission",
+    "competences": ["Enseignement", "Patience", "Français/Arabe"],
+    "description": "Animer des ateliers de soutien scolaire pour les enfants du village, notamment en français et en mathématiques."
+  },
+  {
+    "id": "collecte-fonds",
+    "titre": "Organisateur de collecte de fonds",
+    "lieu": "France",
+    "type": "ponctuel",
+    "competences": ["Organisation", "Relationnel", "Vente"],
+    "description": "Organiser des événements de collecte de fonds : vente de dattes, stands marchés de Noël, soirées de gala."
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "plantation-2024",
+    "titre": "Campagne de plantation 2024 — 500 palmiers replantés",
+    "extrait": "Grâce à vos dons, nous avons pu replanté 500 palmiers dattiers en décembre 2024 dans la palmeraie de Tighremt.",
+    "contenu": "La campagne de plantation 2024 a été un succès retentissant. Avec le soutien de 87 donateurs et 12 bénévoles présents sur place, nous avons replanté 500 palmiers dattiers issus de rejets sélectionnés. Cette action s'inscrit dans notre programme de lutte contre la désertification.",
+    "categorie": "projets",
+    "date": "2024-12-15",
+    "image": "/images/tighremt/palmeraie-panorama.jpg",
+    "auteur": "Équipe Tighremt"
+  },
+  {
+    "id": "eau-irrigation-2024",
+    "titre": "Nouveau système d'irrigation — Phase 2 achevée",
+    "extrait": "Le réseau d'irrigation souterrain couvre désormais 4 hectares supplémentaires de la palmeraie.",
+    "contenu": "La phase 2 du projet d'irrigation a été finalisée en octobre 2024. Le nouveau réseau goutte-à-goutte permet d'économiser 40% d'eau par rapport aux anciennes méthodes. 23 familles de cultivateurs bénéficient directement de cette installation.",
+    "categorie": "projets",
+    "date": "2024-10-20",
+    "image": "/images/tighremt/palmeraie-chemin.jpg",
+    "auteur": "Équipe Tighremt"
+  },
+  {
+    "id": "assemblee-2024",
+    "titre": "Assemblée générale 2024 — Rapport d'activité",
+    "extrait": "Retour sur notre assemblée générale annuelle et les décisions prises pour 2025.",
+    "contenu": "L'assemblée générale 2024 s'est tenue le 15 novembre à Hulluch. 34 membres y ont participé. Le bilan financier affiche un excédent de 2 350€, entièrement réinvesti dans les projets. Le budget 2025 prévoit une augmentation de 18% des actions sur le terrain.",
+    "categorie": "association",
+    "date": "2024-11-15",
+    "image": "/images/tighremt/ksar-silhouette.jpg",
+    "auteur": "Bureau de l'association"
+  },
+  {
+    "id": "visite-terrain-2024",
+    "titre": "Mission terrain — Été 2024",
+    "extrait": "6 bénévoles ont passé 10 jours à Tighremt cet été pour superviser les chantiers en cours.",
+    "contenu": "Une délégation de 6 membres de l'association s'est rendue à Tighremt du 20 au 30 juillet 2024. Ils ont supervisé les travaux d'irrigation, rencontré les familles bénéficiaires et documenté l'avancement des projets. Un rapport complet est disponible sur demande.",
+    "categorie": "evenements",
+    "date": "2024-08-05",
+    "image": "/images/tighremt/route-tighremt.jpg",
+    "auteur": "Équipe Tighremt"
+  }
+]

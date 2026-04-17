@@ -1,0 +1,32 @@
+[
+  {
+    "categorie": "association",
+    "questions": [
+      { "q": "Quand a été fondée l'association ?", "r": "L'association Palmeraies Tighremt TATA a été fondée en mars 2010 sous le statut loi 1901 (association à but non lucratif)." },
+      { "q": "Comment devenir membre ?", "r": "Pour adhérer, contactez-nous par email à palmeraies.tighremt.tata@gmail.com ou par téléphone. La cotisation annuelle est libre." },
+      { "q": "Où est basée l'association ?", "r": "Le siège social est à Hulluch (62410), dans le Pas-de-Calais, France. Les actions se déroulent à Tighremt, province de Tata, Maroc." }
+    ]
+  },
+  {
+    "categorie": "dons",
+    "questions": [
+      { "q": "Les dons sont-ils déductibles des impôts ?", "r": "Oui. En tant qu'association loi 1901 reconnue d'intérêt général, vos dons ouvrent droit à une réduction d'impôt de 66% dans la limite de 20% de votre revenu imposable." },
+      { "q": "Comment sont utilisés les fonds ?", "r": "75% des fonds vont directement aux projets sur le terrain, 15% aux frais de fonctionnement, 10% à la communication. Un rapport annuel détaillé est disponible sur demande." },
+      { "q": "Peut-on faire un don en nature ?", "r": "Oui ! Graines, outils agricoles, matériel scolaire — contactez-nous pour organiser la collecte et l'acheminement." }
+    ]
+  },
+  {
+    "categorie": "benevoles",
+    "questions": [
+      { "q": "Comment devenir bénévole ?", "r": "Remplissez le formulaire sur notre page Bénévoles ou contactez-nous directement. Nous acceptons des bénévoles aussi bien en France (administration, communication) qu'au Maroc (terrain)." },
+      { "q": "Faut-il parler arabe ou tamazight ?", "r": "Ce n'est pas obligatoire, mais toujours apprécié ! Nous organisons des missions mixtes avec des locuteurs francophones et arabophones." }
+    ]
+  },
+  {
+    "categorie": "projets",
+    "questions": [
+      { "q": "Quels sont les projets en cours ?", "r": "Nous menons actuellement : (1) la replantation de la palmeraie, (2) l'extension du réseau d'irrigation, (3) le soutien scolaire aux enfants de Tighremt, (4) la rénovation des pistes d'accès au village." },
+      { "q": "Comment suivre l'avancement des projets ?", "r": "La page Projets de ce site est mise à jour régulièrement. Vous pouvez aussi vous inscrire à notre newsletter pour recevoir les actualités." }
+    ]
+  }
+]
