@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import PillNav from './ui/PillNav';
+import DarkModeToggle from './ui/DarkModeToggle';
 import { C } from '@/lib/tokens';
 
 const NAV_ITEMS = [
@@ -44,7 +45,7 @@ export default function Navbar() {
       boxShadow: transparent ? 'none' : '0 1px 0 rgba(196,112,63,0.15)',
       transition: 'background 0.35s, box-shadow 0.35s',
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', paddingRight: '1rem' }}>
         <PillNav
           logo="/logo.png"
           logoAlt="Association Palmeraies Tighremt"
@@ -58,6 +59,7 @@ export default function Navbar() {
           ease="power3.out"
           initialLoadAnimation={false}
         />
+        <DarkModeToggle />
       </div>
     </div>
   );
