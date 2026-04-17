@@ -7,6 +7,8 @@ import PageTransition from '@/components/ui/PageTransition';
 import ChatbotClient from '@/components/ui/ChatbotClient';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import BackToTop from '@/components/ui/BackToTop';
+import ToastContainer from '@/components/ui/Toast';
+import CookieBanner from '@/components/ui/CookieBanner';
 
 export const viewport = {
   width: 'device-width',
@@ -69,6 +71,8 @@ export default function RootLayout({ children }) {
         <ChatbotClient />
         <WhatsAppButton />
         <BackToTop />
+        <ToastContainer />
+        <CookieBanner />
       </body>
     </html>
   );
