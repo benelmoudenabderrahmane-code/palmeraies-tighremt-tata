@@ -201,7 +201,7 @@ const PillNav = ({
           onMouseEnter={handleLogoEnter}
           ref={logoRef}
         >
-          <img src={logo} alt="" role="presentation" ref={logoImgRef} width="40" height="40" />
+          <img src={logo} alt={logoAlt || "Logotype de l'association"} ref={logoImgRef} width="40" height="40" />
           {(logoName || logoSubtitle) && (
             <div className="pill-logo-text">
               {logoName && <span className="pill-logo-name">{logoName}</span>}
