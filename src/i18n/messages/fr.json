@@ -1,0 +1,5 @@
+{
+  "nav": { "home": "Accueil", "mission": "Mission", "projects": "Nos projets", "team": "Équipe", "history": "Histoire", "donate": "Don", "contact": "Contact", "news": "Actualités" },
+  "home": { "hero_title": "Ensemble pour Tighremt", "hero_subtitle": "Sauvegardons la palmeraie" },
+  "donate": { "cta": "Faire un don", "goal": "Objectif annuel" }
+}

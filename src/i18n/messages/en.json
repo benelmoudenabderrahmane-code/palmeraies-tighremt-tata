@@ -1,0 +1,5 @@
+{
+  "nav": { "home": "Home", "mission": "Mission", "projects": "Our Projects", "team": "Team", "history": "History", "donate": "Donate", "contact": "Contact", "news": "News" },
+  "home": { "hero_title": "Together for Tighremt", "hero_subtitle": "Protecting the palm grove" },
+  "donate": { "cta": "Make a donation", "goal": "Annual goal" }
+}
