@@ -46,7 +46,7 @@ export default function ActualitesContent() {
             <article key={article.id} className={`reveal reveal-delay-${(i % 3) + 1} card-premium`}
               style={{ borderRadius: 16, overflow: 'hidden', background: '#fff', boxShadow: '0 2px 20px rgba(0,0,0,0.07)' }}>
               <div style={{ position: 'relative', height: 200, overflow: 'hidden' }} className="img-zoom-wrap">
-                <Image src={article.image} alt={article.titre} fill style={{ objectFit: 'cover' }} />
+                <Image src={article.image} alt={article.titre} fill style={{ objectFit: 'cover' }} priority={i === 0} loading={i === 0 ? 'eager' : 'lazy'} />
               </div>
               <div style={{ padding: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem', alignItems: 'center' }}>

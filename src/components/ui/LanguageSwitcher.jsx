@@ -31,7 +31,7 @@ export default function LanguageSwitcher() {
 
   return (
     <div style={{ position: 'relative' }}>
-      <button onClick={() => setOpen(o => !o)} aria-label="Changer de langue"
+      <button onClick={() => setOpen(o => !o)} aria-label={`${cur?.label} — changer de langue`} aria-expanded={open} aria-haspopup="listbox"
         style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.3rem 0.6rem', borderRadius: 8, border: `1px solid ${C.sandDark}`, background: 'transparent', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, color: C.inkMuted }}>
         <span>{cur?.flag}</span>
         <span>{cur?.label}</span>

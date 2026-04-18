@@ -1,7 +1,7 @@
 import BenevolesContent from '@/components/pages/BenevolesContent';
 export const metadata = {
   title: 'Bénévolat | Association Palmeraies Tighremt',
-  description: 'Rejoignez notre équipe de bénévoles et contribuez à la sauvegarde de Tighremt.',
+  description: "Rejoignez l'équipe de bénévoles de Tighremt : missions de plantation, irrigation et éducation. Remplissez le formulaire d'inscription et engagez-vous.",
   alternates: { canonical: 'https://palmeries-tighremt.org/benevoles' },
   openGraph: {
     images: [{ url: 'https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg', width: 1200, height: 630, alt: 'Palmeraie de Tighremt' }],

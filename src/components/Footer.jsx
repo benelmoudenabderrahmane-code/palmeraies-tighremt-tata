@@ -29,7 +29,11 @@ function NewsletterForm() {
 
   return (
     <form onSubmit={submit} style={{ display: 'flex', gap: '0.5rem' }}>
+      <label htmlFor="newsletter-email" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+        Adresse e-mail pour la newsletter
+      </label>
       <input
+        id="newsletter-email"
         type="email" placeholder="Votre e-mail" value={email}
         onChange={e => setEmail(e.target.value)}
         autoComplete="email" inputMode="email" required
@@ -128,10 +132,10 @@ export default function Footer() {
           <span>© 2025 Association Palmeraies Tighremt TATA · Tous droits réservés</span>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <span>Association loi 1901 à but non lucratif</span>
-            <Link href="/mentions-legales" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}
+            <Link href="/mentions-legales" rel="privacy-policy" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}
               onMouseOver={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.65)')}
               onMouseOut={e  => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}>
-              Mentions légales
+              Mentions légales &amp; Confidentialité
             </Link>
           </div>
         </div>

@@ -10,6 +10,28 @@ export const metadata = {
   },
 };
 
+const aboutSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'Notre Histoire — Association Palmeraies Tighremt',
+  description: "L'histoire de l'Association Palmeraies Tighremt depuis sa fondation en 2010.",
+  url: 'https://palmeries-tighremt.org/histoire',
+  about: {
+    '@type': 'NGO',
+    name: 'Association Palmeraies Tighremt',
+    foundingDate: '2010',
+    url: 'https://palmeries-tighremt.org',
+  },
+};
+
 export default function HistoirePage() {
-  return <HistoireContent />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
+      />
+      <HistoireContent />
+    </>
+  );
 }

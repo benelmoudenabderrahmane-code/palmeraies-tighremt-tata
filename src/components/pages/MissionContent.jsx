@@ -269,6 +269,8 @@ export default function MissionContent() {
               <img
                 src="/images/tighremt/palmeraie-ksar.jpg"
                 alt="Palmeraie de Tighremt"
+                width="900" height="1125"
+                loading="lazy"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=900&q=75&auto=format&fit=crop'; }}
               />
