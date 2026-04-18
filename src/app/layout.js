@@ -27,6 +27,7 @@ export const metadata = {
     description: 'Ensemble pour la sauvegarde de la palmeraie et le développement de Tighremt.',
     locale: 'fr_FR',
     type: 'website',
+    images: [{ url: 'https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg', width: 1200, height: 630, alt: 'Palmeraie de Tighremt' }],
   },
 };
 

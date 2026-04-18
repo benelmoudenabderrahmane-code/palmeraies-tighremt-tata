@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 export function useScrollReveal() {
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
-      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+      document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => el.classList.add('in-view'));
       return;
     }
     const io = new IntersectionObserver(
@@ -13,7 +13,7 @@ export function useScrollReveal() {
       }),
       { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
     );
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => io.observe(el));
     return () => io.disconnect();
   }, []);
 }

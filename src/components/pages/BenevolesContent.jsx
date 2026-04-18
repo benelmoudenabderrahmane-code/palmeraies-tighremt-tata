@@ -73,6 +73,7 @@ export default function BenevolesContent() {
             <div>
               <label style={{ fontSize: '0.82rem', fontWeight: 600, color: C.ink, display: 'block', marginBottom: '0.4rem' }}>Mission souhaitée</label>
               <select value={form.mission} onChange={e => setForm(p => ({ ...p, mission: e.target.value }))} required
+                aria-label="Mission souhaitée"
                 style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, border: `1px solid ${C.sandDark}`, fontSize: '0.93rem', background: '#fff', outline: 'none' }}>
                 <option value="">Choisir une mission...</option>
                 {missions.map(m => <option key={m.id} value={m.id}>{m.titre}</option>)}

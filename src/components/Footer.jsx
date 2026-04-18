@@ -52,8 +52,9 @@ const quickLinks = [
   { label: 'Événements',   href: '/evenements' },
   { label: 'Bénévoles',    href: '/benevoles' },
   { label: 'FAQ',          href: '/faq' },
-  { label: 'Faire un don', href: '/don' },
-  { label: 'Contact',      href: '/contact' },
+  { label: 'Faire un don',     href: '/don' },
+  { label: 'Contact',          href: '/contact' },
+  { label: 'Mentions légales', href: '/mentions-legales' },
 ];
 
 export default function Footer() {
@@ -125,7 +126,14 @@ export default function Footer() {
 
         <div style={{ paddingTop: '2rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.35)' }}>
           <span>© 2025 Association Palmeraies Tighremt TATA · Tous droits réservés</span>
-          <span>Association loi 1901 à but non lucratif</span>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <span>Association loi 1901 à but non lucratif</span>
+            <Link href="/mentions-legales" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}
+              onMouseOver={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.65)')}
+              onMouseOut={e  => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}>
+              Mentions légales
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

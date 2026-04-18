@@ -61,6 +61,7 @@ export default function ActualitesContent() {
                 <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.25rem', fontWeight: 600, lineHeight: 1.3, marginBottom: '0.6rem', color: C.ink }}>{article.titre}</h2>
                 <p style={{ fontSize: '0.87rem', color: C.inkMuted, lineHeight: 1.7, marginBottom: '1.2rem' }}>{article.extrait}</p>
                 <Link href={`/actualites/${article.id}`}
+                  aria-label={`Lire la suite : ${article.titre}`}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', fontWeight: 600, color: C.ochre, textDecoration: 'none' }}>
                   Lire la suite <ArrowRight size={14} />
                 </Link>

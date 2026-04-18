@@ -1,8 +1,5 @@
 'use client';
-import { useRef, useEffect, useState, useCallback } from 'react';
-
-const BLOCK = 6;        // pixel block size in px
-const NOISE = 0.10;     // ± noise amplitude (fraction of width)
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 export default function BeforeAfterPixel({
   beforeSrc,
@@ -14,133 +11,66 @@ export default function BeforeAfterPixel({
   height      = 420,
 }) {
   const containerRef  = useRef(null);
-  const canvasRef     = useRef(null);
-  const beforeImgRef  = useRef(null);
-  const afterImgRef   = useRef(null);
-  const noiseRef      = useRef(null);
-  const sliderPosRef  = useRef(0.5);
-  const dragging      = useRef(false);
-  const rafRef        = useRef(null);
+  const [pos, setPos]         = useState(50);
+  const [dragging, setDragging] = useState(false);
+  const [hovered, setHovered]   = useState(false);
+  const [interacted, setInteracted] = useState(false);
+  const dragRef = useRef(false);
 
-  const [sliderPct, setSliderPct] = useState(50);
-  const [ready, setReady]         = useState(false);
+  /* ── Auto-sweep intro animation ──────────────────────────── */
+  useEffect(() => {
+    let raf;
+    let startTs = null;
+    const DURATION = 2200;
 
-  /* ── build per-column noise array ─────────────────────────── */
-  const buildNoise = (cols) => {
-    const arr = new Float32Array(cols);
-    for (let i = 0; i < cols; i++) arr[i] = (Math.random() - 0.5) * NOISE * 2;
-    noiseRef.current = arr;
-  };
-
-  /* ── render one frame ──────────────────────────────────────── */
-  const render = useCallback(() => {
-    const canvas = canvasRef.current;
-    const before = beforeImgRef.current;
-    const after  = afterImgRef.current;
-    if (!containerRef.current || !canvas || !before?.complete || !after?.complete) return;
-
-    const ctx  = canvas.getContext('2d');
-    const W    = canvas.width;
-    const H    = canvas.height;
-    const cols = Math.ceil(W / BLOCK);
-
-    if (!noiseRef.current || noiseRef.current.length !== cols) buildNoise(cols);
-    const noise = noiseRef.current;
-    const sp    = sliderPosRef.current;
-
-    // Base: full AVANT image
-    ctx.drawImage(before, 0, 0, W, H);
-
-    // Clip staircase → APRÈS image
-    ctx.save();
-    ctx.beginPath();
-    for (let col = 0; col < cols; col++) {
-      if (col / cols < sp + noise[col]) {
-        ctx.rect(col * BLOCK, 0, BLOCK, H);
+    const sweep = (ts) => {
+      if (!startTs) startTs = ts;
+      const t = Math.min((ts - startTs) / DURATION, 1);
+      // Cubic ease-in-out
+      const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      // Arc: 50 → 18 → 50
+      let p;
+      if (t < 0.5) {
+        p = 50 - 32 * (ease * 2);
+      } else {
+        p = 18 + 32 * ((ease - 0.5) * 2);
       }
-    }
-    ctx.clip();
-    ctx.drawImage(after, 0, 0, W, H);
-    ctx.restore();
+      setPos(Math.round(p));
+      if (t < 1) raf = requestAnimationFrame(sweep);
+      else setInteracted(true);
+    };
 
-    // Divider line
-    const lx = Math.round(sp * W);
-    ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.35)';
-    ctx.shadowBlur  = 6;
-    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-    ctx.lineWidth   = 2;
-    ctx.beginPath();
-    ctx.moveTo(lx, 0);
-    ctx.lineTo(lx, H);
-    ctx.stroke();
-    ctx.restore();
+    const timer = setTimeout(() => {
+      if (!dragRef.current) raf = requestAnimationFrame(sweep);
+    }, 700);
+
+    return () => { clearTimeout(timer); cancelAnimationFrame(raf); };
   }, []);
 
-  /* ── load images ───────────────────────────────────────────── */
-  useEffect(() => {
-    let mounted = true;
-    let count   = 0;
-    const onLoad = () => { count++; if (count === 2 && mounted) setReady(true); };
-
-    const b = new window.Image();
-    b.crossOrigin = 'anonymous';
-    b.onload  = onLoad;
-    b.onerror = () => {
-      if (beforeFallback) { b.onerror = null; b.src = beforeFallback; }
-      else onLoad();
-    };
-    b.src = beforeSrc;
-    beforeImgRef.current = b;
-
-    const a = new window.Image();
-    a.crossOrigin = 'anonymous';
-    a.onload  = onLoad;
-    a.onerror = () => {
-      if (afterFallback) { a.onerror = null; a.src = afterFallback; }
-      else onLoad();
-    };
-    a.src = afterSrc;
-    afterImgRef.current = a;
-
-    return () => { mounted = false; };
-  }, [beforeSrc, afterSrc]);
-
-  /* ── fit canvas to container, re-render on resize ─────────── */
-  useEffect(() => {
-    if (!ready) return;
-    const container = containerRef.current;
-    const canvas    = canvasRef.current;
-    if (!container || !canvas) return;
-
-    const fit = () => {
-      canvas.width  = container.clientWidth;
-      canvas.height = height;
-      noiseRef.current = null;
-      render();
-    };
-
-    fit();
-    const ro = new ResizeObserver(fit);
-    ro.observe(container);
-    return () => ro.disconnect();
-  }, [ready, height, render]);
-
-  /* ── pointer helpers ───────────────────────────────────────── */
-  const clientX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
-
+  /* ── Pointer helpers ─────────────────────────────────────── */
   const applyPos = useCallback((e) => {
+    if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const pos  = Math.max(0.01, Math.min(0.99, (clientX(e) - rect.left) / rect.width));
-    sliderPosRef.current = pos;
-    setSliderPct(Math.round(pos * 100));
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(render);
-  }, [render]);
+    const x    = e.touches ? e.touches[0].clientX : e.clientX;
+    const p    = Math.max(3, Math.min(97, ((x - rect.left) / rect.width) * 100));
+    setPos(Math.round(p));
+  }, []);
 
-  const onDown  = useCallback((e) => { dragging.current = true;  applyPos(e); }, [applyPos]);
-  const onMove  = useCallback((e) => { if (dragging.current) applyPos(e); }, [applyPos]);
-  const onUp    = useCallback(()  => { dragging.current = false; }, []);
+  const onDown = useCallback((e) => {
+    dragRef.current = true;
+    setDragging(true);
+    setInteracted(true);
+    applyPos(e);
+  }, [applyPos]);
+
+  const onMove = useCallback((e) => {
+    if (dragRef.current) applyPos(e);
+  }, [applyPos]);
+
+  const onUp = useCallback(() => {
+    dragRef.current = false;
+    setDragging(false);
+  }, []);
 
   useEffect(() => {
     window.addEventListener('mousemove', onMove);
@@ -155,97 +85,172 @@ export default function BeforeAfterPixel({
     };
   }, [onMove, onUp]);
 
-  /* ── render ────────────────────────────────────────────────── */
+  const tr = dragging ? 'none' : 'clip-path 0.06s linear, left 0.06s linear';
+
   return (
-    <div
-      ref={containerRef}
-      onMouseDown={onDown}
-      onTouchStart={onDown}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height,
-        userSelect: 'none',
-        borderRadius: '1.25rem',
-        overflow: 'hidden',
-        cursor: 'ew-resize',
-        touchAction: 'none',
-        background: '#e8e0d0',
-      }}
-    >
-      {/* Loading skeleton */}
-      {!ready && (
+    <>
+      <style>{`
+        @keyframes bap-hint-fade {
+          0%   { opacity: 0; transform: translateX(-50%) translateY(6px); }
+          15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+          75%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+          100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+        }
+        @keyframes bap-handle-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5), 0 6px 24px rgba(0,0,0,0.32); }
+          50%       { box-shadow: 0 0 0 10px rgba(255,255,255,0), 0 6px 24px rgba(0,0,0,0.32); }
+        }
+        @keyframes bap-line-glow {
+          0%, 100% { opacity: 0.8; }
+          50%       { opacity: 1; }
+        }
+      `}</style>
+
+      <div
+        ref={containerRef}
+        onMouseDown={onDown}
+        onTouchStart={onDown}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height,
+          userSelect: 'none',
+          borderRadius: '1.25rem',
+          overflow: 'hidden',
+          cursor: 'ew-resize',
+          touchAction: 'none',
+          background: '#1a1a18',
+        }}
+      >
+        {/* ── AVANT (full image, base layer) ── */}
+        <img
+          src={beforeSrc}
+          alt={beforeLabel}
+          onError={beforeFallback ? (e) => { e.target.onerror = null; e.target.src = beforeFallback; } : undefined}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover', display: 'block',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* ── APRÈS (clipped top layer) ── */}
+        <img
+          src={afterSrc}
+          alt={afterLabel}
+          onError={afterFallback ? (e) => { e.target.onerror = null; e.target.src = afterFallback; } : undefined}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover', display: 'block',
+            clipPath: `inset(0 ${100 - pos}% 0 0 round 0)`,
+            transition: tr,
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* ── Glowing divider line ── */}
         <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute',
+          top: 0, bottom: 0,
+          left: `${pos}%`,
+          width: 3,
+          transform: 'translateX(-50%)',
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.95) 30%, rgba(255,255,255,0.95) 70%, rgba(255,255,255,0.3))',
+          boxShadow: '0 0 16px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.2)',
+          transition: dragging ? 'none' : 'left 0.06s linear',
+          animation: 'bap-line-glow 2.5s ease-in-out infinite',
+          zIndex: 2,
+          pointerEvents: 'none',
+        }} />
+
+        {/* ── Drag handle ── */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: `${pos}%`,
+          transform: 'translate(-50%, -50%)',
+          width: 52,
+          height: 52,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.96)',
+          backdropFilter: 'blur(8px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: '#ede5d4',
+          zIndex: 3,
+          pointerEvents: 'none',
+          transition: dragging ? 'none' : 'left 0.06s linear',
+          animation: !dragging ? 'bap-handle-pulse 2.5s ease-in-out infinite' : 'none',
         }}>
-          <span style={{ color: '#8a8270', fontSize: '0.82rem', letterSpacing: '0.05em' }}>
-            Chargement…
-          </span>
+          {/* Outer ring */}
+          <div style={{
+            position: 'absolute', inset: -6,
+            borderRadius: '50%',
+            border: '2px solid rgba(255,255,255,0.35)',
+            transition: 'opacity 0.3s',
+            opacity: hovered ? 1 : 0.5,
+          }} />
+          {/* SVG arrows */}
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M8 6L3.5 11L8 16" stroke="#133d20" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M14 6L18.5 11L14 16" stroke="#133d20" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
-      )}
 
-      <canvas
-        ref={canvasRef}
-        style={{ display: 'block', width: '100%', height: '100%' }}
-      />
+        {/* ── APRÈS badge ── */}
+        <div style={{
+          position: 'absolute', top: 14, left: 14,
+          background: 'rgba(19,61,32,0.88)',
+          color: '#fff', fontSize: '0.6rem',
+          letterSpacing: '0.2em', fontWeight: 700,
+          padding: '5px 12px', borderRadius: 6,
+          pointerEvents: 'none', backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          zIndex: 4,
+        }}>
+          {afterLabel}
+        </div>
 
-      {/* APRÈS badge (left = revealed side) */}
-      <div style={{
-        position: 'absolute', top: 14, left: 14,
-        background: 'rgba(19,61,32,0.82)',
-        color: '#fff',
-        fontSize: '0.62rem',
-        letterSpacing: '0.18em',
-        fontWeight: 700,
-        padding: '4px 10px',
-        borderRadius: 4,
-        pointerEvents: 'none',
-        backdropFilter: 'blur(4px)',
-      }}>
-        {afterLabel}
+        {/* ── AVANT badge ── */}
+        <div style={{
+          position: 'absolute', top: 14, right: 14,
+          background: 'rgba(0,0,0,0.55)',
+          color: '#fff', fontSize: '0.6rem',
+          letterSpacing: '0.2em', fontWeight: 700,
+          padding: '5px 12px', borderRadius: 6,
+          pointerEvents: 'none', backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          zIndex: 4,
+        }}>
+          {beforeLabel}
+        </div>
+
+        {/* ── Hint "Glisser" ── */}
+        {!interacted && (
+          <div style={{
+            position: 'absolute',
+            bottom: 18,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '0.62rem',
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.85)',
+            background: 'rgba(0,0,0,0.38)',
+            padding: '5px 14px',
+            borderRadius: 99,
+            backdropFilter: 'blur(8px)',
+            pointerEvents: 'none',
+            zIndex: 4,
+            whiteSpace: 'nowrap',
+            animation: 'bap-hint-fade 3.5s ease 0.6s forwards',
+          }}>
+            ← Glisser pour comparer →
+          </div>
+        )}
       </div>
-
-      {/* AVANT badge (right = original side) */}
-      <div style={{
-        position: 'absolute', top: 14, right: 14,
-        background: 'rgba(0,0,0,0.48)',
-        color: '#fff',
-        fontSize: '0.62rem',
-        letterSpacing: '0.18em',
-        fontWeight: 700,
-        padding: '4px 10px',
-        borderRadius: 4,
-        pointerEvents: 'none',
-        backdropFilter: 'blur(4px)',
-      }}>
-        {beforeLabel}
-      </div>
-
-      {/* Drag handle */}
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: `${sliderPct}%`,
-        transform: 'translate(-50%, -50%)',
-        width: 42,
-        height: 42,
-        borderRadius: '50%',
-        background: '#fff',
-        boxShadow: '0 2px 14px rgba(0,0,0,0.28)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '0.75rem',
-        color: '#133d20',
-        fontWeight: 900,
-        pointerEvents: 'none',
-        zIndex: 3,
-        letterSpacing: '-0.05em',
-      }}>
-        ◀▶
-      </div>
-    </div>
+    </>
   );
 }

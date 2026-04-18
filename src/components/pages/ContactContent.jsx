@@ -114,8 +114,9 @@ export default function ContactContent() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   {[['Prénom', 'prenom', 'text', 'Votre prénom'], ['Nom', 'nom', 'text', 'Votre nom']].map(([label, name, type, placeholder]) => (
                     <div key={name}>
-                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>{label}</label>
+                      <label htmlFor={`contact-${name}`} style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>{label}</label>
                       <input
+                        id={`contact-${name}`}
                         type={type}
                         name={name}
                         value={form[name]}
@@ -128,8 +129,9 @@ export default function ContactContent() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>E-mail *</label>
+                  <label htmlFor="contact-email" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>E-mail *</label>
                   <input
+                    id="contact-email"
                     type="email"
                     name="email"
                     value={form.email}
@@ -141,8 +143,9 @@ export default function ContactContent() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Sujet</label>
+                  <label htmlFor="contact-sujet" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Sujet</label>
                   <input
+                    id="contact-sujet"
                     type="text"
                     name="sujet"
                     value={form.sujet}
@@ -153,8 +156,9 @@ export default function ContactContent() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Message *</label>
+                  <label htmlFor="contact-message" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: C.inkMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Message *</label>
                   <textarea
+                    id="contact-message"
                     name="message"
                     value={form.message}
                     onChange={handleChange}

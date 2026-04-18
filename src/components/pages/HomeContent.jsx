@@ -27,9 +27,10 @@ const CIRCULAR_GALLERY_ITEMS = [
 ];
 
 function Hero() {
-  const videoRef   = useRef(null);
-  const contentRef = useRef(null);
-  const sectionRef = useRef(null);
+  const videoRef      = useRef(null);
+  const videoWrapRef  = useRef(null);
+  const contentRef    = useRef(null);
+  const sectionRef    = useRef(null);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -38,7 +39,8 @@ function Hero() {
       const scrollY  = window.scrollY;
       const sectionH = sectionRef.current.offsetHeight;
       if (scrollY > sectionH) return;
-      if (videoRef.current)   videoRef.current.style.transform   = `scale(1.0) translateY(${scrollY * 0.30}px)`;
+      // Only translateY on the video — the scale animation lives on the wrapper div
+      if (videoRef.current)   videoRef.current.style.transform   = `translateY(${scrollY * 0.28}px)`;
       if (contentRef.current) contentRef.current.style.transform = `translateY(${scrollY * 0.12}px)`;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -116,16 +118,29 @@ function Hero() {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
         padding: '0 1.5rem 5rem', overflow: 'hidden',
       }}>
-        <video ref={videoRef} autoPlay muted loop playsInline
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '115%', objectFit: 'cover', top: '-7.5%',
-            animation: 'heroZoomOut 14s cubic-bezier(0.16,1,0.3,1) forwards',
-            zIndex: 0, willChange: 'transform',
-            filter: 'contrast(1.08) saturate(1.18) brightness(1.04)',
-          }}>
-          <source src="/palmeraie.mp4" type="video/mp4" />
-        </video>
+        {/* Wrapper handles scale animation; video handles scroll translateY — no transform conflict */}
+        <div ref={videoWrapRef} style={{
+          position: 'absolute', inset: 0,
+          animation: 'heroZoomOut 14s cubic-bezier(0.16,1,0.3,1) forwards',
+          zIndex: 0, willChange: 'transform',
+          overflow: 'hidden',
+        }}>
+          <video ref={videoRef} autoPlay muted loop playsInline
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '120%', objectFit: 'cover', top: '-10%',
+              willChange: 'transform',
+              filter: 'contrast(1.08) saturate(1.18) brightness(1.04)',
+            }}>
+            <source src="/palmeraie.mp4" type="video/mp4" />
+            {/* Poster fallback if video fails */}
+            <img
+              src="/images/tighremt/palmeraie-panorama.jpg"
+              alt="Palmeraie de Tighremt"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </video>
+        </div>
 
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(110deg, rgba(6,20,10,0.90) 0%, rgba(6,20,10,0.60) 42%, rgba(6,20,10,0.10) 72%, transparent 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(to top, rgba(6,20,10,0.75) 0%, transparent 45%)' }} />
@@ -145,7 +160,7 @@ function Hero() {
 
           <div className="hero-divider" style={{ width: 80, height: 1.5, background: 'linear-gradient(to right, transparent, rgba(232,163,80,0.9), transparent)', margin: '0 auto 1.75rem' }} />
 
-          <p className="hero-sub" style={{ color: 'rgba(255,255,255,0.70)', fontWeight: 300, fontSize: 'clamp(0.95rem, 2vw, 1.18rem)', lineHeight: 1.8, maxWidth: 520, marginBottom: '2.75rem', textShadow: '0 1px 16px rgba(0,0,0,0.5)', margin: '0 auto 2.75rem', minHeight: '3.5em' }}>
+          <div className="hero-sub" style={{ color: 'rgba(255,255,255,0.70)', fontWeight: 300, fontSize: 'clamp(0.95rem, 2vw, 1.18rem)', lineHeight: 1.8, maxWidth: 520, marginBottom: '2.75rem', textShadow: '0 1px 16px rgba(0,0,0,0.5)', margin: '0 auto 2.75rem', minHeight: '3.5em' }}>
             <TextType
               text={[
                 'Sauvegarde de la palmeraie de Tighremt',
@@ -163,14 +178,14 @@ function Hero() {
               cursorCharacter="|"
               cursorBlinkDuration={0.55}
             />
-          </p>
+          </div>
 
           <div className="hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '4.5rem', alignItems: 'center', justifyContent: 'center' }}>
-            <a href="/don" className="btn-hero-primary">
+            <a href="/don" className="btn-hero-primary btn-micro">
               <Heart size={18} />
               Faire un don
             </a>
-            <a href="/mission" className="btn-hero-glass">
+            <a href="/mission" className="btn-hero-glass btn-micro">
               Découvrir notre mission
             </a>
           </div>

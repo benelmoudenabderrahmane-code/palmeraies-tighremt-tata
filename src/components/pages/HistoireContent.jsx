@@ -38,9 +38,13 @@ export default function HistoireContent() {
           </h1>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+        <div className="timeline-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
           {HISTOIRE_ITEMS.map((item, i) => (
-            <div key={i} className={`reveal reveal-delay-${i + 1}`} style={{ background: C.sand, borderRadius: '1.5rem', padding: '2rem', border: `1px solid ${C.sandDark}`, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div
+              key={i}
+              className={`${i % 2 === 0 ? 'reveal-left' : 'reveal-right'} reveal-delay-${i + 1} card-premium`}
+              style={{ background: C.sand, borderRadius: '1.5rem', padding: '2rem', border: `1px solid ${C.sandDark}`, display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
               <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: C.greenDeep, color: '#fff', borderRadius: 999, padding: '0.3rem 1rem', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', alignSelf: 'flex-start' }}>
                 {item.year}
               </div>

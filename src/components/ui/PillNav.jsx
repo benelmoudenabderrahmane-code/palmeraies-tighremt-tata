@@ -198,7 +198,7 @@ const PillNav = ({
         <Link
           className="pill-logo"
           href={items?.[0]?.href || '/'}
-          aria-label="Home"
+          aria-label="Association Palmeraies Tighremt — Accueil"
           onMouseEnter={handleLogoEnter}
           ref={logoRef}
         >

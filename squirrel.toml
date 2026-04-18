@@ -1,6 +1,6 @@
 [project]
 domains = []
-name = "palmeraies-tighremt"
+name = "palmeries-tighremt"
 
 [crawler]
 max_pages = 100

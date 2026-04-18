@@ -1,8 +1,10 @@
 'use client';
+import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import Lightbox from '@/components/ui/Lightbox';
 
 const BeforeAfterPixel = dynamic(
   () => import('@/components/ui/BeforeAfterPixel'),
@@ -226,40 +228,129 @@ const PROJECTS = [
   },
 ];
 
-/* ── Masonry gallery ───────────────────────────────────────────────────── */
+/* ── Gallery ───────────────────────────────────────────────────────────── */
 function MasonryGallery({ images }) {
+  const [lightboxIdx, setLightboxIdx] = useState(null);
+  const [hoveredIdx, setHoveredIdx]   = useState(null);
+
   return (
-    <div style={{
-      columnCount: 3,
-      columnGap: '0.875rem',
-      marginTop: '2.5rem',
-    }}
-    className="masonry-gallery"
-    >
-      {images.map(({ src, fallback, alt }, i) => (
-        <motion.div
-          key={src}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.55, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-          style={{ breakInside: 'avoid', marginBottom: '0.875rem' }}
-        >
-          <img
-            src={src}
-            alt={alt}
-            loading="lazy"
-            onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
-            style={{
-              display: 'block',
-              width: '100%',
-              borderRadius: '0.875rem',
-              objectFit: 'cover',
-            }}
-          />
-        </motion.div>
-      ))}
-    </div>
+    <>
+      <style>{`
+        @keyframes gallery-shimmer {
+          from { transform: translateX(-100%) skewX(-12deg); }
+          to   { transform: translateX(220%) skewX(-12deg); }
+        }
+      `}</style>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 190px), 1fr))',
+        gap: '0.875rem',
+        marginTop: '2.5rem',
+      }}>
+        {images.map(({ src, fallback, alt }, i) => {
+          const isHovered = hoveredIdx === i;
+          return (
+            <motion.div
+              key={src}
+              initial={{ opacity: 0, scale: 0.82, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{
+                duration: 0.7,
+                delay: i * 0.07,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              onClick={() => setLightboxIdx(i)}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              style={{
+                position: 'relative',
+                borderRadius: '0.875rem',
+                overflow: 'hidden',
+                cursor: 'zoom-in',
+                aspectRatio: '4 / 3',
+                transform: isHovered ? 'scale(1.04) translateY(-4px)' : 'scale(1) translateY(0)',
+                transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease',
+                boxShadow: isHovered
+                  ? '0 20px 48px rgba(19,61,32,0.22), 0 4px 12px rgba(0,0,0,0.12)'
+                  : '0 2px 8px rgba(0,0,0,0.08)',
+                zIndex: isHovered ? 2 : 1,
+              }}
+            >
+              <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
+                  transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                }}
+              />
+
+              {/* Gradient overlay on hover */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: isHovered
+                  ? 'linear-gradient(to top, rgba(19,61,32,0.55) 0%, rgba(19,61,32,0.1) 60%, transparent 100%)'
+                  : 'linear-gradient(to top, rgba(0,0,0,0.12) 0%, transparent 50%)',
+                transition: 'background 0.4s ease',
+              }} />
+
+              {/* Shimmer sweep on hover */}
+              {isHovered && (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  overflow: 'hidden',
+                  pointerEvents: 'none',
+                  borderRadius: '0.875rem',
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0, bottom: 0,
+                    width: '40%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
+                    animation: 'gallery-shimmer 0.7s ease forwards',
+                  }} />
+                </div>
+              )}
+
+              {/* Zoom icon */}
+              <div style={{
+                position: 'absolute',
+                bottom: 10, right: 10,
+                width: 30, height: 30,
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.92)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: isHovered ? 1 : 0,
+                transform: isHovered ? 'scale(1)' : 'scale(0.6)',
+                transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+              }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <circle cx="6" cy="6" r="4" stroke="#133d20" strokeWidth="1.5"/>
+                  <path d="M9.5 9.5L13 13" stroke="#133d20" strokeWidth="1.5" strokeLinecap="round"/>
+                  <path d="M4 6H8M6 4V8" stroke="#133d20" strokeWidth="1.2" strokeLinecap="round"/>
+                </svg>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {lightboxIdx !== null && (
+        <Lightbox
+          images={images}
+          startIndex={lightboxIdx}
+          onClose={() => setLightboxIdx(null)}
+        />
+      )}
+    </>
   );
 }
 
@@ -391,6 +482,230 @@ function ProjectBlock({ project, index }) {
   );
 }
 
+/* ── Projects Index (animated overview between hero and blocks) ─────────── */
+function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
+  const rowRef = useRef(null);
+  const inView = useInView(rowRef, { once: true, margin: '-60px' });
+
+  const imgSrc = project.after || project.afterFallback;
+  const fallback = project.afterFallback;
+
+  return (
+    <motion.div
+      ref={rowRef}
+      initial={{ opacity: 0, x: -44 }}
+      animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -44 }}
+      transition={{ duration: 0.7, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => onEnter(index)}
+      onMouseLeave={onLeave}
+      style={{ position: 'relative' }}
+    >
+      <a
+        href={`#${project.id}`}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '3.5rem 1fr auto',
+          alignItems: 'center',
+          gap: '1.5rem',
+          padding: 'clamp(1.1rem,2.5vw,1.6rem) clamp(1rem,2vw,1.5rem)',
+          borderBottom: `1px solid ${isActive ? C.green + '40' : C.sandDark}`,
+          background: isActive
+            ? `linear-gradient(90deg, ${C.green}08 0%, transparent 80%)`
+            : 'transparent',
+          textDecoration: 'none',
+          transition: 'background 0.35s ease, border-color 0.35s ease',
+          cursor: 'pointer',
+          borderRadius: isActive ? '0.75rem' : '0',
+        }}
+      >
+        {/* ── Number ── */}
+        <span style={{
+          fontFamily: 'Cormorant Garamond, serif',
+          fontSize: 'clamp(1.4rem,2.5vw,1.9rem)',
+          fontWeight: 700,
+          color: isActive ? project.categoryColor : C.sandDark,
+          lineHeight: 1,
+          transition: 'color 0.35s ease',
+          userSelect: 'none',
+        }}>
+          {String(index + 1).padStart(2, '0')}
+        </span>
+
+        {/* ── Title + meta ── */}
+        <div>
+          <div style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: 'clamp(1.1rem,2.2vw,1.55rem)',
+            fontWeight: isActive ? 600 : 400,
+            color: isActive ? C.greenDeep : C.ink,
+            lineHeight: 1.2,
+            marginBottom: '0.25rem',
+            transition: 'color 0.3s ease, font-weight 0.1s',
+          }}>
+            {project.title}
+          </div>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.6rem',
+            flexWrap: 'wrap',
+          }}>
+            <span style={{
+              fontSize: '0.62rem',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: project.categoryColor,
+              background: project.categoryColor + '14',
+              padding: '2px 8px',
+              borderRadius: 999,
+            }}>
+              {project.category}
+            </span>
+            <span style={{ fontSize: '0.75rem', color: C.inkLight, fontWeight: 300 }}>
+              {project.subtitle}
+            </span>
+          </div>
+        </div>
+
+        {/* ── Thumbnail ── */}
+        <div style={{
+          width: 'clamp(64px,10vw,110px)',
+          height: 'clamp(44px,6.5vw,74px)',
+          borderRadius: '0.6rem',
+          overflow: 'hidden',
+          flexShrink: 0,
+          boxShadow: isActive
+            ? '0 10px 28px rgba(19,61,32,0.22)'
+            : '0 2px 8px rgba(0,0,0,0.1)',
+          transition: 'box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1)',
+          transform: isActive ? 'scale(1.06)' : 'scale(1)',
+        }}>
+          <img
+            src={imgSrc}
+            alt={project.title}
+            onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
+            style={{
+              width: '100%', height: '100%',
+              objectFit: 'cover',
+              display: 'block',
+              transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
+              transform: isActive ? 'scale(1.12)' : 'scale(1)',
+            }}
+          />
+        </div>
+      </a>
+
+      {/* Active indicator bar */}
+      <motion.div
+        animate={{ scaleX: isActive ? 1 : 0 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: 'absolute',
+          left: 0, top: '15%', bottom: '15%',
+          width: 3, borderRadius: 3,
+          background: project.categoryColor,
+          transformOrigin: 'top',
+        }}
+      />
+    </motion.div>
+  );
+}
+
+function ProjectsIndex() {
+  const [activeIdx, setActiveIdx] = useState(null);
+  const headerRef = useRef(null);
+  const headerInView = useInView(headerRef, { once: true, margin: '-40px' });
+
+  return (
+    <section style={{
+      background: C.sand,
+      padding: 'clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,2rem)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Subtle decorative bg text */}
+      <div style={{
+        position: 'absolute',
+        right: '-2rem',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        fontFamily: 'Cormorant Garamond, serif',
+        fontSize: 'clamp(6rem,14vw,12rem)',
+        fontWeight: 700,
+        color: C.sandDark,
+        opacity: 0.35,
+        lineHeight: 1,
+        userSelect: 'none',
+        pointerEvents: 'none',
+        letterSpacing: '-0.04em',
+      }}>
+        08
+      </div>
+
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+
+        {/* Header */}
+        <motion.div
+          ref={headerRef}
+          initial={{ opacity: 0, y: 28 }}
+          animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{ marginBottom: 'clamp(2rem,4vw,3.5rem)' }}
+        >
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
+            fontSize: '0.63rem', letterSpacing: '0.26em',
+            textTransform: 'uppercase', fontWeight: 600,
+            color: C.ochre, marginBottom: '0.85rem',
+          }}>
+            <span style={{ width: 24, height: 1.5, background: C.ochre, display: 'block' }} />
+            Vue d&apos;ensemble
+          </div>
+          <h2 style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: 'clamp(1.8rem,3.5vw,2.8rem)',
+            fontWeight: 400, lineHeight: 1.12,
+            color: C.greenDeep, margin: 0,
+          }}>
+            {PROJECTS.length} projets, <em>un seul objectif</em>
+          </h2>
+        </motion.div>
+
+        {/* Project rows */}
+        <div style={{ borderTop: `1px solid ${C.sandDark}` }}>
+          {PROJECTS.map((p, i) => (
+            <ProjectRow
+              key={p.id}
+              project={p}
+              index={i}
+              isActive={activeIdx === i}
+              onEnter={setActiveIdx}
+              onLeave={() => setActiveIdx(null)}
+            />
+          ))}
+        </div>
+
+        {/* Footer hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={headerInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.6, delay: PROJECTS.length * 0.07 + 0.3 }}
+          style={{
+            marginTop: '2rem',
+            fontSize: '0.72rem',
+            color: C.inkLight,
+            fontWeight: 400,
+            letterSpacing: '0.04em',
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+          }}
+        >
+          <span style={{ width: 16, height: 1, background: C.inkLight, display: 'block' }} />
+          Survolez un projet pour l&apos;apercevoir — cliquez pour y accéder
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 /* ── Page hero ─────────────────────────────────────────────────────────── */
 function PageHero() {
   return (
@@ -508,15 +823,14 @@ export default function ProjetsContent() {
   return (
     <>
       <style>{`
-        @media (max-width: 700px) {
-          .masonry-gallery { column-count: 2 !important; }
-        }
         @media (max-width: 440px) {
-          .masonry-gallery { column-count: 1 !important; }
+          .proj-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
       `}</style>
 
       <PageHero />
+
+      <ProjectsIndex />
 
       {PROJECTS.map((project, i) => (
         <ProjectBlock key={project.id} project={project} index={i} />
