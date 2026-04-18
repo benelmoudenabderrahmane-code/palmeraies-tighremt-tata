@@ -2,22 +2,28 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { Search } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import PillNav from './ui/PillNav';
 import DarkModeToggle from './ui/DarkModeToggle';
+import LanguageSwitcher from './ui/LanguageSwitcher';
 import { C } from '@/lib/tokens';
+
+const SearchModal = dynamic(() => import('./ui/SearchModal'), { ssr: false });
 
 const NAV_ITEMS = [
   { label: 'Accueil',     href: '/' },
+  { label: 'Actualités',  href: '/actualites' },
   { label: 'Mission',     href: '/mission' },
-  { label: 'Nos projets', href: '/projets' },
-  { label: 'Équipe',      href: '/equipe' },
-  { label: 'Histoire',    href: '/histoire' },
+  { label: 'Projets',     href: '/projets' },
+  { label: 'Galerie',     href: '/galerie' },
   { label: 'Don',         href: '/don' },
   { label: 'Contact',     href: '/contact' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -60,6 +66,12 @@ export default function Navbar() {
           initialLoadAnimation={false}
         />
         <DarkModeToggle />
+        <LanguageSwitcher />
+        <button onClick={() => setSearchOpen(true)} aria-label="Ouvrir la recherche"
+          style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(232,131,42,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Search size={15} color={transparent ? '#fff' : C.inkMuted} />
+        </button>
+        {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
       </div>
     </div>
   );
