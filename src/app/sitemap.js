@@ -20,6 +20,8 @@ export default function sitemap() {
     { url: '/partenaires',    priority: 0.6, changeFrequency: 'monthly' },
     { url: '/contact',        priority: 0.8, changeFrequency: 'monthly' },
     { url: '/mentions-legales', priority: 0.3, changeFrequency: 'yearly' },
+    { url: '/about',          priority: 0.6, changeFrequency: 'monthly' },
+    { url: '/privacy-policy', priority: 0.3, changeFrequency: 'yearly' },
   ];
 
   const articlePages = actualites.map(article => ({

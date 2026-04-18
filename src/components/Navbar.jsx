@@ -54,7 +54,7 @@ export default function Navbar() {
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', paddingRight: '1rem' }}>
         <PillNav
           logo="/logo.png"
-          logoAlt="Association Palmeraies Tighremt"
+          logoAlt=""
           logoName="Association Palmeraies Tighremt"
           logoSubtitle="TATA · Maroc"
           items={NAV_ITEMS}

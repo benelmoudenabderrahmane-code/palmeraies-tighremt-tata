@@ -45,8 +45,8 @@ export default function ActualitesContent() {
           {filtered.map((article, i) => (
             <article key={article.id} className={`reveal reveal-delay-${(i % 3) + 1} card-premium`}
               style={{ borderRadius: 16, overflow: 'hidden', background: '#fff', boxShadow: '0 2px 20px rgba(0,0,0,0.07)' }}>
-              <div style={{ position: 'relative', height: 200, overflow: 'hidden' }} className="img-zoom-wrap">
-                <Image src={article.image} alt={article.titre} fill style={{ objectFit: 'cover' }} priority={i === 0} loading={i === 0 ? 'eager' : 'lazy'} />
+              <div style={{ overflow: 'hidden', borderRadius: '16px 16px 0 0' }} className="img-zoom-wrap">
+                <Image src={article.image} alt={article.titre} width={400} height={200} style={{ objectFit: 'cover', width: '100%', height: '200px', display: 'block' }} priority={i === 0} loading={i === 0 ? 'eager' : 'lazy'} />
               </div>
               <div style={{ padding: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem', alignItems: 'center' }}>
@@ -61,9 +61,10 @@ export default function ActualitesContent() {
                 <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.25rem', fontWeight: 600, lineHeight: 1.3, marginBottom: '0.6rem', color: C.ink }}>{article.titre}</h2>
                 <p style={{ fontSize: '0.87rem', color: C.inkMuted, lineHeight: 1.7, marginBottom: '1.2rem' }}>{article.extrait}</p>
                 <Link href={`/actualites/${article.id}`}
-                  aria-label={`Lire la suite : ${article.titre}`}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', fontWeight: 600, color: C.ochre, textDecoration: 'none' }}>
-                  Lire la suite <ArrowRight size={14} />
+                  Lire la suite
+                  <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}> : {article.titre}</span>
+                  <ArrowRight size={14} />
                 </Link>
               </div>
             </article>

@@ -50,15 +50,19 @@ function NewsletterForm() {
 const quickLinks = [
   { label: 'Accueil',      href: '/' },
   { label: 'Mission',      href: '/mission' },
+  { label: 'Notre histoire',    href: '/histoire' },
+  { label: 'À propos',          href: '/about' },
   { label: 'Nos projets',  href: '/projets' },
   { label: 'Actualités',   href: '/actualites' },
   { label: 'Galerie',      href: '/galerie' },
   { label: 'Événements',   href: '/evenements' },
   { label: 'Bénévoles',    href: '/benevoles' },
+  { label: 'Nos partenaires',   href: '/partenaires' },
   { label: 'FAQ',          href: '/faq' },
   { label: 'Faire un don',     href: '/don' },
   { label: 'Contact',          href: '/contact' },
   { label: 'Mentions légales', href: '/mentions-legales' },
+  { label: 'Privacy Policy',    href: '/privacy-policy' },
 ];
 
 export default function Footer() {
@@ -96,7 +100,7 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {quickLinks.map(({ label, href }) => (
                 <Link key={label} href={href}
-                  rel={href === '/mentions-legales' ? 'privacy-policy' : undefined}
+                  rel={href === '/mentions-legales' || href === '/privacy-policy' ? 'privacy-policy' : undefined}
                   style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.55)', textDecoration: 'none', transition: 'color 0.2s' }}
                   onMouseOver={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
                   onMouseOut={e  => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}>

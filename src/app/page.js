@@ -10,19 +10,21 @@ export const metadata = {
   },
 };
 
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://palmeries-tighremt.org';
+
 const videoSchema = {
   '@context': 'https://schema.org',
   '@type': 'VideoObject',
   name: 'Palmeraie de Tighremt — Association Palmeraies Tighremt',
   description: 'Découvrez la beauté de la palmeraie de Tighremt, Maroc. Association loi 1901 œuvrant pour la sauvegarde de cet écosystème unique.',
-  thumbnailUrl: 'https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg',
+  thumbnailUrl: `${BASE}/images/tighremt/palmeraie-panorama.jpg`,
   uploadDate: '2024-01-01',
-  contentUrl: 'https://palmeries-tighremt.org/palmeraie.mp4',
-  embedUrl: 'https://palmeries-tighremt.org',
+  contentUrl: `${BASE}/palmeraie.mp4`,
+  embedUrl: BASE,
   publisher: {
     '@type': 'Organization',
     name: 'Association Palmeraies Tighremt',
-    logo: { '@type': 'ImageObject', url: 'https://palmeries-tighremt.org/logo.png' },
+    logo: { '@type': 'ImageObject', url: `${BASE}/logo.png` },
   },
 };
 

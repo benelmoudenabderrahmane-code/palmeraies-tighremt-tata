@@ -35,6 +35,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <head>
+        <link rel="preload" as="image" href="/logo.png" fetchPriority="high" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#133d20" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

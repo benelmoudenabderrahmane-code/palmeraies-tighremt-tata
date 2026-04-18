@@ -24,8 +24,8 @@ export default function ArticleContent({ id }) {
       <Link href="/actualites" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: C.inkMuted, textDecoration: 'none', fontSize: '0.85rem', marginBottom: '2rem' }}>
         <ArrowLeft size={14} /> Retour aux actualités
       </Link>
-      <div style={{ position: 'relative', height: 360, borderRadius: 16, overflow: 'hidden', marginBottom: '2rem' }}>
-        <Image src={article.image} alt={article.titre} fill style={{ objectFit: 'cover' }} />
+      <div style={{ overflow: 'hidden', borderRadius: 16, marginBottom: '2rem' }}>
+        <Image src={article.image} alt={article.titre} width={800} height={360} style={{ objectFit: 'cover', width: '100%', height: '360px', display: 'block' }} priority />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <span style={{ fontSize: '0.75rem', color: C.inkLight, display: 'flex', alignItems: 'center', gap: 4 }}>

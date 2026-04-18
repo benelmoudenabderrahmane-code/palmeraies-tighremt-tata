@@ -21,8 +21,8 @@ export default function PartenairesContent() {
             <a key={p.id} href={p.url} target="_blank" rel="noopener noreferrer"
               className={`reveal reveal-delay-${(i % 4) + 1} card-premium`}
               style={{ background: '#fff', borderRadius: 16, padding: '2rem 1.5rem', textAlign: 'center', boxShadow: '0 2px 20px rgba(0,0,0,0.07)', textDecoration: 'none', display: 'block' }}>
-              <div style={{ position: 'relative', width: 80, height: 80, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 1rem', background: C.sandMid }}>
-                <Image src={p.logo} alt={p.nom} fill style={{ objectFit: 'cover' }} onError={() => {}} />
+              <div style={{ width: 80, height: 80, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 1rem', background: C.sandMid }}>
+                <Image src={p.logo} alt={p.nom} width={80} height={80} style={{ objectFit: 'cover', width: '80px', height: '80px', display: 'block' }} onError={() => {}} />
               </div>
               <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.15rem', fontWeight: 600, color: C.ink, marginBottom: '0.4rem' }}>{p.nom}</h2>
               <p style={{ fontSize: '0.84rem', color: C.inkMuted }}>{p.description}</p>
