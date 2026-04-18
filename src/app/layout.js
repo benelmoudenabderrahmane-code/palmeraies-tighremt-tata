@@ -50,6 +50,18 @@ export default function RootLayout({ children }) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
     }
   `}} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "NGO",
+          "name": "Association Palmeraies Tighremt",
+          "alternateName": "Palmeraies Tighremt TATA",
+          "url": "https://palmeries-tighremt.org",
+          "logo": "https://palmeries-tighremt.org/logo.png",
+          "description": "Association loi 1901 fondée en 2010. Sauvegarde de la palmeraie et développement du village de Tighremt, province de Tata, Maroc.",
+          "foundingDate": "2010",
+          "areaServed": { "@type": "Place", "name": "Tighremt, Tata, Maroc" },
+          "contactPoint": { "@type": "ContactPoint", "email": "palmeraies.tighremt.tata@gmail.com", "contactType": "customer service" }
+        })}} />
       </head>
       <body>
         {/* Cursor trail — client only */}
