@@ -24,7 +24,7 @@ export default function PartenairesContent() {
               <div style={{ position: 'relative', width: 80, height: 80, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 1rem', background: C.sandMid }}>
                 <Image src={p.logo} alt={p.nom} fill style={{ objectFit: 'cover' }} onError={() => {}} />
               </div>
-              <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.15rem', fontWeight: 600, color: C.ink, marginBottom: '0.4rem' }}>{p.nom}</h3>
+              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.15rem', fontWeight: 600, color: C.ink, marginBottom: '0.4rem' }}>{p.nom}</h2>
               <p style={{ fontSize: '0.84rem', color: C.inkMuted }}>{p.description}</p>
             </a>
           ))}

@@ -281,6 +281,8 @@ function MasonryGallery({ images }) {
               <img
                 src={src}
                 alt={alt}
+                width="900"
+                height="600"
                 loading="lazy"
                 onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
                 style={{
@@ -582,6 +584,9 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
           <img
             src={imgSrc}
             alt={project.title}
+            width="900"
+            height="600"
+            loading="lazy"
             onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
             style={{
               width: '100%', height: '100%',

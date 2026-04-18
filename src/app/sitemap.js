@@ -1,3 +1,5 @@
+import actualites from '@/data/actualites.json';
+
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export default function sitemap() {
@@ -20,9 +22,18 @@ export default function sitemap() {
     { url: '/mentions-legales', priority: 0.3, changeFrequency: 'yearly' },
   ];
 
-  return pages.map(({ url, priority, changeFrequency }) => ({
+  const articlePages = actualites.map(article => ({
+    url: `/actualites/${article.id}`,
+    priority: 0.6,
+    changeFrequency: 'monthly',
+    lastModified: article.date ? new Date(article.date).toISOString() : now,
+  }));
+
+  const allPages = [...pages.map(p => ({ ...p, lastModified: now })), ...articlePages];
+
+  return allPages.map(({ url, priority, changeFrequency, lastModified }) => ({
     url: `${BASE_URL}${url}`,
-    lastModified: now,
+    lastModified,
     changeFrequency,
     priority,
   }));

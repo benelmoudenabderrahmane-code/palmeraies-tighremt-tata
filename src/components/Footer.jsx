@@ -96,6 +96,7 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {quickLinks.map(({ label, href }) => (
                 <Link key={label} href={href}
+                  rel={href === '/mentions-legales' ? 'privacy-policy' : undefined}
                   style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.55)', textDecoration: 'none', transition: 'color 0.2s' }}
                   onMouseOver={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
                   onMouseOut={e  => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}>
