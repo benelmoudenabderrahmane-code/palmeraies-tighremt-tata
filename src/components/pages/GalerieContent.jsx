@@ -7,14 +7,14 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false });
 
 const IMAGES = [
-  { src: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Palmeraie de Tighremt — vue panoramique', theme: 'palmeraie' },
-  { src: '/images/tighremt/palmeraie-sol.jpg',      alt: 'Sols de la palmeraie', theme: 'palmeraie' },
-  { src: '/images/tighremt/dattes.jpg',             alt: 'Dattes de Tighremt', theme: 'palmeraie' },
-  { src: '/images/tighremt/minaret.jpg',            alt: 'Mosquée de Tighremt', theme: 'village' },
-  { src: '/images/tighremt/ksar-silhouette.jpg',    alt: 'Ksar ancestral de Tighremt', theme: 'village' },
-  { src: '/images/tighremt/tighremt-panorama.jpg',  alt: 'Village de Tighremt', theme: 'village' },
-  { src: '/images/tighremt/route-tighremt.jpg',     alt: 'Route du sud marocain', theme: 'paysage' },
-  { src: '/images/tighremt/palmeraie-chemin.jpg',   alt: 'Chemin de la palmeraie', theme: 'palmeraie' },
+  { src: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Palmeraie de Tighremt — vue panoramique', theme: 'palmeraie', w: 1920, h: 1080 },
+  { src: '/images/tighremt/palmeraie-sol.jpg',      alt: 'Sols de la palmeraie', theme: 'palmeraie',          w: 1280, h: 960  },
+  { src: '/images/tighremt/dattes.jpg',             alt: 'Dattes de Tighremt', theme: 'palmeraie',            w: 1280, h: 853  },
+  { src: '/images/tighremt/minaret.jpg',            alt: 'Mosquée de Tighremt', theme: 'village',             w: 800,  h: 1067 },
+  { src: '/images/tighremt/ksar-silhouette.jpg',    alt: 'Ksar ancestral de Tighremt', theme: 'village',      w: 1440, h: 810  },
+  { src: '/images/tighremt/tighremt-panorama.jpg',  alt: 'Village de Tighremt', theme: 'village',             w: 1920, h: 1080 },
+  { src: '/images/tighremt/route-tighremt.jpg',     alt: 'Route du sud marocain', theme: 'paysage',           w: 1280, h: 960  },
+  { src: '/images/tighremt/palmeraie-chemin.jpg',   alt: 'Chemin de la palmeraie', theme: 'palmeraie',        w: 1280, h: 853  },
 ];
 
 const THEMES = ['tous', 'palmeraie', 'village', 'paysage'];
@@ -54,7 +54,7 @@ export default function GalerieContent() {
               onClick={() => setLightboxIdx(i)}
               style={{ breakInside: 'avoid', marginBottom: '1rem', borderRadius: 12, overflow: 'hidden', cursor: 'zoom-in', position: 'relative' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.src} alt={img.alt} style={{ width: '100%', display: 'block', borderRadius: 12 }} loading="lazy" />
+              <img src={img.src} alt={img.alt} width={img.w} height={img.h} style={{ width: '100%', display: 'block', borderRadius: 12, aspectRatio: `${img.w}/${img.h}` }} loading="lazy" />
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(19,61,32,0)', transition: 'background 0.3s', borderRadius: 12, display: 'flex', alignItems: 'flex-end', padding: '1rem' }}
                 onMouseOver={e => { e.currentTarget.style.background = 'rgba(19,61,32,0.45)'; e.currentTarget.querySelector('span').style.opacity = '1'; }}
                 onMouseOut={e  => { e.currentTarget.style.background = 'rgba(19,61,32,0)';    e.currentTarget.querySelector('span').style.opacity = '0'; }}>

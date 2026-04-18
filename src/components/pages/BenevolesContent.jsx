@@ -63,8 +63,8 @@ export default function BenevolesContent() {
               { name: 'email', label: 'Email', type: 'email', placeholder: 'votre@email.com' },
             ].map(({ name, label, type, placeholder }) => (
               <div key={name}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: C.ink, display: 'block', marginBottom: '0.4rem' }}>{label}</label>
-                <input type={type} placeholder={placeholder} value={form[name]}
+                <label htmlFor={`benevole-${name}`} style={{ fontSize: '0.82rem', fontWeight: 600, color: C.ink, display: 'block', marginBottom: '0.4rem' }}>{label}</label>
+                <input id={`benevole-${name}`} type={type} placeholder={placeholder} value={form[name]}
                   onChange={e => setForm(p => ({ ...p, [name]: e.target.value }))}
                   required
                   style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, border: `1px solid ${C.sandDark}`, fontSize: '0.93rem', outline: 'none', background: '#fff' }} />
@@ -79,8 +79,8 @@ export default function BenevolesContent() {
               </select>
             </div>
             <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 600, color: C.ink, display: 'block', marginBottom: '0.4rem' }}>Message (optionnel)</label>
-              <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
+              <label htmlFor="benevole-message" style={{ fontSize: '0.82rem', fontWeight: 600, color: C.ink, display: 'block', marginBottom: '0.4rem' }}>Message (optionnel)</label>
+              <textarea id="benevole-message" value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
                 placeholder="Présentez-vous et expliquez votre motivation..."
                 rows={4} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, border: `1px solid ${C.sandDark}`, fontSize: '0.93rem', resize: 'vertical', outline: 'none', background: '#fff' }} />
             </div>
