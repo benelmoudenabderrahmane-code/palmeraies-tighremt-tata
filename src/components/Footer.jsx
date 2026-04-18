@@ -1,8 +1,47 @@
 'use client';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Share2, Globe, Send, Mail, Phone, MapPin, ArrowRight, Heart } from 'lucide-react';
 import Logo from './ui/Logo';
 import { C } from '@/lib/tokens';
+import { toast } from '@/hooks/useToast';
+
+function NewsletterForm() {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!email.includes('@')) { toast.error('Email invalide'); return; }
+    setLoading(true);
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) { toast.success('Inscription confirmée ! Merci.'); setEmail(''); }
+      else toast.error(data.error || 'Erreur');
+    } catch { toast.error('Erreur réseau'); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <form onSubmit={submit} style={{ display: 'flex', gap: '0.5rem' }}>
+      <input
+        type="email" placeholder="Votre e-mail" value={email}
+        onChange={e => setEmail(e.target.value)}
+        autoComplete="email" inputMode="email" required
+        style={{ flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '0.65rem 0.9rem', color: '#fff', fontSize: '0.85rem', outline: 'none' }}
+      />
+      <button type="submit" className="btn-accent" aria-label="S'abonner à la newsletter"
+        disabled={loading} style={{ padding: '0.65rem 1rem', borderRadius: 8, flexShrink: 0 }}>
+        <ArrowRight size={16} />
+      </button>
+    </form>
+  );
+}
 
 const quickLinks = [
   { label: 'Accueil',      href: '/' },
@@ -77,15 +116,7 @@ export default function Footer() {
             <p style={{ fontSize: '0.85rem', lineHeight: 1.7, fontWeight: 300, marginBottom: '1rem' }}>
               Recevez nos actualités et suivez l&apos;avancement de nos projets.
             </p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <input type="email" placeholder="Votre e-mail"
-                autoComplete="email" inputMode="email"
-                style={{ flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '0.65rem 0.9rem', color: '#fff', fontSize: '0.85rem', outline: 'none' }}
-              />
-              <button className="btn-accent" aria-label="S'abonner à la newsletter" style={{ padding: '0.65rem 1rem', borderRadius: 8, flexShrink: 0 }}>
-                <ArrowRight size={16} />
-              </button>
-            </div>
+            <NewsletterForm />
           </div>
         </div>
 
