@@ -47,8 +47,11 @@ const quickLinks = [
   { label: 'Accueil',      href: '/' },
   { label: 'Mission',      href: '/mission' },
   { label: 'Nos projets',  href: '/projets' },
-  { label: 'Histoire',     href: '/histoire' },
-  { label: 'Équipe',       href: '/equipe' },
+  { label: 'Actualités',   href: '/actualites' },
+  { label: 'Galerie',      href: '/galerie' },
+  { label: 'Événements',   href: '/evenements' },
+  { label: 'Bénévoles',    href: '/benevoles' },
+  { label: 'FAQ',          href: '/faq' },
   { label: 'Faire un don', href: '/don' },
   { label: 'Contact',      href: '/contact' },
 ];
