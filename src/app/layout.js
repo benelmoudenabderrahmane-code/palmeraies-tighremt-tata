@@ -9,6 +9,7 @@ import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import BackToTop from '@/components/ui/BackToTop';
 import ToastContainer from '@/components/ui/Toast';
 import CookieBanner from '@/components/ui/CookieBanner';
+import InstallPrompt from '@/components/ui/InstallPrompt';
 
 export const viewport = {
   width: 'device-width',
@@ -85,6 +86,7 @@ export default function RootLayout({ children }) {
         <BackToTop />
         <ToastContainer />
         <CookieBanner />
+        <InstallPrompt />
       </body>
     </html>
   );
