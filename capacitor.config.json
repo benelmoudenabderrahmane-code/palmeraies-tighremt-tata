@@ -1,0 +1,36 @@
+{
+  "appId": "com.tighremt.palmeraies",
+  "appName": "Tighremt",
+  "webDir": "out",
+  "server": {
+    "url": "https://palmeraies-tighremt-tata.vercel.app",
+    "cleartext": false,
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "backgroundColor": "#f5f0e8"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#f5f0e8"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#133d20",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false,
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "StatusBar": {
+      "style": "Dark",
+      "backgroundColor": "#133d20"
+    }
+  }
+}
