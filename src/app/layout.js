@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingDock from '@/components/FloatingDock';
 import ScrollReset from '@/components/ScrollReset';
-import PageTransition from '@/components/ui/PageTransition';
+import PageTransitionController from '@/components/ui/PageTransition';
 import ChatbotClient from '@/components/ui/ChatbotClient';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import BackToTop from '@/components/ui/BackToTop';
@@ -20,7 +20,7 @@ export const viewport = {
 export const metadata = {
   title: 'Association Palmeraies Tighremt | TATA · Maroc',
   description:
-    'Association loi 1901 à but non lucratif fondée en mars 2010. Sauvegarde de la palmeraie, missions humanitaires et développement du village de Tighremt, province de Tata, Maroc.',
+    'Association loi 1901 fondée en 2010. Sauvegarde de la palmeraie, missions humanitaires et développement du village de Tighremt, Tata, Maroc.',
   keywords: 'palmeraie, Tighremt, Tata, Maroc, association, humanitaire, désertification, oasis',
   openGraph: {
     title: 'Association Palmeraies Tighremt',
@@ -36,6 +36,7 @@ export default function RootLayout({ children }) {
     <html lang="fr">
       <head>
         <link rel="preload" as="image" href="/logo.png" fetchPriority="high" />
+        <link rel="preload" as="image" href="/images/tighremt/palmeraie-panorama.jpg" fetchPriority="high" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#133d20" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -65,6 +66,21 @@ export default function RootLayout({ children }) {
           "areaServed": { "@type": "Place", "name": "Tighremt, Tata, Maroc" },
           "contactPoint": { "@type": "ContactPoint", "email": "palmeraies.tighremt.tata@gmail.com", "contactType": "customer service" }
         })}} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          "name": "Palmeraie de Tighremt — Association Palmeraies Tighremt",
+          "description": "Découvrez la beauté de la palmeraie de Tighremt, Maroc. Association loi 1901 œuvrant pour la sauvegarde de cet écosystème unique.",
+          "thumbnailUrl": "https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg",
+          "uploadDate": "2024-01-01",
+          "contentUrl": "https://palmeries-tighremt.org/palmeraie.mp4",
+          "embedUrl": "https://palmeries-tighremt.org",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Association Palmeraies Tighremt",
+            "logo": { "@type": "ImageObject", "url": "https://palmeries-tighremt.org/logo.png" }
+          }
+        })}} />
       </head>
       <body>
         {/* Cursor trail — client only */}
@@ -77,8 +93,11 @@ export default function RootLayout({ children }) {
 
         <Navbar />
 
-        <main id="main-content">
-          <PageTransition>{children}</PageTransition>
+        {/* Controller applies CSS transition class directly on #main-content — no client wrapper around children */}
+        <PageTransitionController />
+
+        <main id="main-content" className="page-transition-enter">
+          {children}
         </main>
 
         <Footer />

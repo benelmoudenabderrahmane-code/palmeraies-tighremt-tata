@@ -74,7 +74,7 @@ export default function Footer() {
 
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-              <Logo size={100} />
+              <Logo size={100} lazy={true} />
               <div>
                 <div style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 600, fontSize: '1rem', color: '#fff', lineHeight: 1.1 }}>Association Palmeraies Tighremt</div>
                 <div style={{ fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: C.accent }}>TATA · Maroc</div>

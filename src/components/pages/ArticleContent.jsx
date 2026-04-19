@@ -25,7 +25,7 @@ export default function ArticleContent({ id }) {
         <ArrowLeft size={14} /> Retour aux actualités
       </Link>
       <div style={{ overflow: 'hidden', borderRadius: 16, marginBottom: '2rem' }}>
-        <Image src={article.image} alt={article.titre} width={800} height={360} style={{ objectFit: 'cover', width: '100%', height: '360px', display: 'block' }} priority />
+        <Image src={article.image} alt={article.titre} width={800} height={360} sizes="(max-width: 768px) 100vw, 800px" style={{ objectFit: 'cover', width: '100%', height: '360px', display: 'block' }} priority />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <span style={{ fontSize: '0.75rem', color: C.inkLight, display: 'flex', alignItems: 'center', gap: 4 }}>

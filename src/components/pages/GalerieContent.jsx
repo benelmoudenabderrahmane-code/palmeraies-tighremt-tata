@@ -54,7 +54,7 @@ export default function GalerieContent() {
               onClick={() => setLightboxIdx(i)}
               style={{ breakInside: 'avoid', marginBottom: '1rem', borderRadius: 12, overflow: 'hidden', cursor: 'zoom-in', position: 'relative' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.src} alt={img.alt} width={img.w} height={img.h} style={{ width: '100%', display: 'block', borderRadius: 12, aspectRatio: `${img.w}/${img.h}` }} loading="lazy" />
+              <img src={img.src} alt={img.alt} width={img.w} height={img.h} style={{ width: '100%', display: 'block', borderRadius: 12, aspectRatio: `${img.w}/${img.h}` }} loading={i < 3 ? 'eager' : 'lazy'} />
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(19,61,32,0)', transition: 'background 0.3s', borderRadius: 12, display: 'flex', alignItems: 'flex-end', padding: '1rem' }}
                 onMouseOver={e => { e.currentTarget.style.background = 'rgba(19,61,32,0.45)'; e.currentTarget.querySelector('span').style.opacity = '1'; }}
                 onMouseOut={e  => { e.currentTarget.style.background = 'rgba(19,61,32,0)';    e.currentTarget.querySelector('span').style.opacity = '0'; }}>

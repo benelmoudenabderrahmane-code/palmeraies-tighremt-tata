@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Mail, Users, Leaf, Crown, Wallet, FileText, ArrowRight, TreePine, Handshake, Lightbulb, Sprout, Star } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { TeamCarousel } from '@/components/ui/TeamCarousel';
+import { TextEffect } from '@/components/ui/TextEffect';
 
 /* ─── Team data ──────────────────────────────────────────────── */
 const MEMBRES = [
@@ -319,6 +321,31 @@ export default function EquipeContent() {
             {MEMBRES.map((m, i) => <MembreCard key={m.name} m={m} index={i} />)}
           </div>
         </div>
+      </section>
+
+      {/* ══ TEAM CAROUSEL ════════════════════════════════════════ */}
+      <section style={{ background: C.sandMid, padding: '0' }}>
+        <div style={{ textAlign: 'center', padding: 'clamp(3rem,5vw,4rem) 1.5rem 0' }}>
+          <div className="reveal" style={{ fontSize: '0.65rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 600, marginBottom: '0.75rem' }}>
+            En quelques mots
+          </div>
+          <TextEffect
+            as="h2"
+            preset="blur"
+            per="word"
+            delay={0.1}
+            className=""
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontSize: 'clamp(1.8rem,4vw,2.8rem)',
+              fontWeight: 400, color: C.greenDeep,
+              marginBottom: '1.5rem',
+            }}
+          >
+            Ce que nos membres partagent
+          </TextEffect>
+        </div>
+        <TeamCarousel members={MEMBRES} />
       </section>
 
       {/* ══ VALEURS ══════════════════════════════════════════════ */}

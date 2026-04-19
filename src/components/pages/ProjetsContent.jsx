@@ -5,9 +5,15 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
+import { TextEffect } from '@/components/ui/TextEffect';
 
-const BeforeAfterPixel = dynamic(
-  () => import('@/components/ui/BeforeAfterPixel'),
+const ImageComparison = dynamic(
+  () => import('@/components/ui/ImageComparison'),
+  { ssr: false },
+);
+
+const ProjectsFlipHero = dynamic(
+  () => import('@/components/ui/ProjectsFlipHero'),
   { ssr: false },
 );
 
@@ -283,7 +289,7 @@ function MasonryGallery({ images }) {
                 alt={alt}
                 width="900"
                 height="600"
-                loading="lazy"
+                loading={i < 3 ? 'eager' : 'lazy'}
                 onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
                 style={{
                   display: 'block',
@@ -466,9 +472,9 @@ function ProjectBlock({ project, index }) {
             className="reveal reveal-delay-2"
             style={{ order: isEven ? 1 : 0 }}
           >
-            <BeforeAfterPixel
-              beforeSrc={project.before}
-              afterSrc={project.after}
+            <ImageComparison
+              beforeImage={project.before}
+              afterImage={project.after}
               beforeFallback={project.beforeFallback}
               afterFallback={project.afterFallback}
               height={380}
@@ -586,7 +592,7 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
             alt={project.title}
             width="900"
             height="600"
-            loading="lazy"
+            loading={index < 2 ? 'eager' : 'lazy'}
             onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
             style={{
               width: '100%', height: '100%',
@@ -665,14 +671,21 @@ function ProjectsIndex() {
             <span style={{ width: 24, height: 1.5, background: C.ochre, display: 'block' }} />
             Vue d&apos;ensemble
           </div>
-          <h2 style={{
-            fontFamily: 'Cormorant Garamond, serif',
-            fontSize: 'clamp(1.8rem,3.5vw,2.8rem)',
-            fontWeight: 400, lineHeight: 1.12,
-            color: C.greenDeep, margin: 0,
-          }}>
-            {PROJECTS.length} projets, <em>un seul objectif</em>
-          </h2>
+          <TextEffect
+            as="h2"
+            preset="slide"
+            per="word"
+            delay={0.15}
+            className=""
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontSize: 'clamp(1.8rem,3.5vw,2.8rem)',
+              fontWeight: 400, lineHeight: 1.12,
+              color: C.greenDeep, margin: 0,
+            }}
+          >
+            {`${PROJECTS.length} projets, un seul objectif`}
+          </TextEffect>
         </motion.div>
 
         {/* Project rows */}
@@ -712,14 +725,30 @@ function ProjectsIndex() {
 }
 
 /* ── Page hero ─────────────────────────────────────────────────────────── */
+// Build a flat array of images from all project galleries + before/after for the FlipCard hero
+const HERO_IMAGES = (() => {
+  const imgs = [];
+  PROJECTS.forEach((p) => {
+    // use "after" image as primary card face
+    if (p.after) imgs.push({ src: p.after, alt: p.title, fallback: p.afterFallback });
+    // add gallery images (up to 2 per project)
+    if (p.gallery) {
+      p.gallery.slice(0, 2).forEach((g) => imgs.push({ src: g.src, alt: g.alt, fallback: g.fallback }));
+    }
+  });
+  // Cap at 20 cards
+  return imgs.slice(0, 20);
+})();
+
 function PageHero() {
   return (
     <section style={{
-      padding: 'clamp(8rem,14vw,11rem) clamp(1.25rem,4vw,2rem) clamp(5rem,9vw,7rem)',
       position: 'relative',
       overflow: 'hidden',
+      minHeight: '100vh',
+      minHeight: '100svh',
     }}>
-      {/* Grainient WebGL background */}
+      {/* ── Grainient base ── */}
       <Grainient
         color1="#8EC9A2"
         color2="#133D20"
@@ -734,88 +763,72 @@ function PageHero() {
         zoom={0.88}
         blendAngle={25}
       />
-      {/* Dark overlay for legibility */}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,15,8,0.35)', pointerEvents: 'none' }} />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', textAlign: 'center' }}>
-        <div className="reveal" style={{
-          fontSize: '0.66rem',
-          letterSpacing: '0.28em',
-          textTransform: 'uppercase',
-          color: C.ochre,
-          fontWeight: 600,
-          marginBottom: '1.1rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '0.75rem',
-        }}>
-          <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
-          Association Palmeraies Tighremt
-          <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
-        </div>
+      {/* ── Dark overlay ── */}
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(4,12,6,0.52)', pointerEvents: 'none', zIndex: 1 }} />
 
-        <h1 className="reveal reveal-delay-1" style={{
-          fontFamily: 'Cormorant Garamond, serif',
-          fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
-          fontWeight: 400,
-          lineHeight: 1.1,
-          color: '#fff',
-          margin: '0 auto 1.5rem',
-        }}>
-          Nos projets pour<br />
-          <em style={{ color: C.ochre }}>Tighremt &amp; la région</em>
+      {/* ── FlipCard animation layer ── */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 2 }}>
+        <ProjectsFlipHero images={HERO_IMAGES}>
+          {/* Content revealed when arc forms */}
+          <div style={{ padding: '0 1rem' }}>
+            <div style={{
+              fontSize: '0.63rem', letterSpacing: '0.28em',
+              textTransform: 'uppercase', color: C.ochre,
+              fontWeight: 600, marginBottom: '1rem',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+            }}>
+              <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
+              Association Palmeraies Tighremt
+              <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
+            </div>
+            <h1 style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontSize: 'clamp(2.2rem,5.5vw,4.2rem)',
+              fontWeight: 400, lineHeight: 1.1,
+              color: '#fff', margin: '0 auto 1.25rem',
+            }}>
+              Nos projets pour<br />
+              <em style={{ color: C.ochre }}>Tighremt &amp; la région</em>
+            </h1>
+            <p style={{
+              fontSize: 'clamp(0.88rem,1.3vw,1rem)',
+              color: 'rgba(255,255,255,0.7)',
+              lineHeight: 1.75, maxWidth: 480,
+              fontWeight: 300, margin: '0 auto 2rem',
+            }}>
+              {PROJECTS.length} projets concrets au service des habitants : environnement,
+              eau, éducation, solidarité et mémoire du territoire.
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+              {PROJECTS.map((p) => (
+                <a key={p.id} href={`#${p.id}`} style={{
+                  fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.04em',
+                  color: 'rgba(255,255,255,0.82)',
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  borderRadius: '2rem', padding: '0.4rem 0.9rem',
+                  textDecoration: 'none',
+                }}>
+                  {p.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        </ProjectsFlipHero>
+      </div>
+
+      {/* ── Static fallback text (visible before flip anim loads) ── */}
+      <div style={{
+        position: 'relative', zIndex: 3,
+        padding: 'clamp(8rem,14vw,11rem) clamp(1.25rem,4vw,2rem) clamp(5rem,9vw,7rem)',
+        textAlign: 'center',
+        pointerEvents: 'none',
+        opacity: 0,  /* hidden — ProjectsFlipHero handles display */
+      }} aria-hidden="true">
+        <h1 style={{ fontFamily: 'Cormorant Garamond, serif', color: '#fff', fontSize: '3rem', margin: 0 }}>
+          Nos projets
         </h1>
-
-        <p className="reveal reveal-delay-2" style={{
-          fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
-          color: 'rgba(255,255,255,0.72)',
-          lineHeight: 1.75,
-          maxWidth: 520,
-          fontWeight: 300,
-          margin: '0 auto',
-        }}>
-          Six projets concrets au service des habitants : environnement, eau, éducation,
-          solidarité et mémoire du territoire.
-        </p>
-
-        {/* Jump nav */}
-        <div className="reveal reveal-delay-3" style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.6rem',
-          marginTop: '2.5rem',
-          justifyContent: 'center',
-        }}>
-          {PROJECTS.map((p) => (
-            <a
-              key={p.id}
-              href={`#${p.id}`}
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: 500,
-                letterSpacing: '0.04em',
-                color: 'rgba(255,255,255,0.82)',
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                borderRadius: '2rem',
-                padding: '0.4rem 1rem',
-                textDecoration: 'none',
-                transition: 'background 0.2s, color 0.2s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
-                e.currentTarget.style.color = '#fff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
-                e.currentTarget.style.color = 'rgba(255,255,255,0.82)';
-              }}
-            >
-              {p.title}
-            </a>
-          ))}
-        </div>
       </div>
     </section>
   );

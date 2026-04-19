@@ -1,23 +1,24 @@
 'use client';
 import './PageTransition.css';
 import { usePathname } from 'next/navigation';
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 
-export default function PageTransition({ children }) {
+/**
+ * PageTransitionController — does NOT wrap children.
+ * It imperatively toggles the CSS class on the existing <main> element
+ * so the server component tree stays free of any client boundary.
+ */
+export default function PageTransitionController() {
   const pathname = usePathname();
-  const ref = useRef(null);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.classList.remove('page-transition-enter');
-    void el.offsetWidth; // force reflow
-    el.classList.add('page-transition-enter');
+    const main = document.getElementById('main-content');
+    if (!main) return;
+    main.classList.remove('page-transition-enter');
+    // Force reflow so removing + re-adding the class triggers the animation
+    void main.offsetWidth;
+    main.classList.add('page-transition-enter');
   }, [pathname]);
 
-  return (
-    <div ref={ref} className="page-transition-enter">
-      {children}
-    </div>
-  );
+  return null;
 }
