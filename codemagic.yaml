@@ -1,0 +1,35 @@
+workflows:
+  android-debug:
+    name: Tighremt Android APK
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    environment:
+      node: v20.0.0
+      java: 17
+
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+
+      - name: Sync Capacitor
+        script: npx cap sync android
+
+      - name: Set gradlew permissions
+        script: chmod +x android/gradlew
+
+      - name: Build debug APK
+        script: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+    artifacts:
+      - android/app/build/outputs/apk/debug/app-debug.apk
+
+    publishing:
+      email:
+        recipients:
+          - palmeraies.tighremt.tata@gmail.com
+        notify:
+          success: true
+          failure: true
