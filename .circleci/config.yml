@@ -25,17 +25,20 @@ jobs:
       - run:
           name: Install Android SDK
           command: |
+            set +e
             cd ~
             wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
             unzip -q commandlinetools-linux-11076708_latest.zip
             mkdir -p ~/android-sdk/cmdline-tools
             mv cmdline-tools ~/android-sdk/cmdline-tools/latest
-            echo "export ANDROID_HOME=~/android-sdk" >> $BASH_ENV
-            echo "export ANDROID_SDK_ROOT=~/android-sdk" >> $BASH_ENV
-            echo "export PATH=\$PATH:~/android-sdk/cmdline-tools/latest/bin:~/android-sdk/platform-tools" >> $BASH_ENV
+            echo "export ANDROID_HOME=$HOME/android-sdk" >> $BASH_ENV
+            echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $BASH_ENV
+            echo "export PATH=\$PATH:$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools" >> $BASH_ENV
             source $BASH_ENV
-            yes | sdkmanager --licenses
-            sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+            printf 'y\n%.0s' {1..20} | sdkmanager --licenses > /dev/null 2>&1
+            sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools" > /dev/null 2>&1
+            echo "Android SDK installed"
+            set -e
 
       - run:
           name: Install npm dependencies
