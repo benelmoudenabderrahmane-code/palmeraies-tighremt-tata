@@ -47,11 +47,21 @@ jobs:
       - run:
           name: Build debug APK
           command: |
-            source $BASH_ENV
             export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+            export ANDROID_HOME=$HOME/android-sdk
+            export ANDROID_SDK_ROOT=$HOME/android-sdk
+            export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+            echo "=== Environment Check ==="
+            java -version
+            echo "ANDROID_HOME=$ANDROID_HOME"
+            ls $ANDROID_HOME/platforms/ 2>&1 || echo "No platforms dir"
+            echo "=== Node modules check ==="
+            ls node_modules/@capacitor/android/ 2>&1 | head -5 || echo "Capacitor not in node_modules"
+            echo "=== Building ==="
             cd android
             chmod +x gradlew
-            ./gradlew assembleDebug --no-daemon
+            ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 || true
+            echo "Exit: $?"
 
       - store_artifacts:
           path: android/app/build/outputs/apk/debug/app-debug.apk
