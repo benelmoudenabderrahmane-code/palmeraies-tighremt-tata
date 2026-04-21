@@ -29,11 +29,17 @@ jobs:
             sdkmanager "platforms;android-35" "build-tools;35.0.0" 2>/dev/null || true
 
       - run:
+          name: Check Java version
+          command: java -version && echo "JAVA_HOME=$JAVA_HOME"
+
+      - run:
           name: Build debug APK
           command: |
             cd android
             chmod +x gradlew
-            ./gradlew assembleDebug --no-daemon --stacktrace
+            export JAVA_OPTS="-Xmx2g"
+            export GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx2g -Dorg.gradle.daemon=false"
+            ./gradlew assembleDebug --no-daemon --stacktrace --info 2>&1 | tail -100
 
       - store_artifacts:
           path: android/app/build/outputs/apk/debug/app-debug.apk
