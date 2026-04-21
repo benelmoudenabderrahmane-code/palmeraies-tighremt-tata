@@ -25,11 +25,11 @@ jobs:
       - run:
           name: Install Android SDK 35
           command: |
-            yes | sdkmanager "platforms;android-35" "build-tools;35.0.0" --sdk_root=$ANDROID_SDK_ROOT 2>/dev/null || true
+            yes | sdkmanager "platforms;android-35" "build-tools;35.0.0" 2>/dev/null || true
 
       - run:
           name: Sync Capacitor
-          command: npx cap sync android
+          command: ./node_modules/.bin/cap sync android
 
       - run:
           name: Build debug APK
