@@ -11,14 +11,14 @@ jobs:
 
       - restore_cache:
           keys:
-            - npm-v1-{{ checksum "package-lock.json" }}
+            - npm-v2-{{ checksum "package.json" }}
 
       - run:
           name: Install Node dependencies
-          command: npm ci
+          command: npm install --legacy-peer-deps
 
       - save_cache:
-          key: npm-v1-{{ checksum "package-lock.json" }}
+          key: npm-v2-{{ checksum "package.json" }}
           paths:
             - node_modules
 
