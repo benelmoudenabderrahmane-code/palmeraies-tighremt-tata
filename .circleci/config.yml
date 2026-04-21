@@ -1,43 +1,54 @@
 version: 2.1
 
-orbs:
-  android: circleci/android@2.4.0
-
 jobs:
   build-apk:
-    executor:
-      name: android/android-machine
-      resource-class: large
-      tag: 2024.04.1
+    machine:
+      image: ubuntu-2204:current
+    resource_class: medium
     steps:
       - checkout
 
       - run:
-          name: Set Node version
+          name: Setup Java 17
           command: |
-            nvm install 20
-            nvm use 20
-            node --version
-            npm --version
+            sudo apt-get update -q
+            sudo apt-get install -y openjdk-17-jdk
+            java -version
 
       - run:
-          name: Install dependencies
+          name: Setup Node 20
           command: |
-            nvm use 20
-            npm install --legacy-peer-deps
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            node --version && npm --version
 
       - run:
-          name: Accept SDK licenses
+          name: Install Android SDK
           command: |
-            yes | sdkmanager --licenses || true
-            sdkmanager "platforms;android-35" "build-tools;35.0.0" || true
+            cd ~
+            wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+            unzip -q commandlinetools-linux-11076708_latest.zip
+            mkdir -p ~/android-sdk/cmdline-tools
+            mv cmdline-tools ~/android-sdk/cmdline-tools/latest
+            echo "export ANDROID_HOME=~/android-sdk" >> $BASH_ENV
+            echo "export ANDROID_SDK_ROOT=~/android-sdk" >> $BASH_ENV
+            echo "export PATH=\$PATH:~/android-sdk/cmdline-tools/latest/bin:~/android-sdk/platform-tools" >> $BASH_ENV
+            source $BASH_ENV
+            yes | sdkmanager --licenses
+            sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - run:
-          name: Build APK
+          name: Install npm dependencies
+          command: npm install --legacy-peer-deps
+
+      - run:
+          name: Build debug APK
           command: |
+            source $BASH_ENV
+            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
             cd android
             chmod +x gradlew
-            ./gradlew assembleDebug --no-daemon 2>&1
+            ./gradlew assembleDebug --no-daemon
 
       - store_artifacts:
           path: android/app/build/outputs/apk/debug/app-debug.apk
