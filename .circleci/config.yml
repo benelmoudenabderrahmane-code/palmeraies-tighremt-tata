@@ -43,23 +43,15 @@ jobs:
       - run:
           name: Install npm dependencies
           command: |
-            echo "=== npm install ==="
-            npm install --legacy-peer-deps 2>&1
-            echo "=== Exit code: $? ==="
-            echo "=== Capacitor android check ==="
-            if [ -f "node_modules/@capacitor/android/capacitor/build.gradle" ]; then
-              echo "OK: @capacitor/android/capacitor/build.gradle found"
-            else
-              echo "MISSING: @capacitor/android/capacitor/build.gradle - installing explicitly"
-              npm install @capacitor/android @capacitor/core @capacitor/cli @capacitor/app @capacitor/splash-screen @capacitor/status-bar --legacy-peer-deps 2>&1
-              if [ -f "node_modules/@capacitor/android/capacitor/build.gradle" ]; then
-                echo "OK after explicit install"
-              else
-                echo "FATAL: @capacitor/android still not found after explicit install"
-                ls node_modules/@capacitor/ 2>&1 || echo "no @capacitor folder"
-                exit 1
-              fi
-            fi
+            npm install --legacy-peer-deps
+
+      - run:
+          name: Sync Capacitor Android
+          command: |
+            npx cap sync android
+            echo "=== Generated files check ==="
+            ls android/capacitor-cordova-android-plugins/cordova.variables.gradle
+            ls android/app/src/main/assets/capacitor.config.json
 
       - run:
           name: Build debug APK
@@ -68,12 +60,6 @@ jobs:
             export ANDROID_HOME=$HOME/android-sdk
             export ANDROID_SDK_ROOT=$HOME/android-sdk
             export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
-            echo "=== Verify paths ==="
-            ls node_modules/@capacitor/android/capacitor/build.gradle
-            ls node_modules/@capacitor/app/android/build.gradle 2>/dev/null || echo "WARN: app plugin missing"
-            ls node_modules/@capacitor/splash-screen/android/build.gradle 2>/dev/null || echo "WARN: splash-screen plugin missing"
-            ls node_modules/@capacitor/status-bar/android/build.gradle 2>/dev/null || echo "WARN: status-bar plugin missing"
-            echo "=== Building APK ==="
             cd android
             chmod +x gradlew
             ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
