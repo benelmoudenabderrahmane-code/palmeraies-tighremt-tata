@@ -46,14 +46,6 @@ jobs:
             npm install --legacy-peer-deps
 
       - run:
-          name: Sync Capacitor Android
-          command: |
-            npx cap sync android
-            echo "=== Generated files check ==="
-            ls android/capacitor-cordova-android-plugins/cordova.variables.gradle
-            ls android/app/src/main/assets/capacitor.config.json
-
-      - run:
           name: Build debug APK
           command: |
             export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
