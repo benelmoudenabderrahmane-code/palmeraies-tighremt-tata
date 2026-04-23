@@ -33,6 +33,10 @@ function Hero() {
   const sectionRef    = useRef(null);
 
   useEffect(() => {
+    if (videoRef.current) videoRef.current.muted = true;
+  }, []);
+
+  useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const onScroll = () => {
       if (!sectionRef.current) return;
@@ -125,7 +129,7 @@ function Hero() {
           zIndex: 0, willChange: 'transform',
           overflow: 'hidden',
         }}>
-          <video ref={videoRef} autoPlay muted loop playsInline
+          <video ref={videoRef} autoPlay loop playsInline preload="auto"
             poster="/images/tighremt/palmeraie-panorama.jpg"
             style={{
               position: 'absolute', inset: 0,
