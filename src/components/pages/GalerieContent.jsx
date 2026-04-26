@@ -8,68 +8,161 @@ const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false 
 
 const IMAGES = [
   { src: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Palmeraie de Tighremt — vue panoramique', theme: 'palmeraie', w: 1920, h: 1080 },
-  { src: '/images/tighremt/palmeraie-sol.jpg',      alt: 'Sols de la palmeraie', theme: 'palmeraie',          w: 1280, h: 960  },
-  { src: '/images/tighremt/dattes.jpg',             alt: 'Dattes de Tighremt', theme: 'palmeraie',            w: 1280, h: 853  },
-  { src: '/images/tighremt/minaret.jpg',            alt: 'Mosquée de Tighremt', theme: 'village',             w: 800,  h: 1067 },
-  { src: '/images/tighremt/ksar-silhouette.jpg',    alt: 'Ksar ancestral de Tighremt', theme: 'village',      w: 1440, h: 810  },
-  { src: '/images/tighremt/tighremt-panorama.jpg',  alt: 'Village de Tighremt', theme: 'village',             w: 1920, h: 1080 },
-  { src: '/images/tighremt/route-tighremt.jpg',     alt: 'Route du sud marocain', theme: 'paysage',           w: 1280, h: 960  },
-  { src: '/images/tighremt/palmeraie-chemin.jpg',   alt: 'Chemin de la palmeraie', theme: 'palmeraie',        w: 1280, h: 853  },
+  { src: '/images/tighremt/palmeraie-sol.jpg',      alt: 'Sols de la palmeraie',                   theme: 'palmeraie', w: 1280, h: 960  },
+  { src: '/images/tighremt/dattes.jpg',             alt: 'Dattes de Tighremt',                     theme: 'palmeraie', w: 1280, h: 853  },
+  { src: '/images/tighremt/minaret.jpg',            alt: 'Mosquée de Tighremt',                    theme: 'village',   w: 800,  h: 1067 },
+  { src: '/images/tighremt/ksar-silhouette.jpg',    alt: 'Ksar ancestral de Tighremt',             theme: 'village',   w: 1440, h: 810  },
+  { src: '/images/tighremt/tighremt-panorama.jpg',  alt: 'Village de Tighremt',                    theme: 'village',   w: 1920, h: 1080 },
+  { src: '/images/tighremt/route-tighremt.jpg',     alt: 'Route du sud marocain',                  theme: 'paysage',   w: 1280, h: 960  },
+  { src: '/images/tighremt/palmeraie-chemin.jpg',   alt: 'Chemin de la palmeraie',                 theme: 'palmeraie', w: 1280, h: 853  },
 ];
 
-const THEMES = ['tous', 'palmeraie', 'village', 'paysage'];
+const THEMES       = ['tous', 'palmeraie', 'village', 'paysage'];
+const THEME_LABELS = { tous: 'Tous', palmeraie: 'Palmeraie', village: 'Village', paysage: 'Paysage' };
+
+/**
+ * Une cellule du bento.
+ * bentoIdx 0   → grande image dominante (gridRow 1/3, gridColumn 1/2)
+ * bentoIdx 1-4 → cellules standard
+ * bentoIdx 5+  → bannière panoramique plein-largeur
+ */
+function BentoCell({ img, bentoIdx, lightboxIdx, onOpen }) {
+  const isPano = bentoIdx >= 5;
+  const isBig  = bentoIdx === 0;
+
+  const gridStyle = isPano
+    ? { gridColumn: '1 / 4', height: 130 }
+    : isBig
+    ? { gridColumn: '1 / 2', gridRow: '1 / 3', minHeight: 360 }
+    : { height: 175 };
+
+  return (
+    <div
+      className={`gal-bento-wrap reveal reveal-delay-${(bentoIdx % 4) + 1}`}
+      onClick={() => onOpen(lightboxIdx)}
+      style={gridStyle}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={img.src}
+        alt={img.alt}
+        className="gal-bento-img"
+        loading={bentoIdx < 2 ? 'eager' : 'lazy'}
+      />
+      <div className="gal-bento-overlay">
+        <span className="gal-bento-caption">{img.alt}</span>
+      </div>
+    </div>
+  );
+}
 
 export default function GalerieContent() {
   useScrollReveal();
-  const [theme, setTheme] = useState('tous');
-  const [lightboxIdx, setLightboxIdx] = useState(null);
+  const [theme, setTheme]          = useState('tous');
+  const [lightboxIdx, setLightbox] = useState(null);
   const filtered = theme === 'tous' ? IMAGES : IMAGES.filter(img => img.theme === theme);
 
+  const bentoCells = filtered.slice(0, 5);
+  const panoCells  = filtered.slice(5);
+
   return (
-    <div style={{ paddingTop: '6rem', minHeight: '100vh' }}>
+    <div style={{ paddingTop: '6rem', minHeight: '100vh', background: '#f5f0e8' }}>
+
+      {/* ── Hero vert ── */}
       <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
-          <p style={{ fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.accent, marginBottom: '0.75rem' }}>Galerie</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 600 }}>Photos de Tighremt</h1>
-          <p style={{ marginTop: '1rem', opacity: 0.75 }}>La beauté de la palmeraie et du village à travers nos photos.</p>
+          <p style={{
+            fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase',
+            color: 'rgba(196,169,107,0.9)', marginBottom: '0.75rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+          }}>
+            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
+            Galerie
+            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
+          </p>
+          <h1 style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 300, fontStyle: 'italic', lineHeight: 1.1,
+          }}>
+            Tighremt en images
+          </h1>
+          <p style={{ marginTop: '0.75rem', opacity: 0.6, fontSize: '0.92rem', lineHeight: 1.7 }}>
+            La beauté de la palmeraie et du village à travers nos photos.
+          </p>
         </div>
       </section>
 
-      <section style={{ background: C.sandMid, padding: '1.5rem', display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+      {/* ── Filtres — text-links petites caps ── */}
+      <div style={{
+        background: '#f5f0e8', padding: '1.75rem 1.5rem 0',
+        display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap',
+      }}>
         {THEMES.map(t => (
-          <button key={t} onClick={() => setTheme(t)} style={{
-            padding: '0.45rem 1.1rem', borderRadius: 999, border: 'none', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, textTransform: 'capitalize',
-            background: theme === t ? C.greenDeep : 'transparent',
-            color: theme === t ? '#fff' : C.inkMuted,
-            outline: theme === t ? 'none' : `1px solid ${C.sandDark}`,
-            transition: 'all 0.2s',
-          }}>{t === 'tous' ? 'Tous' : t.charAt(0).toUpperCase() + t.slice(1)}</button>
+          <button
+            key={t}
+            onClick={() => setTheme(t)}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 500,
+              color:        theme === t ? C.greenDeep : C.inkLight,
+              borderBottom: theme === t ? `1.5px solid ${C.greenDeep}` : '1.5px solid transparent',
+              paddingBottom: '0.25rem',
+              transition: 'color 0.2s, border-color 0.2s',
+            }}
+          >
+            {THEME_LABELS[t]}
+          </button>
         ))}
-      </section>
+      </div>
 
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '3rem 1.5rem' }}>
-        <div style={{ columns: '3 280px', gap: '1rem' }}>
-          {filtered.map((img, i) => (
-            <div key={img.src} className="reveal img-zoom-wrap"
-              onClick={() => setLightboxIdx(i)}
-              style={{ breakInside: 'avoid', marginBottom: '1rem', borderRadius: 12, overflow: 'hidden', cursor: 'zoom-in', position: 'relative' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.src} alt={img.alt} width={img.w} height={img.h} style={{ width: '100%', display: 'block', borderRadius: 12, aspectRatio: `${img.w}/${img.h}` }} loading={i < 3 ? 'eager' : 'lazy'} />
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(19,61,32,0)', transition: 'background 0.3s', borderRadius: 12, display: 'flex', alignItems: 'flex-end', padding: '1rem' }}
-                onMouseOver={e => { e.currentTarget.style.background = 'rgba(19,61,32,0.45)'; e.currentTarget.querySelector('span').style.opacity = '1'; }}
-                onMouseOut={e  => { e.currentTarget.style.background = 'rgba(19,61,32,0)';    e.currentTarget.querySelector('span').style.opacity = '0'; }}>
-                <span style={{ color: '#fff', fontSize: '0.82rem', opacity: 0, transition: 'opacity 0.3s' }}>{img.alt}</span>
-              </div>
+      {/* ── Bento grid ── */}
+      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '2.5rem 1.5rem 5rem' }}>
+        {filtered.length === 0 ? (
+          <p style={{ textAlign: 'center', color: C.inkMuted, padding: '4rem 0', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', fontStyle: 'italic' }}>
+            Aucune photo dans ce thème.
+          </p>
+        ) : (
+          <>
+            {/* Grille bento principale : 2fr 1fr 1fr, 2 rangées */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: bentoCells.length >= 3 ? '2fr 1fr 1fr' : `repeat(${Math.min(bentoCells.length, 3)}, 1fr)`,
+              gridTemplateRows: bentoCells.length >= 3 ? '180px 180px' : '240px',
+              gap: '0.5rem',
+              marginBottom: bentoCells.length > 0 ? '0.5rem' : 0,
+            }}>
+              {bentoCells.map((img, i) => (
+                <BentoCell
+                  key={img.src}
+                  img={img}
+                  bentoIdx={i}
+                  lightboxIdx={i}
+                  onOpen={setLightbox}
+                />
+              ))}
             </div>
-          ))}
-        </div>
+
+            {/* Bannières panoramiques (images 5+) */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {panoCells.map((img, i) => (
+                <BentoCell
+                  key={img.src}
+                  img={img}
+                  bentoIdx={5 + i}
+                  lightboxIdx={5 + i}
+                  onOpen={setLightbox}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       {lightboxIdx !== null && (
         <Lightbox
           images={filtered.map(img => img.src)}
           initialIndex={lightboxIdx}
-          onClose={() => setLightboxIdx(null)}
+          onClose={() => setLightbox(null)}
         />
       )}
     </div>
