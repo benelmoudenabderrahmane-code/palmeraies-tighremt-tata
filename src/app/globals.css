@@ -259,8 +259,11 @@ a:focus-visible, button:focus-visible {
 
 /* ── Galerie Bento hover ── */
 .gal-bento-wrap { overflow: hidden; position: relative; border-radius: 10px; cursor: zoom-in; }
-.gal-bento-img  { width: 100%; height: 100%; object-fit: cover; display: block;
-                  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+.gal-bento-img  {
+  width: 100%; height: 100%;
+  background-size: cover; background-position: center;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
 .gal-bento-wrap:hover .gal-bento-img { transform: scale(1.05); }
 .gal-bento-overlay {
   position: absolute; inset: 0;
