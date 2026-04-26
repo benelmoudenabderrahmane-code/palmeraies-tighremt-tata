@@ -128,10 +128,15 @@ function Hero() {
           <video
             ref={(el) => {
               videoRef.current = el;
-              if (el) {
-                el.muted = true;          // React muted workaround — avant autoplay
-                el.play().catch(() => {}); // Force play après muting
-              }
+              if (!el) return;
+              // Workaround React : muted doit être set sur le DOM node, pas en JSX
+              el.muted = true;
+              el.defaultMuted = true;
+              el.setAttribute('muted', '');
+              // Recharge les métadonnées avec l'état muted, puis lance la lecture
+              el.load();
+              const tryPlay = () => { el.muted = true; el.play().catch(() => {}); };
+              el.addEventListener('canplay', tryPlay, { once: true });
             }}
             autoPlay loop playsInline preload="auto"
             poster="/images/tighremt/palmeraie-panorama.jpg"
@@ -143,13 +148,6 @@ function Hero() {
             }}>
             <source src="/palmeraie.mp4" type="video/mp4" />
             <track kind="captions" src="/captions/palmeraie.vtt" srcLang="fr" label="Français" default />
-            {/* Poster fallback if video fails */}
-            <img
-              src="/images/tighremt/palmeraie-panorama.jpg"
-              alt="Palmeraie de Tighremt"
-              width="1920" height="1080"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-            />
           </video>
         </div>
 
