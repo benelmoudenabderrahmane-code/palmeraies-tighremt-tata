@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { Heart, ChevronDown } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const CircularGallery = dynamic(
   () => import('@/components/ui/CircularGallery'),
@@ -251,6 +252,7 @@ export default function HomeContent() {
   return (
     <>
       <Hero />
+      <SectionDivider />
       <Galerie />
     </>
   );
