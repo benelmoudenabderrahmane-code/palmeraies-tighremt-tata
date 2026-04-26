@@ -33,10 +33,6 @@ function Hero() {
   const sectionRef    = useRef(null);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = true;
-  }, []);
-
-  useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const onScroll = () => {
       if (!sectionRef.current) return;
@@ -129,7 +125,15 @@ function Hero() {
           zIndex: 0, willChange: 'transform',
           overflow: 'hidden',
         }}>
-          <video ref={videoRef} autoPlay loop playsInline preload="auto"
+          <video
+            ref={(el) => {
+              videoRef.current = el;
+              if (el) {
+                el.muted = true;          // React muted workaround — avant autoplay
+                el.play().catch(() => {}); // Force play après muting
+              }
+            }}
+            autoPlay loop playsInline preload="auto"
             poster="/images/tighremt/palmeraie-panorama.jpg"
             style={{
               position: 'absolute', inset: 0,
