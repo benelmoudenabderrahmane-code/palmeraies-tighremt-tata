@@ -129,14 +129,9 @@ function Hero() {
             ref={(el) => {
               videoRef.current = el;
               if (!el) return;
-              // Workaround React : muted doit être set sur le DOM node, pas en JSX
-              el.muted = true;
+              el.muted        = true;
               el.defaultMuted = true;
               el.setAttribute('muted', '');
-              // Recharge les métadonnées avec l'état muted, puis lance la lecture
-              el.load();
-              const tryPlay = () => { el.muted = true; el.play().catch(() => {}); };
-              el.addEventListener('canplay', tryPlay, { once: true });
             }}
             autoPlay loop playsInline preload="auto"
             poster="/images/tighremt/palmeraie-panorama.jpg"
