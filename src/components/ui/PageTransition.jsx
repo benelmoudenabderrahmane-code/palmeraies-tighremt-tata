@@ -1,4 +1,5 @@
 'use client';
+import './PageTransition.css';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
