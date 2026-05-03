@@ -3,6 +3,7 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false });
 
@@ -49,6 +50,8 @@ export default function GalerieContent() {
           </p>
         </div>
       </section>
+
+      <SectionDivider />
 
       {/* ── Filtres text-links ── */}
       <div style={{ background: '#f5f0e8', padding: '1.75rem 1.5rem 0', display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>

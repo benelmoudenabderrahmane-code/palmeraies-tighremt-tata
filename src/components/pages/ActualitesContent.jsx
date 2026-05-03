@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import actualites from '@/data/actualites.json';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const CATEGORIES = ['tous', 'projets', 'association', 'evenements'];
 const CAT_LABELS  = { tous: 'Tous', projets: 'Projets', association: 'Association', evenements: 'Événements' };
@@ -39,6 +40,8 @@ export default function ActualitesContent() {
           </p>
         </div>
       </section>
+
+      <SectionDivider />
 
       {/* ── Filtres text-links ── */}
       <div style={{ background: '#f5f0e8', padding: '1.75rem 1.5rem 0', display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>
