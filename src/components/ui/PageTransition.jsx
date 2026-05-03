@@ -1,10 +1,9 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
 
 /**
- * PageTransitionController — Curtain overlay (estrela-style).
+ * PageTransitionController — Rideau estrela-style.
  *
  * Séquence sur changement de route :
  *  1. Rideau vert nuit monte depuis le bas   (0.45s, ease [0.76,0,0.24,1])
@@ -12,32 +11,40 @@ import { motion, useAnimation } from 'framer-motion';
  *  3. Contenu entre en scène (CSS .page-transition-enter sur #main-content)
  *  4. Rideau sort vers le haut               (0.5s, même ease)
  *
- * Ne wrape PAS children — la server-component tree du layout reste intacte.
+ * Implémentation : CSS transitions via DOM direct — aucune dépendance
+ * à framer-motion pour éviter les conflits WAAPI / style-prop v12.
  */
 
-const EASE = [0.76, 0, 0.24, 1];
+const EASE    = 'cubic-bezier(0.76,0,0.24,1)';
+const DUR_IN  = 450;  // ms
+const DUR_OUT = 500;  // ms
 
 export default function PageTransitionController() {
-  const pathname = usePathname();
-  const controls = useAnimation();
-  const prevRef  = useRef(pathname);
-  const firstRef = useRef(true);
+  const pathname   = usePathname();
+  const prevRef    = useRef(pathname);
+  const firstRef   = useRef(true);
+  const curtainRef = useRef(null);
+  const busyRef    = useRef(false);
 
   useEffect(() => {
-    // Ignorer le premier rendu — la page est déjà visible
     if (firstRef.current) { firstRef.current = false; return; }
     if (prevRef.current === pathname) return;
     prevRef.current = pathname;
 
-    async function run() {
-      // ── Phase 1 : rideau monte depuis le bas (originY=1 = bottom) ──
-      controls.set({ originY: 1, scaleY: 0 });
-      await controls.start({
-        scaleY: 1,
-        transition: { duration: 0.45, ease: EASE },
-      });
+    const el = curtainRef.current;
+    if (!el || busyRef.current) return;
+    busyRef.current = true;
 
-      // ── Reset animation du contenu (visible sous le rideau) ──
+    // ── Phase 1 : rideau monte depuis le bas ──
+    el.style.transition      = 'none';
+    el.style.transformOrigin = 'bottom center';
+    el.style.transform       = 'scaleY(0)';
+    void el.offsetHeight;                       // force reflow
+    el.style.transition = `transform ${DUR_IN}ms ${EASE}`;
+    el.style.transform  = 'scaleY(1)';
+
+    setTimeout(() => {
+      // ── Toggle animation du contenu ──
       const main = document.getElementById('main-content');
       if (main) {
         main.classList.remove('page-transition-enter');
@@ -46,35 +53,33 @@ export default function PageTransitionController() {
       }
 
       // ── Pause à plein écran ──
-      await new Promise(r => setTimeout(r, 80));
+      setTimeout(() => {
+        // ── Phase 2 : rideau sort vers le haut ──
+        el.style.transition      = 'none';
+        el.style.transformOrigin = 'top center';
+        void el.offsetHeight;                   // force reflow
+        el.style.transition = `transform ${DUR_OUT}ms ${EASE}`;
+        el.style.transform  = 'scaleY(0)';
 
-      // ── Snap origin vers le haut SANS animation ──
-      controls.set({ originY: 0 });
-
-      // ── Phase 2 : rideau sort vers le haut (collapse upward) ──
-      await controls.start({
-        scaleY: 0,
-        transition: { duration: 0.5, ease: EASE },
-      });
-    }
-
-    run();
-  }, [pathname, controls]);
+        setTimeout(() => { busyRef.current = false; }, DUR_OUT);
+      }, 80);
+    }, DUR_IN);
+  }, [pathname]);
 
   return (
-    <motion.div
-      animate={controls}
-      style={{
-        position:       'fixed',
-        inset:           0,
-        zIndex:          9997,
-        background:     '#0d1f11',   /* vert nuit — accord avec la charte */
-        pointerEvents:  'none',
-        willChange:     'transform',
-        transformOrigin: 'bottom center',
-        scaleY:          0,
-      }}
+    <div
+      ref={curtainRef}
       aria-hidden="true"
+      style={{
+        position:        'fixed',
+        inset:            0,
+        zIndex:           9997,
+        background:      '#0d1f11',
+        pointerEvents:   'none',
+        willChange:      'transform',
+        transform:       'scaleY(0)',
+        transformOrigin: 'bottom center',
+      }}
     />
   );
 }
