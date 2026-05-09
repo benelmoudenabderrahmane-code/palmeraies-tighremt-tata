@@ -117,15 +117,26 @@ function Hero() {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
         padding: '0 1.5rem 5rem', overflow: 'hidden',
       }}>
-        {/* Hero image with zoom + parallax */}
+        {/* Wrapper handles scale animation; video handles scroll translateY */}
         <div ref={imgWrapRef} style={{
           position: 'absolute', inset: 0,
           animation: 'heroZoomOut 14s cubic-bezier(0.16,1,0.3,1) forwards',
           zIndex: 0, willChange: 'transform',
-          backgroundImage: 'url(/images/tighremt/palmeraie-panorama.jpg)',
-          backgroundSize: 'cover', backgroundPosition: 'center',
-          filter: 'contrast(1.08) saturate(1.18) brightness(1.04)',
-        }} />
+          overflow: 'hidden',
+        }}>
+          <video
+            ref={el => { if (!el) return; el.muted = true; el.defaultMuted = true; el.setAttribute('muted', ''); }}
+            autoPlay loop playsInline preload="auto"
+            poster="/images/tighremt/palmeraie-panorama.jpg"
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '120%', objectFit: 'cover', top: '-10%',
+              willChange: 'transform',
+              filter: 'contrast(1.08) saturate(1.18) brightness(1.04)',
+            }}>
+            <source src="/palmeraie.mp4" type="video/mp4" />
+          </video>
+        </div>
 
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(110deg, rgba(6,20,10,0.90) 0%, rgba(6,20,10,0.60) 42%, rgba(6,20,10,0.10) 72%, transparent 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(to top, rgba(6,20,10,0.75) 0%, transparent 45%)' }} />

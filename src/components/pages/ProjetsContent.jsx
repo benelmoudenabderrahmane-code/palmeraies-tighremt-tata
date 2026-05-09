@@ -257,16 +257,8 @@ function MasonryGallery({ images }) {
         {images.map(({ src, fallback, alt }, i) => {
           const isHovered = hoveredIdx === i;
           return (
-            <motion.div
+            <div
               key={src}
-              initial={{ opacity: 0, scale: 0.82, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, margin: '-30px' }}
-              transition={{
-                duration: 0.7,
-                delay: i * 0.07,
-                ease: [0.16, 1, 0.3, 1],
-              }}
               onClick={() => setLightboxIdx(i)}
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
@@ -346,7 +338,7 @@ function MasonryGallery({ images }) {
                   <path d="M4 6H8M6 4V8" stroke="#133d20" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
