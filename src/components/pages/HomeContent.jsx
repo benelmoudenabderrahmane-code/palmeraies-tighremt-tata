@@ -28,10 +28,9 @@ const CIRCULAR_GALLERY_ITEMS = [
 ];
 
 function Hero() {
-  const videoRef      = useRef(null);
-  const videoWrapRef  = useRef(null);
-  const contentRef    = useRef(null);
-  const sectionRef    = useRef(null);
+  const imgWrapRef   = useRef(null);
+  const contentRef   = useRef(null);
+  const sectionRef   = useRef(null);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -40,9 +39,8 @@ function Hero() {
       const scrollY  = window.scrollY;
       const sectionH = sectionRef.current.offsetHeight;
       if (scrollY > sectionH) return;
-      // Only translateY on the video — the scale animation lives on the wrapper div
-      if (videoRef.current)   videoRef.current.style.transform   = `translateY(${scrollY * 0.28}px)`;
-      if (contentRef.current) contentRef.current.style.transform = `translateY(${scrollY * 0.12}px)`;
+      if (imgWrapRef.current)  imgWrapRef.current.style.transform  = `scale(1.0) translateY(${scrollY * 0.28}px)`;
+      if (contentRef.current)  contentRef.current.style.transform  = `translateY(${scrollY * 0.12}px)`;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -119,32 +117,15 @@ function Hero() {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
         padding: '0 1.5rem 5rem', overflow: 'hidden',
       }}>
-        {/* Wrapper handles scale animation; video handles scroll translateY — no transform conflict */}
-        <div ref={videoWrapRef} style={{
+        {/* Hero image with zoom + parallax */}
+        <div ref={imgWrapRef} style={{
           position: 'absolute', inset: 0,
           animation: 'heroZoomOut 14s cubic-bezier(0.16,1,0.3,1) forwards',
           zIndex: 0, willChange: 'transform',
-          overflow: 'hidden',
-        }}>
-          <video
-            ref={(el) => {
-              videoRef.current = el;
-              if (!el) return;
-              el.muted        = true;
-              el.defaultMuted = true;
-              el.setAttribute('muted', '');
-            }}
-            autoPlay loop playsInline preload="auto"
-            poster="/images/tighremt/palmeraie-panorama.jpg"
-            style={{
-              position: 'absolute', inset: 0,
-              width: '100%', height: '120%', objectFit: 'cover', top: '-10%',
-              willChange: 'transform',
-              filter: 'contrast(1.08) saturate(1.18) brightness(1.04)',
-            }}>
-            <source src="/hero.mp4" type="video/mp4" />
-          </video>
-        </div>
+          backgroundImage: 'url(/images/tighremt/palmeraie-panorama.jpg)',
+          backgroundSize: 'cover', backgroundPosition: 'center',
+          filter: 'contrast(1.08) saturate(1.18) brightness(1.04)',
+        }} />
 
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(110deg, rgba(6,20,10,0.90) 0%, rgba(6,20,10,0.60) 42%, rgba(6,20,10,0.10) 72%, transparent 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(to top, rgba(6,20,10,0.75) 0%, transparent 45%)' }} />
