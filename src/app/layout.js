@@ -3,7 +3,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingDock from '@/components/FloatingDock';
 import ScrollReset from '@/components/ScrollReset';
-import PageTransitionController from '@/components/ui/PageTransition';
 import ChatbotClient from '@/components/ui/ChatbotClient';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import BackToTop from '@/components/ui/BackToTop';
@@ -93,10 +92,7 @@ export default function RootLayout({ children }) {
 
         <Navbar />
 
-        {/* Controller applies CSS transition class directly on #main-content — no client wrapper around children */}
-        <PageTransitionController />
-
-        <main id="main-content" className="page-transition-enter">
+        <main id="main-content">
           {children}
         </main>
 

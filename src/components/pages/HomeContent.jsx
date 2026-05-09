@@ -142,8 +142,7 @@ function Hero() {
               willChange: 'transform',
               filter: 'contrast(1.08) saturate(1.18) brightness(1.04)',
             }}>
-            <source src="/palmeraie.mp4" type="video/mp4" />
-            <track kind="captions" src="/captions/palmeraie.vtt" srcLang="fr" label="Français" default />
+            <source src="/hero.mp4" type="video/mp4" />
           </video>
         </div>
 
