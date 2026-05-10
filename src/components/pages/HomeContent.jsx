@@ -33,6 +33,16 @@ function Hero() {
   const contentRef   = useRef(null);
   const sectionRef   = useRef(null);
 
+  // Force muted + autoplay après le montage (React ne passe pas muted comme attribut HTML)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute('muted', '');
+    v.play().catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const onScroll = () => {
@@ -40,7 +50,6 @@ function Hero() {
       const scrollY  = window.scrollY;
       const sectionH = sectionRef.current.offsetHeight;
       if (scrollY > sectionH) return;
-      // translateY sur la vidéo seulement — le wrapper gère le scale CSS
       if (videoRef.current)   videoRef.current.style.transform   = `translateY(${scrollY * 0.28}px)`;
       if (contentRef.current) contentRef.current.style.transform = `translateY(${scrollY * 0.12}px)`;
     };
@@ -127,14 +136,9 @@ function Hero() {
           overflow: 'hidden',
         }}>
           <video
-            ref={(el) => {
-              videoRef.current = el;
-              if (!el) return;
-              el.muted        = true;
-              el.defaultMuted = true;
-              el.setAttribute('muted', '');
-            }}
+            ref={videoRef}
             autoPlay loop playsInline preload="auto"
+            muted
             poster="/images/tighremt/palmeraie-panorama.jpg"
             style={{
               position: 'absolute', inset: 0,
