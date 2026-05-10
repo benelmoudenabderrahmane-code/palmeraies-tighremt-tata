@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
@@ -9,16 +9,6 @@ import { TextEffect } from '@/components/ui/TextEffect';
 
 const ImageComparison = dynamic(
   () => import('@/components/ui/ImageComparison'),
-  { ssr: false },
-);
-
-const ProjectsFlipHero = dynamic(
-  () => import('@/components/ui/ProjectsFlipHero'),
-  { ssr: false },
-);
-
-const Grainient = dynamic(
-  () => import('@/components/ui/Grainient'),
   { ssr: false },
 );
 
@@ -651,110 +641,36 @@ function ProjectsIndex() {
 }
 
 /* ── Page hero ─────────────────────────────────────────────────────────── */
-// Build a flat array of images from all project galleries + before/after for the FlipCard hero
-const HERO_IMAGES = (() => {
-  const imgs = [];
-  PROJECTS.forEach((p) => {
-    // use "after" image as primary card face
-    if (p.after) imgs.push({ src: p.after, alt: p.title, fallback: p.afterFallback });
-    // add gallery images (up to 2 per project)
-    if (p.gallery) {
-      p.gallery.slice(0, 2).forEach((g) => imgs.push({ src: g.src, alt: g.alt, fallback: g.fallback }));
-    }
-  });
-  // Cap at 20 cards
-  return imgs.slice(0, 20);
-})();
-
 function PageHero() {
   return (
     <section style={{
-      position: 'relative',
-      overflow: 'hidden',
-      minHeight: '100vh',
-      minHeight: '100svh',
+      background: C.greenDeep,
+      color: '#fff',
+      padding: '4rem 1.5rem 3rem',
+      textAlign: 'center',
+      paddingTop: '8rem',
     }}>
-      {/* ── Grainient base ── */}
-      <Grainient
-        color1="#8EC9A2"
-        color2="#133D20"
-        color3="#0A1F10"
-        timeSpeed={0.15}
-        warpStrength={0.9}
-        warpFrequency={4.5}
-        warpAmplitude={55}
-        grainAmount={0.07}
-        contrast={1.45}
-        saturation={1.0}
-        zoom={0.88}
-        blendAngle={25}
-      />
-
-      {/* ── Dark overlay ── */}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(4,12,6,0.52)', pointerEvents: 'none', zIndex: 1 }} />
-
-      {/* ── FlipCard animation layer ── */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 2 }}>
-        <ProjectsFlipHero images={HERO_IMAGES}>
-          {/* Content revealed when arc forms */}
-          <div style={{ padding: '0 1rem' }}>
-            <div style={{
-              fontSize: '0.63rem', letterSpacing: '0.28em',
-              textTransform: 'uppercase', color: C.ochre,
-              fontWeight: 600, marginBottom: '1rem',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-            }}>
-              <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
-              Association Palmeraies Tighremt
-              <span style={{ width: 28, height: 1.5, background: C.ochre, display: 'block' }} />
-            </div>
-            <h1 style={{
-              fontFamily: 'Cormorant Garamond, serif',
-              fontSize: 'clamp(2.2rem,5.5vw,4.2rem)',
-              fontWeight: 400, lineHeight: 1.1,
-              color: '#fff', margin: '0 auto 1.25rem',
-            }}>
-              Nos projets pour<br />
-              <em style={{ color: C.ochre }}>Tighremt &amp; la région</em>
-            </h1>
-            <p style={{
-              fontSize: 'clamp(0.88rem,1.3vw,1rem)',
-              color: 'rgba(255,255,255,0.7)',
-              lineHeight: 1.75, maxWidth: 480,
-              fontWeight: 300, margin: '0 auto 2rem',
-            }}>
-              {PROJECTS.length} projets concrets au service des habitants : environnement,
-              eau, éducation, solidarité et mémoire du territoire.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
-              {PROJECTS.map((p) => (
-                <a key={p.id} href={`#${p.id}`} style={{
-                  fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.04em',
-                  color: 'rgba(255,255,255,0.82)',
-                  background: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.18)',
-                  borderRadius: '2rem', padding: '0.4rem 0.9rem',
-                  textDecoration: 'none',
-                }}>
-                  {p.title}
-                </a>
-              ))}
-            </div>
-          </div>
-        </ProjectsFlipHero>
-      </div>
-
-      {/* ── Static fallback text (visible before flip anim loads) ── */}
-      <div style={{
-        position: 'relative', zIndex: 3,
-        padding: 'clamp(8rem,14vw,11rem) clamp(1.25rem,4vw,2rem) clamp(5rem,9vw,7rem)',
-        textAlign: 'center',
-        pointerEvents: 'none',
-        opacity: 0,  /* hidden — ProjectsFlipHero handles display */
-      }} aria-hidden="true">
-        <h1 style={{ fontFamily: 'Cormorant Garamond, serif', color: '#fff', fontSize: '3rem', margin: 0 }}>
+      <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
+        <p style={{
+          fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase',
+          color: 'rgba(196,169,107,0.9)', marginBottom: '0.75rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+        }}>
+          <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
           Nos projets
+          <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
+        </p>
+        <h1 style={{
+          fontFamily: 'Cormorant Garamond, serif',
+          fontSize: 'clamp(2rem,5vw,3.5rem)',
+          fontWeight: 300, lineHeight: 1.1,
+        }}>
+          {PROJECTS.length} projets pour<br />
+          <em style={{ fontStyle: 'italic', fontWeight: 400 }}>Tighremt &amp; la région</em>
         </h1>
+        <p style={{ marginTop: '0.75rem', opacity: 0.6, fontSize: '0.92rem', lineHeight: 1.7 }}>
+          Environnement, infrastructure, éducation, solidarité et mémoire du territoire.
+        </p>
       </div>
     </section>
   );
