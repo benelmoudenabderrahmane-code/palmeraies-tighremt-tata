@@ -497,11 +497,7 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
           borderRadius: '0.6rem',
           overflow: 'hidden',
           flexShrink: 0,
-          boxShadow: isActive
-            ? '0 10px 28px rgba(19,61,32,0.22)'
-            : '0 2px 8px rgba(0,0,0,0.1)',
-          transition: 'box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-          transform: isActive ? 'scale(1.06)' : 'scale(1)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         }}>
           <img
             src={imgSrc}
@@ -514,8 +510,6 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
               width: '100%', height: '100%',
               objectFit: 'cover',
               display: 'block',
-              transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
-              transform: isActive ? 'scale(1.12)' : 'scale(1)',
             }}
           />
         </div>
