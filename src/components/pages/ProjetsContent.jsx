@@ -227,44 +227,110 @@ const PROJECTS = [
 /* ── Gallery ───────────────────────────────────────────────────────────── */
 function MasonryGallery({ images }) {
   const [lightboxIdx, setLightboxIdx] = useState(null);
+  const [hoveredIdx, setHoveredIdx]   = useState(null);
 
   return (
     <>
+      <style>{`
+        @keyframes gallery-shimmer {
+          from { transform: translateX(-100%) skewX(-12deg); }
+          to   { transform: translateX(220%) skewX(-12deg); }
+        }
+      `}</style>
+
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 190px), 1fr))',
         gap: '0.875rem',
         marginTop: '2.5rem',
       }}>
-        {images.map(({ src, fallback, alt }, i) => (
-          <div
-            key={src}
-            onClick={() => setLightboxIdx(i)}
-            style={{
-              position: 'relative',
-              borderRadius: '0.875rem',
-              overflow: 'hidden',
-              cursor: 'zoom-in',
-              aspectRatio: '4 / 3',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            }}
-          >
-            <img
-              src={src}
-              alt={alt}
-              width="900"
-              height="600"
-              loading={i < 3 ? 'eager' : 'lazy'}
-              onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
+        {images.map(({ src, fallback, alt }, i) => {
+          const isHovered = hoveredIdx === i;
+          return (
+            <div
+              key={src}
+              onClick={() => setLightboxIdx(i)}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
               style={{
-                display: 'block',
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+                position: 'relative',
+                borderRadius: '0.875rem',
+                overflow: 'hidden',
+                cursor: 'zoom-in',
+                aspectRatio: '4 / 3',
+                transform: isHovered ? 'scale(1.04) translateY(-4px)' : 'scale(1) translateY(0)',
+                transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease',
+                boxShadow: isHovered
+                  ? '0 20px 48px rgba(19,61,32,0.22), 0 4px 12px rgba(0,0,0,0.12)'
+                  : '0 2px 8px rgba(0,0,0,0.08)',
+                zIndex: isHovered ? 2 : 1,
               }}
-            />
-          </div>
-        ))}
+            >
+              <img
+                src={src}
+                alt={alt}
+                width="900"
+                height="600"
+                loading={i < 3 ? 'eager' : 'lazy'}
+                onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
+                  transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                }}
+              />
+
+              {/* Gradient overlay on hover */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: isHovered
+                  ? 'linear-gradient(to top, rgba(19,61,32,0.55) 0%, rgba(19,61,32,0.1) 60%, transparent 100%)'
+                  : 'linear-gradient(to top, rgba(0,0,0,0.12) 0%, transparent 50%)',
+                transition: 'background 0.4s ease',
+              }} />
+
+              {/* Shimmer sweep on hover */}
+              {isHovered && (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  overflow: 'hidden',
+                  pointerEvents: 'none',
+                  borderRadius: '0.875rem',
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0, bottom: 0,
+                    width: '40%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
+                    animation: 'gallery-shimmer 0.7s ease forwards',
+                  }} />
+                </div>
+              )}
+
+              {/* Zoom icon */}
+              <div style={{
+                position: 'absolute',
+                bottom: 10, right: 10,
+                width: 30, height: 30,
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.92)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: isHovered ? 1 : 0,
+                transform: isHovered ? 'scale(1)' : 'scale(0.6)',
+                transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+              }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <circle cx="6" cy="6" r="4" stroke="#133d20" strokeWidth="1.5"/>
+                  <path d="M9.5 9.5L13 13" stroke="#133d20" strokeWidth="1.5" strokeLinecap="round"/>
+                  <path d="M4 6H8M6 4V8" stroke="#133d20" strokeWidth="1.2" strokeLinecap="round"/>
+                </svg>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {lightboxIdx !== null && (
@@ -497,7 +563,11 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
           borderRadius: '0.6rem',
           overflow: 'hidden',
           flexShrink: 0,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          boxShadow: isActive
+            ? '0 10px 28px rgba(19,61,32,0.22)'
+            : '0 2px 8px rgba(0,0,0,0.1)',
+          transition: 'box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1)',
+          transform: isActive ? 'scale(1.06)' : 'scale(1)',
         }}>
           <img
             src={imgSrc}
@@ -510,6 +580,8 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
               width: '100%', height: '100%',
               objectFit: 'cover',
               display: 'block',
+              transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
+              transform: isActive ? 'scale(1.12)' : 'scale(1)',
             }}
           />
         </div>
