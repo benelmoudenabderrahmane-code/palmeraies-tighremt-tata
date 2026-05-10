@@ -9,6 +9,7 @@ import BackToTop from '@/components/ui/BackToTop';
 import ToastContainer from '@/components/ui/Toast';
 import CookieBanner from '@/components/ui/CookieBanner';
 import InstallPrompt from '@/components/ui/InstallPrompt';
+import PageTransition from '@/components/ui/PageTransition';
 
 export const viewport = {
   width: 'device-width',
@@ -48,6 +49,19 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Literata:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@300;400;500;600&display=swap"
           rel="stylesheet"
         />
+        {/* Instant page-transition cover — prevents flash on navigation */}
+        <script dangerouslySetInnerHTML={{ __html: `
+    (function(){
+      try {
+        if (sessionStorage.getItem('pt_pending_reveal') === '1') {
+          var s = document.createElement('style');
+          s.id = 'pt-flash-cover';
+          s.textContent = 'body::before{content:"";position:fixed;inset:0;background:#133d20;z-index:9998;pointer-events:none}';
+          document.head.appendChild(s);
+        }
+      } catch(e) {}
+    })();
+  `}} />
         <script dangerouslySetInnerHTML={{ __html: `
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
@@ -81,7 +95,7 @@ export default function RootLayout({ children }) {
           }
         })}} />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {/* Cursor trail — client only */}
         <ScrollReset />
 
@@ -104,6 +118,7 @@ export default function RootLayout({ children }) {
         <ToastContainer />
         <CookieBanner />
         <InstallPrompt />
+        <PageTransition />
       </body>
     </html>
   );
