@@ -28,7 +28,8 @@ const CIRCULAR_GALLERY_ITEMS = [
 ];
 
 function Hero() {
-  const imgWrapRef   = useRef(null);
+  const videoRef     = useRef(null);
+  const videoWrapRef = useRef(null);
   const contentRef   = useRef(null);
   const sectionRef   = useRef(null);
 
@@ -39,8 +40,9 @@ function Hero() {
       const scrollY  = window.scrollY;
       const sectionH = sectionRef.current.offsetHeight;
       if (scrollY > sectionH) return;
-      if (imgWrapRef.current)  imgWrapRef.current.style.transform  = `scale(1.0) translateY(${scrollY * 0.28}px)`;
-      if (contentRef.current)  contentRef.current.style.transform  = `translateY(${scrollY * 0.12}px)`;
+      // translateY sur la vidéo seulement — le wrapper gère le scale CSS
+      if (videoRef.current)   videoRef.current.style.transform   = `translateY(${scrollY * 0.28}px)`;
+      if (contentRef.current) contentRef.current.style.transform = `translateY(${scrollY * 0.12}px)`;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -117,15 +119,21 @@ function Hero() {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
         padding: '0 1.5rem 5rem', overflow: 'hidden',
       }}>
-        {/* Wrapper handles scale animation; video handles scroll translateY */}
-        <div ref={imgWrapRef} style={{
+        {/* videoWrapRef → animation CSS scale ; videoRef → translateY parallax scroll */}
+        <div ref={videoWrapRef} style={{
           position: 'absolute', inset: 0,
           animation: 'heroZoomOut 14s cubic-bezier(0.16,1,0.3,1) forwards',
           zIndex: 0, willChange: 'transform',
           overflow: 'hidden',
         }}>
           <video
-            ref={el => { if (!el) return; el.muted = true; el.defaultMuted = true; el.setAttribute('muted', ''); }}
+            ref={(el) => {
+              videoRef.current = el;
+              if (!el) return;
+              el.muted        = true;
+              el.defaultMuted = true;
+              el.setAttribute('muted', '');
+            }}
             autoPlay loop playsInline preload="auto"
             poster="/images/tighremt/palmeraie-panorama.jpg"
             style={{
