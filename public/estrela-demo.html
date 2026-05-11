@@ -6,686 +6,796 @@
 <title>Association Palmeraies Tighremt — Tata · Maroc</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <script src="/lib/gsap.min.js"></script>
 <script src="/lib/ScrollTrigger.min.js"></script>
+
+
 <style>
-/* ─── RESET & TOKENS ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   RESET & VARIABLES
+══════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --black:#020202;
-  --white:#FBFBF4;
-  --grey:#666;
-  --grey-dark:#0E0E0E;
-  --grey-light:#F4F4E8;
   --green:#133d20;
+  --green-mid:#1e5e2f;
   --gold:#c8a96e;
-  --gold-warm:#d4956a;
+  --gold-light:#e2c99a;
   --cream:#f5f0e8;
+  --cream-dark:#ede5d4;
   --ink:#0e1a12;
-  --ease:cubic-bezier(.16,1,.3,1);
+  --ink-muted:#4a5c4e;
+  --ink-light:#8a9e8e;
   --serif:'Cormorant Garamond',serif;
   --sans:'DM Sans',sans-serif;
 }
 html{overflow-x:hidden}
 body{
   font-family:var(--sans);
-  background:var(--white);
-  color:var(--black);
+  background:var(--cream);
+  color:var(--ink);
   overflow-x:hidden;
   cursor:none;
 }
 
-/* ─── PRELOADER ──────────────────────────────────────────── */
-#preloader{
-  position:fixed;inset:0;z-index:10000;
-  background:var(--black);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  pointer-events:none;
-}
-.pre-logo{
-  width:72px;height:72px;
-  position:relative;margin-bottom:3rem;
-}
-.pre-logo svg{
-  width:100%;height:100%;
-  animation:preloaderSpin 2s linear infinite;
-}
-@keyframes preloaderSpin{
-  0%{transform:rotate(0deg)}
-  100%{transform:rotate(360deg)}
-}
-.pre-count{
-  font-family:var(--serif);
-  font-size:clamp(4rem,12vw,10rem);
-  font-weight:700;color:#fff;
-  line-height:1;letter-spacing:-0.04em;
-  font-variant-numeric:tabular-nums;
-}
-.pre-bar{
-  position:absolute;bottom:0;left:0;
-  height:2px;background:var(--gold);
-  width:0;transition:none;
-}
-
-/* ─── CUSTOM CURSOR ─────────────────────────────────────── */
-.cursor-dot{
+/* ══════════════════════════════════════════════
+   CUSTOM CURSOR
+══════════════════════════════════════════════ */
+.cursor{
   position:fixed;z-index:9999;pointer-events:none;
-  width:6px;height:6px;border-radius:50%;
-  background:var(--gold);transform:translate(-50%,-50%);
+  width:8px;height:8px;border-radius:50%;
+  background:var(--gold);
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.3s,height 0.3s,background 0.3s;
 }
 .cursor-ring{
   position:fixed;z-index:9998;pointer-events:none;
-  width:40px;height:40px;border-radius:50%;
-  border:1px solid rgba(200,169,110,0.45);
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid rgba(200,169,110,0.5);
   transform:translate(-50%,-50%);
+  transition:transform 0.08s linear,width 0.3s,height 0.3s,border-color 0.3s;
 }
+body:hover .cursor-ring{transition:none}
 
-/* ─── NAV ────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════ */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:1000;
   display:flex;align-items:center;justify-content:space-between;
-  padding:1.8rem 3.5rem;
-  mix-blend-mode:difference;
+  padding:1.5rem 3rem;
+  transition:background 0.4s,padding 0.4s,backdrop-filter 0.4s;
+}
+nav.scrolled{
+  background:rgba(19,61,32,0.92);
+  backdrop-filter:blur(12px);
+  padding:1rem 3rem;
 }
 .nav-logo{
-  font-family:var(--serif);font-size:0.88rem;font-weight:500;
-  color:#fff;letter-spacing:0.05em;text-decoration:none;line-height:1.3;
+  font-family:var(--serif);
+  font-size:0.9rem;font-weight:500;
+  color:#fff;letter-spacing:0.06em;
+  text-decoration:none;line-height:1.3;
 }
-.nav-logo span{display:block;font-size:0.55rem;letter-spacing:0.24em;text-transform:uppercase;opacity:0.5;font-family:var(--sans);font-weight:300}
+.nav-logo span{display:block;font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;opacity:0.6;font-family:var(--sans)}
 .nav-links{display:flex;gap:2.5rem;list-style:none}
 .nav-links a{
-  color:#fff;font-size:0.7rem;letter-spacing:0.14em;
-  text-transform:uppercase;text-decoration:none;font-weight:400;
-  position:relative;transition:opacity 0.25s;
+  color:rgba(255,255,255,0.75);
+  font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;
+  text-decoration:none;font-weight:400;
+  position:relative;transition:color 0.25s;
 }
-.nav-links a:hover{opacity:0.55}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-3px;left:0;
+  width:0;height:1px;background:var(--gold);
+  transition:width 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-links a:hover{color:#fff}
+.nav-links a:hover::after{width:100%}
 .nav-cta{
-  background:var(--gold);color:var(--black);
-  font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;
-  font-weight:500;padding:0.6rem 1.5rem;border-radius:2rem;
-  text-decoration:none;transition:transform 0.25s,background 0.2s;
+  background:var(--gold);color:var(--ink);
+  font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;font-weight:500;
+  padding:0.55rem 1.4rem;border-radius:2rem;text-decoration:none;
+  transition:background 0.2s,transform 0.2s;
 }
-.nav-cta:hover{background:var(--white);transform:scale(1.04)}
+.nav-cta:hover{background:var(--gold-light);transform:translateY(-1px)}
 
-/* ─── HERO ───────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
 #hero{
-  position:relative;height:100vh;min-height:640px;
-  background:var(--black);overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
+  position:relative;height:100vh;min-height:600px;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  overflow:hidden;background:var(--green);
 }
 .hero-bg{
   position:absolute;inset:0;
   background:url('/images/tighremt/palmeraie-panorama.jpg') center/cover no-repeat;
-  opacity:0.28;transform:scale(1.06);will-change:transform;
+  opacity:0.35;
+  transform:scale(1.08);
+  will-change:transform;
 }
-/* Split title */
-.hero-split{
-  position:relative;z-index:5;
-  width:100%;padding:0 3.5rem;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:2rem;
-}
-.hero-title-left,.hero-title-right{
-  font-family:var(--serif);
-  font-size:clamp(3.5rem,7.5vw,7rem);
-  font-weight:700;color:#fff;
-  line-height:0.95;letter-spacing:-0.03em;
-  overflow:hidden;
-}
-.hero-title-left{text-align:left;flex:1}
-.hero-title-right{text-align:right;flex:1;font-style:italic;font-weight:300}
-.hero-word{display:inline-block;transform:translateY(110%)}
-/* Central image */
-.hero-center{
-  flex:0 0 auto;width:clamp(200px,22vw,360px);
-  aspect-ratio:9/14;border-radius:16px;overflow:hidden;
-  position:relative;
-  box-shadow:0 40px 100px rgba(0,0,0,0.6);
-  transform:rotate(-4deg) scale(0.9);opacity:0;
-}
-.hero-center img{width:100%;height:100%;object-fit:cover;display:block}
-/* Scroll hint */
-.hero-scroll{
-  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
-  z-index:5;text-align:center;opacity:0;
-}
-.hero-scroll p{
-  font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;
-  color:rgba(255,255,255,0.45);margin-bottom:0.75rem;
-}
-.scroll-indicator{
-  width:1px;height:50px;background:rgba(255,255,255,0.15);
-  margin:0 auto;position:relative;overflow:hidden;
-}
-.scroll-indicator::after{
-  content:'';position:absolute;top:-100%;left:0;
-  width:100%;height:100%;background:var(--gold);
-  animation:scrollPulse 2s ease-in-out infinite;
-}
-@keyframes scrollPulse{0%{top:-100%}50%{top:100%}51%{top:-100%}100%{top:100%}}
-
-/* ─── MARQUEE ────────────────────────────────────────────── */
-#marquee{
-  background:var(--green);
-  padding:1rem 0;overflow:hidden;
-  border-top:1px solid rgba(255,255,255,0.08);
-}
-.marquee-track{
-  display:flex;gap:3rem;white-space:nowrap;
-  animation:marqueeRun 18s linear infinite;
-}
-@keyframes marqueeRun{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.marquee-item{
-  font-family:var(--serif);font-style:italic;
-  font-size:1.1rem;color:rgba(255,255,255,0.55);font-weight:300;
-  display:flex;align-items:center;gap:1.5rem;flex-shrink:0;
-}
-.marquee-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--gold);opacity:0.7;flex-shrink:0;
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(19,61,32,0.3) 0%,rgba(19,61,32,0.7) 100%);
 }
 
-/* ─── ABOUT STATEMENT ───────────────────────────────────── */
-#statement{
-  background:var(--white);
-  padding:clamp(5rem,10vw,10rem) clamp(2rem,6vw,6rem);
+/* Slot machine counters (top strip) */
+.hero-stats{
+  position:absolute;top:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:4rem;align-items:center;
+  z-index:10;
 }
-.statement-inner{max-width:1400px;margin:0 auto}
-.statement-tag{
-  font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;
-  color:var(--gold);font-weight:500;
-  display:flex;align-items:center;gap:0.75rem;
-  margin-bottom:2.5rem;
+.hero-stat{text-align:center}
+.slot-number{
+  font-family:var(--serif);font-size:2.2rem;font-weight:600;
+  color:var(--gold);line-height:1;
+  height:2.6rem;overflow:hidden;
+  display:flex;align-items:flex-start;
 }
-.statement-tag::before{content:'';display:block;width:28px;height:1px;background:var(--gold)}
-.statement-h2{
-  font-family:var(--serif);
-  font-size:clamp(3rem,7vw,7rem);
-  font-weight:700;line-height:0.95;
-  letter-spacing:-0.04em;color:var(--black);
+.slot-digit-col{
+  display:flex;flex-direction:column;
+  transition:none;
 }
-.statement-h2 em{
-  font-style:italic;font-weight:300;
-  color:var(--gold-warm);
+.slot-digit{height:2.6rem;display:flex;align-items:center;justify-content:center;min-width:0.65em}
+.slot-sep{color:var(--gold);font-family:var(--serif);font-size:2.2rem;font-weight:300;line-height:2.6rem}
+.hero-stat-label{
+  font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:rgba(255,255,255,0.55);margin-top:0.35rem;font-weight:400;
 }
-.statement-body{
-  display:grid;grid-template-columns:1fr 1fr;gap:6rem;
-  align-items:end;margin-top:4rem;
+
+/* Hero content */
+.hero-content{
+  position:relative;z-index:10;
+  text-align:center;max-width:900px;
+  padding:0 2rem;
 }
-.statement-text{
-  font-size:clamp(0.85rem,1.2vw,1rem);
-  color:var(--grey);line-height:1.9;font-weight:300;
-  max-width:460px;opacity:0;transform:translateY(24px);
-}
-.statement-cta{
-  display:inline-flex;align-items:center;gap:0.75rem;
-  font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;
-  font-weight:500;color:var(--black);text-decoration:none;
-  border:1px solid rgba(0,0,0,0.2);border-radius:2rem;
-  padding:0.8rem 1.8rem;
-  transition:background 0.25s,color 0.25s,transform 0.25s;
+.hero-eyebrow{
+  font-size:0.62rem;letter-spacing:0.32em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;font-weight:400;
+  display:flex;align-items:center;justify-content:center;gap:1rem;
   opacity:0;
 }
-.statement-cta:hover{background:var(--black);color:#fff;transform:scale(1.04)}
-
-/* ─── GALLERY HORIZONTAL ────────────────────────────────── */
-#gallery{
-  background:var(--grey-dark);
-  padding:5rem 0;overflow:hidden;
-}
-.gallery-header{
-  padding:0 4rem;margin-bottom:3rem;
-  display:flex;justify-content:space-between;align-items:flex-end;
-}
-.gallery-header h2{
-  font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,3rem);
-  font-weight:300;font-style:italic;color:#fff;
-}
-.gallery-header p{font-size:0.75rem;color:rgba(255,255,255,0.35);max-width:260px;line-height:1.8}
-.gallery-strip{
-  display:flex;gap:1.2rem;padding:0 4rem;
-  overflow-x:auto;scroll-snap-type:x mandatory;
-  scrollbar-width:none;cursor:grab;
-}
-.gallery-strip::-webkit-scrollbar{display:none}
-.g-cell{
-  flex:0 0 auto;width:clamp(260px,22vw,360px);height:460px;
-  border-radius:12px;overflow:hidden;
-  position:relative;scroll-snap-align:start;
-  opacity:0;transform:translateY(50px);
-}
-.g-cell:nth-child(even){margin-top:3rem}
-.g-cell img{
-  width:100%;height:100%;object-fit:cover;display:block;
-  transform:scale(1.08);
-  transition:transform 0.9s var(--ease);
-}
-.g-cell:hover img{transform:scale(1.0)}
-.g-cell-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(10,24,14,0.75) 0%,transparent 55%);
-  opacity:0;transition:opacity 0.4s;
-}
-.g-cell:hover .g-cell-overlay{opacity:1}
-.g-cell-caption{
-  position:absolute;bottom:1.2rem;left:1.2rem;
-  font-family:var(--serif);font-style:italic;
-  font-size:0.9rem;color:rgba(255,255,255,0.9);
-  opacity:0;transform:translateY(10px);
-  transition:opacity 0.35s,transform 0.35s;
-}
-.g-cell:hover .g-cell-caption{opacity:1;transform:translateY(0)}
-
-/* ─── WHO WE ARE ────────────────────────────────────────── */
-#who{
-  background:var(--white);
-  padding:clamp(6rem,12vw,12rem) 4rem;
-  display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;
-}
-.who-title{
+.hero-eyebrow span{display:block;width:32px;height:1px;background:rgba(200,169,110,0.5)}
+.hero-title{
   font-family:var(--serif);
-  font-size:clamp(5rem,12vw,12rem);
-  font-weight:700;line-height:0.88;
-  letter-spacing:-0.05em;color:var(--black);
-  overflow:hidden;
-}
-.who-title span{display:block;transform:translateY(110%)}
-.who-content{opacity:0;transform:translateY(32px)}
-.who-tag{
-  font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;
-  color:var(--gold);font-weight:500;margin-bottom:1.5rem;
-  display:flex;align-items:center;gap:0.75rem;
-}
-.who-tag::before{content:'';display:block;width:24px;height:1px;background:var(--gold)}
-.who-body{
-  font-size:0.9rem;color:var(--grey);line-height:1.9;font-weight:300;
-  margin-bottom:2.5rem;
-}
-.who-cta{
-  display:inline-flex;align-items:center;gap:0.6rem;
-  font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;
-  font-weight:500;color:var(--black);text-decoration:none;
-  border:1px solid rgba(0,0,0,0.2);padding:0.75rem 1.6rem;border-radius:2rem;
-  transition:all 0.25s;
-}
-.who-cta:hover{background:var(--black);color:#fff;gap:1rem}
-
-/* ─── FEATURED WORK ─────────────────────────────────────── */
-#work{
-  background:var(--white);
-  padding:0 4rem clamp(5rem,10vw,10rem);
-}
-.work-header{
-  display:flex;justify-content:space-between;align-items:baseline;
-  padding-bottom:2rem;
-  border-bottom:1px solid rgba(0,0,0,0.1);
-  margin-bottom:3rem;
-}
-.work-header h2{
-  font-family:var(--serif);font-size:clamp(2rem,4vw,3.5rem);
+  font-size:clamp(2.8rem,6vw,5.2rem);
   font-weight:300;font-style:italic;
+  color:#fff;line-height:1.1;
+  margin-bottom:2rem;
 }
-.work-header a{
-  font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--grey);text-decoration:none;
-  border-bottom:1px solid rgba(0,0,0,0.2);padding-bottom:0.15rem;
-  transition:color 0.25s;
+/* Word wrapper for clip animation */
+.word-wrap{display:inline-block;overflow:hidden;vertical-align:bottom}
+.word-inner{display:inline-block;transform:translateY(100%)}
+
+.hero-sub{
+  font-size:0.8rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+  display:flex;align-items:center;justify-content:center;gap:0.8rem;
+  opacity:0;
 }
-.work-header a:hover{color:var(--black)}
-.work-list{display:flex;flex-direction:column;gap:0}
-.work-item{
-  display:grid;
-  grid-template-columns:80px 1fr auto;
-  align-items:center;gap:2rem;
-  padding:1.8rem 0;
-  border-bottom:1px solid rgba(0,0,0,0.08);
-  cursor:pointer;
-  opacity:0;transform:translateY(20px);
-  transition:background 0.25s;
+.scroll-line{
+  width:1px;height:40px;background:rgba(255,255,255,0.25);
   position:relative;overflow:hidden;
 }
-.work-item::after{
-  content:'';position:absolute;bottom:0;left:0;
-  height:1px;width:0;background:var(--green);
-  transition:width 0.5s var(--ease);
+.scroll-line::after{
+  content:'';position:absolute;top:-100%;left:0;
+  width:100%;height:100%;background:var(--gold);
+  animation:scrollDown 1.8s ease-in-out infinite;
 }
-.work-item:hover::after{width:100%}
-.work-num{
-  font-family:var(--serif);font-size:1.6rem;font-weight:700;
-  color:rgba(0,0,0,0.12);transition:color 0.3s;
+@keyframes scrollDown{
+  0%{top:-100%}50%{top:100%}51%{top:-100%}100%{top:100%}
 }
-.work-item:hover .work-num{color:var(--green)}
-.work-info h3{
-  font-family:var(--serif);font-size:clamp(1.2rem,2.5vw,2rem);
-  font-weight:400;line-height:1.2;margin-bottom:0.4rem;
-  transition:transform 0.4s var(--ease);
-}
-.work-item:hover .work-info h3{transform:translateX(8px)}
-.work-cat{
-  font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--grey);font-weight:500;
-}
-.work-thumb{
-  width:clamp(90px,9vw,140px);height:clamp(60px,6vw,92px);
-  border-radius:8px;overflow:hidden;flex-shrink:0;
-  box-shadow:0 4px 16px rgba(0,0,0,0.1);
-  transform:scale(0.96);
-  transition:transform 0.4s var(--ease),box-shadow 0.4s;
-}
-.work-item:hover .work-thumb{transform:scale(1.04);box-shadow:0 12px 32px rgba(0,0,0,0.18)}
-.work-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* ─── SERVICES ───────────────────────────────────────────── */
-#services{
-  background:var(--grey-dark);
-  padding:clamp(5rem,10vw,10rem) 4rem;
+/* Hero bottom buttons */
+.hero-bottom{
+  position:absolute;bottom:2.5rem;left:0;right:0;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:0 3rem;z-index:10;
+  opacity:0;
 }
-.services-eyebrow{
+.hero-btn{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,0.25);
+  padding-bottom:0.2rem;
+  transition:color 0.25s,border-color 0.25s;
+}
+.hero-btn:hover{color:#fff;border-color:var(--gold)}
+.hero-btn-primary{
+  background:var(--gold);color:var(--ink);border:none;
+  padding:0.75rem 2rem;border-radius:2rem;font-weight:500;
+}
+.hero-btn-primary:hover{background:var(--gold-light)}
+
+/* ══════════════════════════════════════════════
+   GALLERY
+══════════════════════════════════════════════ */
+#gallery{
+  padding:7rem 4rem;background:var(--ink);
+}
+.gallery-header{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:3.5rem;
+}
+.gallery-header h2{
+  font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);
+  font-weight:300;font-style:italic;color:#fff;
+}
+.gallery-header p{font-size:0.75rem;color:rgba(255,255,255,0.4);max-width:280px;line-height:1.8;letter-spacing:0.04em}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  grid-template-rows:280px 280px;
+  gap:0.75rem;
+}
+.gallery-cell{
+  overflow:hidden;border-radius:8px;
+  position:relative;cursor:pointer;
+  opacity:0;transform:translateY(50px);
+}
+.gallery-cell:nth-child(1){grid-row:span 2}
+.gallery-cell:nth-child(5){grid-column:span 2}
+.gallery-cell img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.06);
+  transition:transform 0.8s cubic-bezier(0.16,1,0.3,1);
+  display:block;
+}
+.gallery-cell:hover img{transform:scale(1.0)}
+.gallery-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(19,61,32,0.6) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.4s;
+}
+.gallery-cell:hover .gallery-overlay{opacity:1}
+.gallery-caption{
+  position:absolute;bottom:1rem;left:1rem;
+  font-family:var(--serif);font-style:italic;font-size:0.85rem;
+  color:rgba(255,255,255,0.9);opacity:0;
+  transform:translateY(8px);
+  transition:opacity 0.35s,transform 0.35s;
+}
+.gallery-cell:hover .gallery-caption{opacity:1;transform:translateY(0)}
+
+/* ══════════════════════════════════════════════
+   ASSOCIATION SECTION
+══════════════════════════════════════════════ */
+#association{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:80vh;
+}
+.assoc-text{
+  background:var(--cream);
+  padding:7rem 5rem 7rem 8rem;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.assoc-eyebrow{
   font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;
-  color:var(--gold);font-weight:500;margin-bottom:3rem;
+  color:var(--gold);margin-bottom:1.5rem;font-weight:500;
   display:flex;align-items:center;gap:0.75rem;
 }
-.services-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--gold)}
-.services-h2{
+.assoc-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--gold);opacity:0.6}
+.assoc-title{
   font-family:var(--serif);
-  font-size:clamp(2.5rem,5vw,5rem);
-  font-weight:700;line-height:1;
-  letter-spacing:-0.03em;color:#fff;
-  margin-bottom:4rem;
+  font-size:clamp(2rem,3.5vw,3rem);
+  font-weight:300;line-height:1.2;
+  color:var(--green);margin-bottom:2rem;
 }
-.services-h2 em{font-style:italic;font-weight:300;color:var(--gold)}
-.services-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  border-top:1px solid rgba(255,255,255,0.08);
+.assoc-body{
+  font-size:0.92rem;color:var(--ink-muted);
+  line-height:1.9;font-weight:300;max-width:440px;
+  margin-bottom:2.5rem;
+  opacity:0;transform:translateY(24px);
 }
-.svc{
-  padding:2.5rem 2rem 2.5rem 0;
-  border-right:1px solid rgba(255,255,255,0.08);
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  opacity:0;transform:translateY(30px);
-  transition:background 0.3s;
+.assoc-cta{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--green);font-weight:500;text-decoration:none;
+  border-bottom:1px solid var(--green);padding-bottom:0.2rem;
+  transition:gap 0.3s,color 0.3s;
+  width:fit-content;
+  opacity:0;
 }
-.svc:hover{background:rgba(255,255,255,0.03)}
-.svc:nth-child(3n){border-right:none}
-.svc:nth-child(4),.svc:nth-child(5),.svc:nth-child(6){border-bottom:none}
-.svc-num{
-  font-family:var(--serif);font-size:0.75rem;font-weight:600;
-  color:var(--gold);opacity:0.7;letter-spacing:0.1em;
-  margin-bottom:1.5rem;
+.assoc-cta:hover{gap:1rem;color:var(--green-mid)}
+.assoc-image{
+  position:relative;overflow:hidden;
+  background:var(--green);
 }
-.svc-title{
-  font-family:var(--serif);font-size:1.5rem;
-  font-weight:400;color:#fff;line-height:1.2;margin-bottom:0.75rem;
+.assoc-image img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.1);
+  display:block;
 }
-.svc-body{
-  font-size:0.78rem;color:rgba(255,255,255,0.4);
-  line-height:1.85;font-weight:300;
+.assoc-badge{
+  position:absolute;bottom:2.5rem;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--gold);color:var(--ink);
+  font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;
+  font-weight:600;padding:0.6rem 1.4rem;border-radius:2rem;
+  white-space:nowrap;opacity:0;
+  transition:opacity 0.4s,transform 0.4s;
 }
 
-/* ─── STATS ──────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   FEATURED PROJECTS
+══════════════════════════════════════════════ */
+#projects{
+  background:var(--ink);
+  padding:0 4rem;
+}
+.projects-inner{
+  display:grid;
+  grid-template-columns:340px 1fr;
+  gap:0;
+  min-height:600px;
+}
+.projects-sticky{
+  position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:3rem 0;
+}
+.projects-sticky-eyebrow{
+  font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.2rem;font-weight:500;
+}
+.projects-sticky-title{
+  font-family:var(--serif);
+  font-size:clamp(2.2rem,3.5vw,3.2rem);
+  font-weight:300;font-style:italic;
+  color:#fff;line-height:1.15;margin-bottom:2rem;
+}
+.projects-counter{
+  font-family:var(--serif);font-size:5rem;
+  font-weight:700;color:var(--gold);
+  opacity:0.15;line-height:1;
+  height:6rem;overflow:hidden;
+}
+.projects-counter-inner{display:flex;flex-direction:column;transition:none}
+.projects-counter-item{height:6rem;display:flex;align-items:center}
+.projects-link{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.4);text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:0.2rem;
+  transition:color 0.25s;margin-top:auto;
+}
+.projects-link:hover{color:#fff}
+
+.projects-list{
+  padding:4rem 0 4rem 4rem;
+  display:flex;flex-direction:column;gap:2rem;
+}
+.project-card{
+  position:relative;border-radius:12px;overflow:hidden;
+  height:340px;cursor:pointer;flex-shrink:0;
+  opacity:0;transform:translateX(40px);
+}
+.project-card img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.05);
+  transition:transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.project-card:hover img{transform:scale(1.0)}
+.project-card-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,30,15,0.88) 0%,rgba(10,30,15,0.1) 60%,transparent 100%);
+}
+.project-card-content{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:2rem 2rem 1.5rem;
+}
+.project-cat{
+  font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:0.5rem;
+}
+.project-title{
+  font-family:var(--serif);font-size:1.6rem;
+  font-weight:400;color:#fff;line-height:1.2;
+  transform:translateX(20px);opacity:0;
+  transition:transform 0.5s,opacity 0.5s;
+}
+.project-card:hover .project-title{transform:translateX(0);opacity:1}
+.project-tags{
+  display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;
+}
+.project-tag{
+  font-size:0.55rem;letter-spacing:0.14em;text-transform:uppercase;
+  background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);
+  padding:0.25rem 0.7rem;border-radius:2rem;
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.4s,opacity 0.4s;
+}
+.project-card:hover .project-tag{transform:translateY(0);opacity:1}
+.project-card:hover .project-tag:nth-child(2){transition-delay:0.05s}
+.project-card:hover .project-tag:nth-child(3){transition-delay:0.1s}
+
+/* ══════════════════════════════════════════════
+   WHO WE ARE
+══════════════════════════════════════════════ */
+#about{
+  padding:9rem 8rem;background:var(--cream);
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:6rem;align-items:center;
+}
+.about-images{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:auto auto;
+  gap:1rem;position:relative;
+}
+.about-img{
+  border-radius:10px;overflow:hidden;
+  opacity:0;
+}
+.about-img:nth-child(1){grid-row:span 2;height:460px}
+.about-img:nth-child(2){height:200px}
+.about-img:nth-child(3){height:244px}
+.about-img img{width:100%;height:100%;object-fit:cover;display:block}
+.about-text{opacity:0;transform:translateY(30px)}
+.about-eyebrow{
+  font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;font-weight:500;
+  display:flex;align-items:center;gap:0.75rem;
+}
+.about-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--gold);opacity:0.6}
+.about-title{
+  font-family:var(--serif);
+  font-size:clamp(1.8rem,3vw,2.8rem);
+  font-weight:300;line-height:1.25;
+  color:var(--green);margin-bottom:1.8rem;
+}
+.about-body{
+  font-size:0.9rem;color:var(--ink-muted);
+  line-height:1.9;font-weight:300;margin-bottom:2rem;
+}
+.about-cta{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--green);font-weight:500;text-decoration:none;
+  position:relative;padding-bottom:0.25rem;
+}
+.about-cta::after{
+  content:'';position:absolute;bottom:0;left:0;
+  width:0;height:1px;background:var(--green);
+  transition:width 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.about-cta:hover::after{width:100%}
+
+/* ══════════════════════════════════════════════
+   SERVICES / MISSIONS
+══════════════════════════════════════════════ */
+#services{background:var(--green);padding:8rem 4rem}
+.services-header{
+  text-align:center;margin-bottom:5rem;
+}
+.services-header h2{
+  font-family:var(--serif);font-size:clamp(2rem,4vw,3.5rem);
+  font-weight:300;font-style:italic;color:#fff;
+}
+.services-header p{
+  color:rgba(255,255,255,0.5);font-size:0.85rem;
+  margin-top:1rem;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8;
+}
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:0;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.service-item{
+  padding:3rem 2.5rem;
+  border-right:1px solid rgba(255,255,255,0.1);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(30px);
+  transition:background 0.3s;cursor:pointer;
+}
+.service-item:hover{background:rgba(255,255,255,0.04)}
+.service-item:nth-child(3n){border-right:none}
+.service-item:nth-child(4),.service-item:nth-child(5),.service-item:nth-child(6){border-bottom:none}
+.service-num{
+  font-family:var(--serif);font-size:5rem;font-weight:700;
+  color:rgba(255,255,255,0.05);
+  position:absolute;top:-1rem;right:1rem;line-height:1;
+  pointer-events:none;
+}
+.service-icon{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(200,169,110,0.12);
+  border:1px solid rgba(200,169,110,0.25);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.5rem;font-size:1.1rem;
+}
+.service-title{
+  font-family:var(--serif);font-size:1.3rem;
+  font-weight:400;color:#fff;margin-bottom:0.75rem;line-height:1.2;
+}
+.service-body{
+  font-size:0.78rem;color:rgba(255,255,255,0.45);
+  line-height:1.8;font-weight:300;
+}
+.service-arrow{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--gold);margin-top:1.2rem;
+  opacity:0;transform:translateX(-10px);
+  transition:opacity 0.3s,transform 0.3s;
+}
+.service-item:hover .service-arrow{opacity:1;transform:translateX(0)}
+
+/* ══════════════════════════════════════════════
+   STATS COUNTERS
+══════════════════════════════════════════════ */
 #stats{
-  background:var(--cream);
+  background:var(--cream-dark);
+  padding:6rem 8rem;
   display:grid;grid-template-columns:repeat(4,1fr);
+  gap:2rem;text-align:center;
 }
-.stat{
-  padding:4rem 2.5rem;
-  border-right:1px solid rgba(19,61,32,0.1);
-  opacity:0;transform:translateY(20px);
-  text-align:center;
-}
-.stat:last-child{border-right:none}
+.stat-block{opacity:0;transform:translateY(20px)}
 .stat-num{
-  font-family:var(--serif);font-size:clamp(3rem,6vw,5rem);
-  font-weight:700;color:var(--green);line-height:1;
+  font-family:var(--serif);font-size:clamp(2.5rem,5vw,4rem);
+  font-weight:600;color:var(--green);line-height:1;
   margin-bottom:0.5rem;
 }
 .stat-label{
-  font-size:0.63rem;letter-spacing:0.2em;text-transform:uppercase;
-  color:rgba(19,61,32,0.5);font-weight:400;
+  font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--ink-muted);font-weight:400;
 }
 
-/* ─── TESTIMONIALS ───────────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════════════ */
 #testimonials{
-  background:var(--black);
-  padding:clamp(5rem,10vw,10rem) 4rem;
-  position:relative;overflow:hidden;
+  background:var(--green);
+  padding:8rem 6rem;
+  overflow:hidden;
 }
-.test-bg{
-  position:absolute;inset:0;
-  background:url('/images/tighremt/ksar-silhouette.jpg') center/cover no-repeat;
-  opacity:0.06;
+.test-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:4rem;
 }
-.test-tag{
-  font-family:var(--serif);font-style:italic;font-size:0.9rem;
-  color:rgba(255,255,255,0.45);letter-spacing:0.04em;
-  text-align:center;margin-bottom:2rem;
+.test-header h2{
+  font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.8rem);
+  font-weight:300;font-style:italic;color:#fff;
 }
-.test-h2{
-  font-family:var(--serif);
-  font-size:clamp(2.5rem,6vw,5.5rem);
-  font-weight:700;font-style:italic;
-  color:#fff;line-height:1.05;
-  text-align:center;letter-spacing:-0.03em;
-  margin-bottom:4rem;position:relative;
+.test-nav{display:flex;gap:1rem}
+.test-btn{
+  width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.2);
+  background:transparent;color:rgba(255,255,255,0.6);
+  cursor:pointer;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.25s,color 0.25s,border-color 0.25s;
 }
-.test-slider{position:relative;overflow:hidden}
+.test-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
 .test-track{
   display:flex;gap:2rem;
-  transition:transform 0.7s var(--ease);
+  transition:transform 0.65s cubic-bezier(0.16,1,0.3,1);
 }
 .test-card{
   flex:0 0 calc(50% - 1rem);
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:16px;padding:2.5rem;
+  background:rgba(255,255,255,0.05);border-radius:16px;
+  padding:2.5rem;border:1px solid rgba(255,255,255,0.08);
 }
-.test-stars{color:var(--gold);font-size:0.75rem;letter-spacing:0.2em;margin-bottom:1.2rem}
 .test-quote{
-  font-family:var(--serif);font-size:1.1rem;font-style:italic;
-  font-weight:300;color:rgba(255,255,255,0.8);line-height:1.8;
-  margin-bottom:1.8rem;
+  font-family:var(--serif);font-size:1.15rem;font-style:italic;
+  font-weight:300;color:rgba(255,255,255,0.85);line-height:1.8;
+  margin-bottom:1.5rem;
 }
-.test-author{display:flex;align-items:center;gap:0.75rem}
-.test-av{width:40px;height:40px;border-radius:50%;background:rgba(200,169,110,0.2);flex-shrink:0}
-.test-name{font-size:0.82rem;font-weight:500;color:#fff}
-.test-role{font-size:0.68rem;color:rgba(255,255,255,0.35)}
-.test-controls{
-  display:flex;justify-content:center;gap:1rem;margin-top:3rem;
-  align-items:center;
+.test-quote::before{content:'\201C';font-size:3rem;color:var(--gold);opacity:0.4;line-height:0;vertical-align:-0.6rem;margin-right:0.25rem}
+.test-author{
+  display:flex;align-items:center;gap:0.75rem;
 }
-.test-btn{
-  width:44px;height:44px;border-radius:50%;
-  border:1px solid rgba(255,255,255,0.15);
-  background:transparent;color:rgba(255,255,255,0.55);
-  cursor:pointer;font-size:1rem;display:flex;
-  align-items:center;justify-content:center;
-  transition:all 0.25s;
+.test-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--gold);opacity:0.3;flex-shrink:0;
 }
-.test-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--black)}
-.test-dots{display:flex;gap:0.5rem;align-items:center}
+.test-name{font-size:0.8rem;font-weight:500;color:#fff}
+.test-role{font-size:0.68rem;color:rgba(255,255,255,0.4)}
+.test-dots{display:flex;gap:0.5rem;justify-content:center;margin-top:3rem}
 .test-dot{
-  width:6px;height:6px;border-radius:3px;
+  width:6px;height:6px;border-radius:50%;
   background:rgba(255,255,255,0.2);cursor:pointer;
-  transition:background 0.3s,width 0.3s;
+  transition:background 0.3s,width 0.3s;border-radius:3px;
 }
 .test-dot.active{background:var(--gold);width:22px}
 
-/* ─── FAQ ────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════════ */
 #faq{
-  background:var(--white);
-  padding:clamp(5rem,10vw,10rem) 4rem;
-  display:grid;grid-template-columns:1fr 1.4fr;gap:8rem;
+  padding:8rem 8rem;background:var(--cream);
+  display:grid;grid-template-columns:1fr 1fr;gap:6rem;
 }
 .faq-left h2{
-  font-family:var(--serif);
-  font-size:clamp(2.5rem,5vw,4.5rem);
-  font-weight:700;letter-spacing:-0.04em;
-  color:var(--black);line-height:0.95;
-  margin-bottom:1.5rem;
+  font-family:var(--serif);font-size:clamp(2rem,3.5vw,3rem);
+  font-weight:300;line-height:1.2;color:var(--green);margin-bottom:1rem;
 }
-.faq-left p{font-size:0.85rem;color:var(--grey);line-height:1.8;margin-bottom:2rem}
-.faq-link{
-  display:inline-flex;align-items:center;gap:0.5rem;
+.faq-left p{
+  font-size:0.85rem;color:var(--ink-muted);line-height:1.8;max-width:320px;margin-bottom:2rem;
+}
+.faq-cta{
+  display:inline-flex;align-items:center;gap:0.6rem;
   font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--black);text-decoration:none;
-  border-bottom:1px solid rgba(0,0,0,0.2);padding-bottom:0.2rem;
+  color:var(--green);font-weight:500;text-decoration:none;
+  border-bottom:1px solid var(--green);padding-bottom:0.2rem;
 }
-.faq-items{display:flex;flex-direction:column}
-.faq-item{border-top:1px solid rgba(0,0,0,0.1);opacity:0;transform:translateX(20px)}
-.faq-item:last-child{border-bottom:1px solid rgba(0,0,0,0.1)}
-.faq-q{
+.faq-list{display:flex;flex-direction:column}
+.faq-item{
+  border-top:1px solid rgba(19,61,32,0.12);
+  opacity:0;transform:translateX(20px);
+}
+.faq-item:last-child{border-bottom:1px solid rgba(19,61,32,0.12)}
+.faq-header{
   display:flex;justify-content:space-between;align-items:center;
-  padding:1.4rem 0;cursor:pointer;user-select:none;gap:1rem;
+  padding:1.4rem 0;cursor:pointer;user-select:none;
 }
-.faq-q span{
-  font-family:var(--serif);font-size:1.05rem;
-  font-weight:400;color:var(--black);line-height:1.3;
+.faq-question{
+  font-family:var(--serif);font-size:1rem;
+  font-weight:400;color:var(--green);line-height:1.3;
+  padding-right:1rem;
 }
 .faq-icon{
   width:28px;height:28px;border-radius:50%;
-  border:1px solid rgba(0,0,0,0.15);flex-shrink:0;
+  border:1px solid rgba(19,61,32,0.2);
   display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;color:var(--black);
-  transition:transform 0.4s var(--ease),background 0.25s;
+  flex-shrink:0;
+  font-size:1.1rem;color:var(--green);
+  transition:transform 0.35s cubic-bezier(0.16,1,0.3,1),background 0.25s,border-color 0.25s;
 }
-.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--black);color:#fff;border-color:var(--black)}
-.faq-body{max-height:0;overflow:hidden;transition:max-height 0.5s var(--ease)}
-.faq-body p{font-size:0.84rem;color:var(--grey);line-height:1.85;padding-bottom:1.4rem;font-weight:300}
-.faq-line{height:1.5px;width:0;background:var(--gold);transition:width 0.5s var(--ease);margin-top:-1px}
-.faq-item.open .faq-line{width:100%}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--green);border-color:var(--green);color:#fff}
+.faq-body{max-height:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.16,1,0.3,1)}
+.faq-answer{
+  font-size:0.85rem;color:var(--ink-muted);
+  line-height:1.8;padding-bottom:1.4rem;font-weight:300;
+}
+.faq-bar{
+  width:0;height:1.5px;background:var(--gold);
+  transition:width 0.5s cubic-bezier(0.16,1,0.3,1);margin-top:-1px;
+}
+.faq-item.open .faq-bar{width:100%}
 
-/* ─── FOOTER ─────────────────────────────────────────────── */
-.footer-spacer{height:50vh;background:var(--white)}
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+#footer-reveal{
+  position:relative;
+  z-index:0;
+}
 footer{
   position:sticky;bottom:0;
-  background:var(--black);
-  padding:5rem 4rem 2.5rem;
-  z-index:1;overflow:hidden;
+  background:var(--ink);
+  padding:6rem 6rem 3rem;
+  z-index:1;
+  overflow:hidden;
 }
-.footer-cta-bg{
+.footer-bg{
   position:absolute;inset:0;
-  font-family:var(--serif);font-size:clamp(4rem,10vw,9rem);
-  font-weight:700;font-style:italic;
-  color:rgba(255,255,255,0.03);
-  display:flex;align-items:center;justify-content:center;
-  white-space:nowrap;pointer-events:none;line-height:1;
+  background:url('/images/tighremt/tighremt-panorama.jpg') center/cover no-repeat;
+  opacity:0.08;pointer-events:none;
 }
 .footer-top{
   display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;
-  gap:3rem;margin-bottom:5rem;position:relative;
+  gap:3rem;margin-bottom:5rem;
 }
 .footer-brand h3{
-  font-family:var(--serif);font-size:1.3rem;
-  font-weight:400;font-style:italic;color:#fff;margin-bottom:0.75rem;
+  font-family:var(--serif);font-size:1.4rem;
+  font-weight:400;font-style:italic;color:#fff;margin-bottom:0.5rem;
 }
 .footer-brand p{
-  font-size:0.73rem;color:rgba(255,255,255,0.35);
-  line-height:1.85;max-width:280px;margin-bottom:1.5rem;
-}
-.footer-clock{
-  font-family:var(--serif);font-size:0.78rem;
-  color:rgba(255,255,255,0.25);letter-spacing:0.06em;
-  font-style:italic;
+  font-size:0.75rem;color:rgba(255,255,255,0.4);
+  line-height:1.8;max-width:280px;margin-bottom:1.5rem;
 }
 .footer-col h4{
-  font-size:0.58rem;letter-spacing:0.24em;text-transform:uppercase;
+  font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;
   color:var(--gold);font-weight:600;margin-bottom:1.2rem;
 }
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:0.55rem}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:0.6rem}
 .footer-col li a{
-  font-size:0.77rem;color:rgba(255,255,255,0.38);
-  text-decoration:none;transition:color 0.25s;
+  font-size:0.78rem;color:rgba(255,255,255,0.45);text-decoration:none;
+  transition:color 0.25s;
 }
-.footer-col li a:hover{color:rgba(255,255,255,0.8)}
-.footer-newsletter{display:flex;gap:0.6rem;margin-top:0.5rem}
+.footer-col li a:hover{color:rgba(255,255,255,0.85)}
+.footer-clock{
+  font-family:var(--serif);font-size:0.8rem;
+  color:rgba(255,255,255,0.3);letter-spacing:0.08em;
+  margin-top:0.5rem;
+}
+.footer-newsletter{display:flex;gap:0.75rem;margin-top:0.5rem}
 .footer-newsletter input{
-  flex:1;background:rgba(255,255,255,0.05);
+  flex:1;background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.1);border-radius:2rem;
-  padding:0.6rem 1.1rem;font-size:0.72rem;
+  padding:0.6rem 1.2rem;font-size:0.75rem;
   color:#fff;font-family:var(--sans);outline:none;
   transition:border-color 0.25s;
 }
-.footer-newsletter input::placeholder{color:rgba(255,255,255,0.2)}
-.footer-newsletter input:focus{border-color:rgba(200,169,110,0.5)}
+.footer-newsletter input:focus{border-color:rgba(200,169,110,0.4)}
+.footer-newsletter input::placeholder{color:rgba(255,255,255,0.25)}
 .footer-newsletter button{
-  background:var(--gold);color:var(--black);
-  border:none;border-radius:2rem;padding:0.6rem 1.1rem;
-  font-size:0.68rem;font-weight:500;cursor:pointer;
+  background:var(--gold);color:var(--ink);
+  border:none;border-radius:2rem;padding:0.6rem 1.2rem;
+  font-size:0.7rem;font-weight:500;cursor:pointer;
   font-family:var(--sans);transition:background 0.2s;
 }
-.footer-newsletter button:hover{background:#e2c99a}
-.footer-divider{height:1px;background:rgba(255,255,255,0.07);margin-bottom:2rem;position:relative}
+.footer-newsletter button:hover{background:var(--gold-light)}
+.footer-divider{height:1px;background:rgba(255,255,255,0.08);margin-bottom:2rem}
 .footer-bottom{
   display:flex;justify-content:space-between;align-items:center;
-  position:relative;
 }
-.footer-legal{font-size:0.65rem;color:rgba(255,255,255,0.25)}
-.footer-socials{display:flex;gap:0.75rem}
+.footer-legal{font-size:0.68rem;color:rgba(255,255,255,0.3)}
+.footer-socials{display:flex;gap:1rem}
 .footer-social{
-  width:34px;height:34px;border-radius:50%;
-  border:1px solid rgba(255,255,255,0.1);
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.12);
   display:flex;align-items:center;justify-content:center;
-  font-size:0.7rem;color:rgba(255,255,255,0.35);
-  text-decoration:none;transition:all 0.25s;
+  font-size:0.75rem;color:rgba(255,255,255,0.4);
+  text-decoration:none;transition:border-color 0.25s,color 0.25s,background 0.25s;
 }
 .footer-social:hover{border-color:var(--gold);color:var(--gold)}
+.footer-cta{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none;
+  opacity:0.04;
+}
+.footer-cta-text{
+  font-family:var(--serif);font-size:clamp(3rem,8vw,7rem);
+  font-weight:700;font-style:italic;
+  color:#fff;line-height:1.1;white-space:nowrap;
+}
+
+/* ══════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════ */
+.reveal-section{margin-bottom:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
 
 @media(max-width:1024px){
   nav{padding:1.25rem 2rem}
-  .hero-split{padding:0 2rem}
-  .hero-title-left,.hero-title-right{font-size:clamp(2.5rem,6vw,4rem)}
-  #statement,.gallery-header,#who,#work,#services,#faq{padding-left:2rem;padding-right:2rem}
-  .gallery-strip{padding:0 2rem}
-  .statement-body{grid-template-columns:1fr;gap:2rem}
-  #who{grid-template-columns:1fr;padding:5rem 2rem}
-  .who-title{font-size:clamp(4rem,15vw,8rem)}
-  .services-grid{grid-template-columns:1fr 1fr}
-  #stats{grid-template-columns:repeat(2,1fr)}
-  #faq{grid-template-columns:1fr;gap:3rem;padding:5rem 2rem}
-  footer{padding:4rem 2rem 2rem}
-  .footer-top{grid-template-columns:1fr 1fr;gap:2rem}
+  #gallery{padding:5rem 2rem}
+  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .gallery-cell:nth-child(1){grid-row:unset}
+  .gallery-cell:nth-child(5){grid-column:unset}
+  #association{grid-template-columns:1fr}
+  .assoc-text{padding:4rem 3rem}
+  .assoc-image{height:400px}
+  .projects-inner{grid-template-columns:1fr}
+  .projects-sticky{position:relative;height:auto;padding:4rem 0 2rem}
+  #about{grid-template-columns:1fr;padding:6rem 3rem;gap:3rem}
+  #stats{grid-template-columns:repeat(2,1fr);padding:5rem 3rem}
+  #faq{grid-template-columns:1fr;padding:5rem 3rem;gap:3rem}
+  footer{padding:4rem 2.5rem 2rem}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2.5rem}
+  .hero-stats{display:none}
 }
 @media(max-width:600px){
-  .hero-split{flex-direction:column;text-align:center}
-  .hero-center{width:200px}
   .services-grid{grid-template-columns:1fr}
+  .service-item:nth-child(n){border-right:none}
   .test-card{flex:0 0 100%}
-  .work-item{grid-template-columns:50px 1fr auto}
 }
 </style>
 </head>
+
 <body>
 
-<!-- PRELOADER -->
-<div id="preloader">
-  <div class="pre-logo">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="50" y1="10" x2="50" y2="90" stroke="white" stroke-width="6" stroke-linecap="round"/>
-      <line x1="10" y1="50" x2="90" y2="50" stroke="white" stroke-width="6" stroke-linecap="round"/>
-      <line x1="22" y1="22" x2="78" y2="78" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
-      <line x1="78" y1="22" x2="22" y2="78" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
-    </svg>
-  </div>
-  <div class="pre-count" id="preCount">0</div>
-  <div class="pre-bar" id="preBar"></div>
-</div>
-
 <!-- CURSOR -->
-<div class="cursor-dot" id="curDot"></div>
-<div class="cursor-ring" id="curRing"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
 <!-- NAV -->
-<nav id="nav">
+<nav id="navbar">
   <a href="#" class="nav-logo">
-    Palmeraies Tighremt
-    <span>Tata · Maroc · Depuis 2010</span>
+    Association Palmeraies Tighremt
+    <span>Tata · Maroc · Loi 1901</span>
   </a>
   <ul class="nav-links">
     <li><a href="#gallery">Galerie</a></li>
-    <li><a href="#work">Projets</a></li>
-    <li><a href="#who">Association</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#about">Association</a></li>
     <li><a href="#services">Missions</a></li>
     <li><a href="#faq">FAQ</a></li>
   </ul>
@@ -695,58 +805,46 @@ footer{
 <!-- HERO -->
 <section id="hero">
   <div class="hero-bg" id="heroBg"></div>
-  <div class="hero-split">
-    <div class="hero-title-left" id="heroLeft">
-      <span class="hero-word">Agir</span><br>
-      <span class="hero-word">pour</span>
-    </div>
-    <div class="hero-center" id="heroCenter">
-      <img src="/images/tighremt/palmeraie-chemin.jpg" alt="Palmeraie de Tighremt">
-    </div>
-    <div class="hero-title-right" id="heroRight">
-      <span class="hero-word">préserver</span><br>
-      <span class="hero-word">un héritage</span>
-    </div>
-  </div>
-  <div class="hero-scroll" id="heroScroll">
-    <p>Découvrir notre engagement</p>
-    <div class="scroll-indicator"></div>
-  </div>
-</section>
+  <div class="hero-overlay"></div>
 
-<!-- MARQUEE -->
-<div id="marquee">
-  <div class="marquee-track">
-    <span class="marquee-item"><span class="marquee-dot"></span>1 200 palmiers replantés</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>120 foyers aidés / an</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>14 ans d'engagement</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>8 projets réalisés</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Province de Tata · Maroc</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Association loi 1901</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>1 200 palmiers replantés</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>120 foyers aidés / an</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>14 ans d'engagement</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>8 projets réalisés</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Province de Tata · Maroc</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Association loi 1901</span>
-  </div>
-</div>
-
-<!-- STATEMENT -->
-<section id="statement">
-  <div class="statement-inner">
-    <p class="statement-tag">Notre mission</p>
-    <h2 class="statement-h2" id="stmtH2">Sauvegarder<br>la palmeraie,<br><em>ensemble</em></h2>
-    <div class="statement-body">
-      <p class="statement-text" id="stmtText">
-        Fondée en 2010 sous la loi 1901, l'Association Palmeraies Tighremt œuvre pour la sauvegarde de l'oasis de Tighremt dans la province de Tata, au Maroc. Face à la désertification, à l'exode rural et à la dégradation du patrimoine ancestral, nous agissons concrètement — replantation, irrigation, éducation et solidarité.
-      </p>
-      <div>
-        <a href="https://palmeraies-tighremt-tata.vercel.app/mission" class="statement-cta" id="stmtCta">
-          Découvrir notre mission →
-        </a>
+  <!-- Slot-machine counters -->
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="slot-number" id="slot1">
+        <!-- injected by JS -->
       </div>
+      <div class="hero-stat-label">palmiers replantés</div>
     </div>
+    <div class="hero-stat">
+      <div class="slot-number" id="slot2"></div>
+      <div class="hero-stat-label">foyers aidés / an</div>
+    </div>
+    <div class="hero-stat">
+      <div class="slot-number" id="slot3"></div>
+      <div class="hero-stat-label">années d'engagement</div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="hero-content">
+    <p class="hero-eyebrow" id="heroEyebrow">
+      <span></span>
+      Association Palmeraies Tighremt
+      <span></span>
+    </p>
+    <h1 class="hero-title" id="heroTitle">Agir pour préserver un héritage vivant</h1>
+    <p class="hero-sub" id="heroSub">
+      <span class="scroll-line"></span>
+      Découvrir notre engagement
+      <span class="scroll-line"></span>
+    </p>
+  </div>
+
+  <!-- Bottom buttons -->
+  <div class="hero-bottom" id="heroBottom">
+    <a href="#about" class="hero-btn">En savoir plus →</a>
+    <a href="https://palmeraies-tighremt-tata.vercel.app" class="hero-btn hero-btn-primary">Visiter le site</a>
+    <a href="#gallery" class="hero-btn">Galerie →</a>
   </div>
 </section>
 
@@ -754,120 +852,329 @@ footer{
 <section id="gallery">
   <div class="gallery-header">
     <h2>Tighremt en images</h2>
-    <p>La palmeraie, le ksar ancestral et la vie du douar à travers nos photos.</p>
+    <p>La palmeraie, le ksar ancestral et la vie du douar à travers l'objectif de nos bénévoles.</p>
   </div>
-  <div class="gallery-strip" id="galleryStrip">
-    <div class="g-cell"><img src="/images/tighremt/palmeraie-panorama.jpg" alt="Palmeraie — vue panoramique"><div class="g-cell-overlay"></div><span class="g-cell-caption">Palmeraie — vue panoramique</span></div>
-    <div class="g-cell"><img src="/images/tighremt/minaret.jpg" alt="Minaret de Tighremt"><div class="g-cell-overlay"></div><span class="g-cell-caption">Minaret de Tighremt</span></div>
-    <div class="g-cell"><img src="/images/tighremt/dattes.jpg" alt="Dattes de la palmeraie"><div class="g-cell-overlay"></div><span class="g-cell-caption">Dattes de la palmeraie</span></div>
-    <div class="g-cell"><img src="/images/tighremt/ksar-silhouette.jpg" alt="Ksar ancestral"><div class="g-cell-overlay"></div><span class="g-cell-caption">Ksar ancestral</span></div>
-    <div class="g-cell"><img src="/images/tighremt/palmeraie-chemin.jpg" alt="Chemin entre les palmiers"><div class="g-cell-overlay"></div><span class="g-cell-caption">Chemin entre les palmiers</span></div>
-    <div class="g-cell"><img src="/images/tighremt/route-tighremt.jpg" alt="Route vers Tighremt"><div class="g-cell-overlay"></div><span class="g-cell-caption">Route vers Tighremt</span></div>
-    <div class="g-cell"><img src="/images/tighremt/tighremt-panorama.jpg" alt="Village de Tighremt"><div class="g-cell-overlay"></div><span class="g-cell-caption">Village de Tighremt</span></div>
-    <div class="g-cell"><img src="/images/tighremt/palmeraie-sol.jpg" alt="Sol irrigué"><div class="g-cell-overlay"></div><span class="g-cell-caption">Sol irrigué de la palmeraie</span></div>
+  <div class="gallery-grid">
+    <div class="gallery-cell" data-speed="0.85">
+      <img src="/images/tighremt/palmeraie-panorama.jpg" alt="Vue panoramique de la palmeraie">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Palmeraie — vue panoramique</span>
+    </div>
+    <div class="gallery-cell" data-speed="1.05">
+      <img src="/images/tighremt/minaret.jpg" alt="Mosquée de Tighremt">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Minaret de Tighremt</span>
+    </div>
+    <div class="gallery-cell" data-speed="0.95">
+      <img src="/images/tighremt/dattes.jpg" alt="Dattes de Tighremt">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Dattes de la palmeraie</span>
+    </div>
+    <div class="gallery-cell" data-speed="1.1">
+      <img src="/images/tighremt/ksar-silhouette.jpg" alt="Ksar ancestral">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Ksar ancestral</span>
+    </div>
+    <div class="gallery-cell" data-speed="0.9">
+      <img src="/images/tighremt/palmeraie-chemin.jpg" alt="Chemin de la palmeraie">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Chemin entre les palmiers</span>
+    </div>
+    <div class="gallery-cell" data-speed="1.0">
+      <img src="/images/tighremt/route-tighremt.jpg" alt="Route du sud">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Route vers Tighremt</span>
+    </div>
+    <div class="gallery-cell" data-speed="0.92">
+      <img src="/images/tighremt/tighremt-panorama.jpg" alt="Village de Tighremt">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Village de Tighremt</span>
+    </div>
+    <div class="gallery-cell" data-speed="1.08">
+      <img src="/images/tighremt/palmeraie-sol.jpg" alt="Sol de la palmeraie">
+      <div class="gallery-overlay"></div>
+      <span class="gallery-caption">Sol irrigué de la palmeraie</span>
+    </div>
+  </div>
+</section>
+
+<!-- ASSOCIATION -->
+<section id="association">
+  <div class="assoc-text">
+    <p class="assoc-eyebrow">Notre histoire</p>
+    <h2 class="assoc-title" id="assocTitle">Une association ancrée dans la réalité du terrain depuis 2010</h2>
+    <p class="assoc-body" id="assocBody">
+      Fondée en France sous la loi 1901, l'Association Palmeraies Tighremt œuvre pour la sauvegarde de la palmeraie de Tighremt, dans la province de Tata au Maroc. Face à la désertification, à l'exode rural et à la dégradation du patrimoine, nous agissons concrètement : replantation, irrigation, éducation, solidarité et préservation de la mémoire collective.
+    </p>
+    <a href="https://palmeraies-tighremt-tata.vercel.app/mission" class="assoc-cta" id="assocCta">
+      Découvrir notre mission →
+    </a>
+  </div>
+  <div class="assoc-image">
+    <img src="/images/tighremt/ksar-silhouette.jpg" alt="Ksar de Tighremt" id="assocImg">
+    <div class="assoc-badge" id="assocBadge">Association Palmeraies Tighremt · Depuis 2010</div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="projects-inner">
+    <div class="projects-sticky">
+      <p class="projects-sticky-eyebrow">Nos réalisations</p>
+      <h2 class="projects-sticky-title">6 projets,<br>un seul objectif</h2>
+      <div class="projects-counter" id="projCounter">
+        <div class="projects-counter-inner" id="projCounterInner">
+          <div class="projects-counter-item">01</div>
+          <div class="projects-counter-item">02</div>
+          <div class="projects-counter-item">03</div>
+          <div class="projects-counter-item">04</div>
+          <div class="projects-counter-item">05</div>
+          <div class="projects-counter-item">06</div>
+        </div>
+      </div>
+      <a href="https://palmeraies-tighremt-tata.vercel.app/projets" class="projects-link">
+        Voir tous les projets →
+      </a>
+    </div>
+
+    <div class="projects-list">
+      <div class="project-card" data-idx="0">
+        <img src="/images/tighremt/palmeraie-panorama.jpg" alt="Palmeraie">
+        <div class="project-card-overlay"></div>
+        <div class="project-card-content">
+          <p class="project-cat">Environnement · 2022 – présent</p>
+          <h3 class="project-title">Restauration de la Palmeraie</h3>
+          <div class="project-tags">
+            <span class="project-tag">1 200 palmiers</span>
+            <span class="project-tag">4 ha</span>
+            <span class="project-tag">18 familles</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-idx="1">
+        <img src="/images/tighremt/palmeraie-chemin.jpg" alt="Crèches">
+        <div class="project-card-overlay"></div>
+        <div class="project-card-content">
+          <p class="project-cat">Éducation · En cours</p>
+          <h3 class="project-title">Rénovation des crèches de Tighremt</h3>
+          <div class="project-tags">
+            <span class="project-tag">2 crèches</span>
+            <span class="project-tag">80+ enfants</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-idx="2">
+        <img src="/images/tighremt/route-tighremt.jpg" alt="Pont">
+        <div class="project-card-overlay"></div>
+        <div class="project-card-content">
+          <p class="project-cat">Infrastructure · 2010</p>
+          <h3 class="project-title">Consolidation du pont de Tighremt</h3>
+          <div class="project-tags">
+            <span class="project-tag">4 piliers</span>
+            <span class="project-tag">Accès rétabli 100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-idx="3">
+        <img src="/images/tighremt/palmeraie-sol.jpg" alt="Désertification">
+        <div class="project-card-overlay"></div>
+        <div class="project-card-content">
+          <p class="project-cat">Environnement · 2023 – présent</p>
+          <h3 class="project-title">Lutte contre la désertification</h3>
+          <div class="project-tags">
+            <span class="project-tag">800 m de haies</span>
+            <span class="project-tag">2 500 tamaris</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-idx="4">
+        <img src="/images/tighremt/dattes.jpg" alt="Distribution alimentaire">
+        <div class="project-card-overlay"></div>
+        <div class="project-card-content">
+          <p class="project-cat">Humanitaire · 2020 – présent</p>
+          <h3 class="project-title">Distribution alimentaire</h3>
+          <div class="project-tags">
+            <span class="project-tag">120 foyers</span>
+            <span class="project-tag">3 tonnes / an</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-idx="5">
+        <img src="/images/tighremt/ksar-silhouette.jpg" alt="Patrimoine">
+        <div class="project-card-overlay"></div>
+        <div class="project-card-content">
+          <p class="project-cat">Patrimoine · 2024 – présent</p>
+          <h3 class="project-title">Patrimoine culturel & Mémoire</h3>
+          <div class="project-tags">
+            <span class="project-tag">40+ sites</span>
+            <span class="project-tag">200h enregistrées</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- WHO WE ARE -->
-<section id="who">
-  <div class="who-title">
-    <span id="whoW1">qui</span><br>
-    <span id="whoW2">nous</span><br>
-    <span id="whoW3">sommes</span>
+<section id="about">
+  <div class="about-images">
+    <div class="about-img" data-speed="0.9">
+      <img src="/images/tighremt/palmeraie-panorama.jpg" alt="Palmeraie">
+    </div>
+    <div class="about-img" data-speed="1.05">
+      <img src="/images/tighremt/minaret.jpg" alt="Minaret">
+    </div>
+    <div class="about-img" data-speed="0.95">
+      <img src="/images/tighremt/tighremt-panorama.jpg" alt="Village">
+    </div>
   </div>
-  <div class="who-content" id="whoContent">
-    <p class="who-tag">L'association</p>
-    <p class="who-body">
-      Notre association réunit des membres de la diaspora marocaine établis en France et des habitants du douar de Tighremt. Ensemble, nous identifions les besoins prioritaires, levons des fonds et coordonnons les interventions sur le terrain. Chaque don est tracé, chaque projet documenté, chaque résultat partagé avec transparence totale.
+  <div class="about-text" id="aboutText">
+    <p class="about-eyebrow">Qui sommes-nous</p>
+    <h2 class="about-title" id="aboutTitle">Bénévoles engagés pour un territoire oublié</h2>
+    <p class="about-body">
+      Notre association réunit des membres de la diaspora marocaine installés en France et des habitants du douar. Ensemble, nous identifions les besoins prioritaires, levons des fonds et coordonnons les interventions. Chaque don est tracé, chaque projet documenté, chaque résultat partagé avec transparence.
     </p>
-    <a href="https://palmeraies-tighremt-tata.vercel.app/mission" class="who-cta">Découvrir notre étincelle →</a>
-  </div>
-</section>
-
-<!-- FEATURED WORK -->
-<section id="work">
-  <div class="work-header">
-    <h2>Nos projets phares</h2>
-    <a href="https://palmeraies-tighremt-tata.vercel.app/projets">Voir tous les projets →</a>
-  </div>
-  <div class="work-list">
-    <div class="work-item">
-      <span class="work-num">01</span>
-      <div class="work-info"><h3>Restauration de la Palmeraie</h3><span class="work-cat">Environnement · 2022 – présent</span></div>
-      <div class="work-thumb"><img src="/images/tighremt/palmeraie-panorama.jpg" alt="Palmeraie"></div>
-    </div>
-    <div class="work-item">
-      <span class="work-num">02</span>
-      <div class="work-info"><h3>Rénovation des crèches</h3><span class="work-cat">Éducation · En cours</span></div>
-      <div class="work-thumb"><img src="/images/tighremt/palmeraie-chemin.jpg" alt="Crèches"></div>
-    </div>
-    <div class="work-item">
-      <span class="work-num">03</span>
-      <div class="work-info"><h3>Consolidation du pont</h3><span class="work-cat">Infrastructure · 2010</span></div>
-      <div class="work-thumb"><img src="/images/tighremt/route-tighremt.jpg" alt="Pont"></div>
-    </div>
-    <div class="work-item">
-      <span class="work-num">04</span>
-      <div class="work-info"><h3>Lutte contre la désertification</h3><span class="work-cat">Environnement · 2023 – présent</span></div>
-      <div class="work-thumb"><img src="/images/tighremt/palmeraie-sol.jpg" alt="Désertification"></div>
-    </div>
-    <div class="work-item">
-      <span class="work-num">05</span>
-      <div class="work-info"><h3>Distribution alimentaire</h3><span class="work-cat">Humanitaire · 2020 – présent</span></div>
-      <div class="work-thumb"><img src="/images/tighremt/dattes.jpg" alt="Distribution"></div>
-    </div>
-    <div class="work-item">
-      <span class="work-num">06</span>
-      <div class="work-info"><h3>Patrimoine culturel & Mémoire</h3><span class="work-cat">Patrimoine · 2024 – présent</span></div>
-      <div class="work-thumb"><img src="/images/tighremt/ksar-silhouette.jpg" alt="Patrimoine"></div>
-    </div>
+    <a href="https://palmeraies-tighremt-tata.vercel.app/mission" class="about-cta">
+      Découvrir notre étincelle →
+    </a>
   </div>
 </section>
 
 <!-- SERVICES -->
 <section id="services">
-  <p class="services-eyebrow">Nos domaines d'action</p>
-  <h2 class="services-h2" id="svcH2">6 missions,<br><em>un seul territoire</em></h2>
+  <div class="services-header">
+    <h2>Nos 6 domaines d'intervention</h2>
+    <p>De la racine des palmiers aux mains des enfants — nos missions couvrent tous les aspects du développement durable de Tighremt.</p>
+  </div>
   <div class="services-grid">
-    <div class="svc"><p class="svc-num">01</p><h3 class="svc-title">Environnement</h3><p class="svc-body">Replantation de palmiers, fixation des dunes, haies brise-vent et lutte active contre la désertification de l'oasis de Tighremt.</p></div>
-    <div class="svc"><p class="svc-num">02</p><h3 class="svc-title">Éducation</h3><p class="svc-body">Rénovation de crèches, équipement informatique, bibliothèques et soutien à l'enseignement préscolaire dans le douar.</p></div>
-    <div class="svc"><p class="svc-num">03</p><h3 class="svc-title">Infrastructure</h3><p class="svc-body">Consolidation du pont, construction de vestiaires sportifs, réhabilitation des pistes et voies d'accès essentielles.</p></div>
-    <div class="svc"><p class="svc-num">04</p><h3 class="svc-title">Humanitaire</h3><p class="svc-body">Distributions alimentaires saisonnières, couvertures hivernales et aide d'urgence aux foyers les plus vulnérables.</p></div>
-    <div class="svc"><p class="svc-num">05</p><h3 class="svc-title">Patrimoine</h3><p class="svc-body">Inventaire numérique des ksour, transmission des savoirs amazighs et restauration du grenier collectif ancestral.</p></div>
-    <div class="svc"><p class="svc-num">06</p><h3 class="svc-title">Eau</h3><p class="svc-body">Remise en état des seguias (canaux d'irrigation), suivi de la nappe phréatique et sensibilisation à l'économie d'eau.</p></div>
+    <div class="service-item">
+      <div class="service-num">01</div>
+      <div class="service-icon">🌴</div>
+      <h3 class="service-title">Environnement</h3>
+      <p class="service-body">Replantation de palmiers, fixation des dunes, haies brise-vent et lutte active contre la désertification de l'oasis.</p>
+      <span class="service-arrow">Explorer →</span>
+    </div>
+    <div class="service-item">
+      <div class="service-num">02</div>
+      <div class="service-icon">📚</div>
+      <h3 class="service-title">Éducation</h3>
+      <p class="service-body">Rénovation de crèches, équipement informatique, bibliothèques et soutien à l'enseignement préscolaire.</p>
+      <span class="service-arrow">Explorer →</span>
+    </div>
+    <div class="service-item">
+      <div class="service-num">03</div>
+      <div class="service-icon">🏗️</div>
+      <h3 class="service-title">Infrastructure</h3>
+      <p class="service-body">Consolidation du pont, construction de vestiaires sportifs, réhabilitation des pistes et voies d'accès.</p>
+      <span class="service-arrow">Explorer →</span>
+    </div>
+    <div class="service-item">
+      <div class="service-num">04</div>
+      <div class="service-icon">🤝</div>
+      <h3 class="service-title">Humanitaire</h3>
+      <p class="service-body">Distributions alimentaires saisonnières, couvertures hivernales et aide d'urgence aux foyers vulnérables.</p>
+      <span class="service-arrow">Explorer →</span>
+    </div>
+    <div class="service-item">
+      <div class="service-num">05</div>
+      <div class="service-icon">🏛️</div>
+      <h3 class="service-title">Patrimoine</h3>
+      <p class="service-body">Inventaire numérique des ksour, transmission des savoirs amazighs et restauration du grenier collectif.</p>
+      <span class="service-arrow">Explorer →</span>
+    </div>
+    <div class="service-item">
+      <div class="service-num">06</div>
+      <div class="service-icon">💧</div>
+      <h3 class="service-title">Eau</h3>
+      <p class="service-body">Remise en état des canaux d'irrigation (seguias), suivi de la nappe phréatique et sensibilisation à l'économie d'eau.</p>
+      <span class="service-arrow">Explorer →</span>
+    </div>
   </div>
 </section>
 
 <!-- STATS -->
 <section id="stats">
-  <div class="stat"><div class="stat-num" data-target="1200">0</div><div class="stat-label">palmiers replantés</div></div>
-  <div class="stat"><div class="stat-num" data-target="120">0</div><div class="stat-label">foyers aidés / an</div></div>
-  <div class="stat"><div class="stat-num" data-target="14">0</div><div class="stat-label">années d'engagement</div></div>
-  <div class="stat"><div class="stat-num" data-target="8">0</div><div class="stat-label">projets réalisés</div></div>
+  <div class="stat-block">
+    <div class="stat-num" data-target="1200">0</div>
+    <div class="stat-label">palmiers replantés</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-num" data-target="120">0</div>
+    <div class="stat-label">foyers aidés / an</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-num" data-target="14">0</div>
+    <div class="stat-label">années d'engagement</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-num" data-target="8">0</div>
+    <div class="stat-label">projets réalisés</div>
+  </div>
 </section>
 
 <!-- TESTIMONIALS -->
 <section id="testimonials">
-  <div class="test-bg"></div>
-  <p class="test-tag">Témoignages</p>
-  <h2 class="test-h2" id="testH2">Quelques mots<br>de nos bénéficiaires</h2>
-  <div class="test-slider">
-    <div class="test-track" id="testTrack">
-      <div class="test-card"><p class="test-stars">★★★★★</p><p class="test-quote">Grâce à l'association, mes enfants ont enfin une crèche digne. Ce que ces bénévoles accomplissent depuis la France pour notre douar est une véritable bénédiction.</p><div class="test-author"><div class="test-av"></div><div><div class="test-name">Fatima A.</div><div class="test-role">Habitante de Tighremt</div></div></div></div>
-      <div class="test-card"><p class="test-stars">★★★★★</p><p class="test-quote">La palmeraie retrouve son visage d'autrefois. Chaque palmier replanté, c'est un peu de notre mémoire collective qui renaît et qui résiste au désert.</p><div class="test-author"><div class="test-av"></div><div><div class="test-name">Mohamed B.</div><div class="test-role">Agriculteur, Douar Tighremt</div></div></div></div>
-      <div class="test-card"><p class="test-stars">★★★★★</p><p class="test-quote">Le pont consolidé, c'est le lien vital avec le reste du monde. Avant, les crues nous coupaient du village pendant des semaines entières.</p><div class="test-author"><div class="test-av"></div><div><div class="test-name">Ahmed K.</div><div class="test-role">Chef de famille, Province de Tata</div></div></div></div>
-      <div class="test-card"><p class="test-stars">★★★★★</p><p class="test-quote">La distribution alimentaire du Ramadan nous a soulagés dans les moments les plus difficiles. Cette solidarité transcende toutes les frontières.</p><div class="test-author"><div class="test-av"></div><div><div class="test-name">Khadija M.</div><div class="test-role">Bénéficiaire, Douar Tighremt</div></div></div></div>
+  <div class="test-header">
+    <h2>Ce que disent les bénéficiaires</h2>
+    <div class="test-nav">
+      <button class="test-btn" id="testPrev">&#8592;</button>
+      <button class="test-btn" id="testNext">&#8594;</button>
     </div>
   </div>
-  <div class="test-controls">
-    <button class="test-btn" id="tPrev">&#8592;</button>
-    <div class="test-dots">
-      <div class="test-dot active" data-i="0"></div>
-      <div class="test-dot" data-i="1"></div>
-      <div class="test-dot" data-i="2"></div>
-      <div class="test-dot" data-i="3"></div>
+  <div style="overflow:hidden">
+    <div class="test-track" id="testTrack">
+      <div class="test-card">
+        <p class="test-quote">Grâce à l'association, mes enfants ont enfin une crèche digne. Ce que ces bénévoles accomplissent depuis la France pour notre douar est une bénédiction.</p>
+        <div class="test-author">
+          <div class="test-avatar"></div>
+          <div>
+            <div class="test-name">Fatima A.</div>
+            <div class="test-role">Habitante de Tighremt, mère de 3 enfants</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card">
+        <p class="test-quote">La palmeraie retrouve son visage d'autrefois. Chaque palmier replanté, c'est un peu de notre mémoire collective qui renaît.</p>
+        <div class="test-author">
+          <div class="test-avatar"></div>
+          <div>
+            <div class="test-name">Mohamed B.</div>
+            <div class="test-role">Agriculteur, Douar Tighremt</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card">
+        <p class="test-quote">Le pont consolidé, c'est le lien vital avec le reste du monde. Avant, les crues nous coupaient du village pendant des semaines.</p>
+        <div class="test-author">
+          <div class="test-avatar"></div>
+          <div>
+            <div class="test-name">Ahmed K.</div>
+            <div class="test-role">Chef de famille, Province de Tata</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card">
+        <p class="test-quote">La distribution alimentaire du Ramadan nous a soulagés dans les moments les plus difficiles. Cette solidarité transcende les frontières.</p>
+        <div class="test-author">
+          <div class="test-avatar"></div>
+          <div>
+            <div class="test-name">Khadija M.</div>
+            <div class="test-role">Bénéficiaire, Douar Tighremt</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <button class="test-btn" id="tNext">&#8594;</button>
+  </div>
+  <div class="test-dots">
+    <div class="test-dot active" data-i="0"></div>
+    <div class="test-dot" data-i="1"></div>
+    <div class="test-dot" data-i="2"></div>
+    <div class="test-dot" data-i="3"></div>
   </div>
 </section>
 
@@ -875,248 +1182,430 @@ footer{
 <section id="faq">
   <div class="faq-left">
     <h2>Questions fréquentes</h2>
-    <p>Tout ce que vous souhaitez savoir sur nos dons, projets et fonctionnement.</p>
-    <a href="https://palmeraies-tighremt-tata.vercel.app/contact" class="faq-link">Nous contacter →</a>
+    <p>Tout ce que vous souhaitez savoir sur nos projets, nos dons et notre fonctionnement.</p>
+    <a href="https://palmeraies-tighremt-tata.vercel.app/contact" class="faq-cta">Nous contacter →</a>
   </div>
-  <div class="faq-items">
-    <div class="faq-item"><div class="faq-line"></div><div class="faq-q"><span>Comment faire un don — est-il déductible ?</span><div class="faq-icon">+</div></div><div class="faq-body"><p>Vous pouvez faire un don en ligne via notre page dédiée. En tant qu'association loi 1901 d'intérêt général, vos dons ouvrent droit à une réduction d'impôt de 66 % du montant versé. Un reçu fiscal vous est adressé après chaque don.</p></div></div>
-    <div class="faq-item"><div class="faq-line"></div><div class="faq-q"><span>Comment les fonds sont-ils utilisés et contrôlés ?</span><div class="faq-icon">+</div></div><div class="faq-body"><p>100 % des dons vont directement aux projets terrain. L'association publie un rapport financier annuel. Chaque projet fait l'objet d'un suivi photographique complet. Nos comptes sont tenus par un trésorier bénévole et vérifiés régulièrement.</p></div></div>
-    <div class="faq-item"><div class="faq-line"></div><div class="faq-q"><span>Peut-on devenir bénévole ou participer aux missions ?</span><div class="faq-icon">+</div></div><div class="faq-body"><p>Oui ! Que vous soyez en France ou au Maroc, vous pouvez contribuer : collecte de fonds, organisation d'événements, missions terrain, compétences numériques ou communication. Contactez-nous via le formulaire.</p></div></div>
-    <div class="faq-item"><div class="faq-line"></div><div class="faq-q"><span>Quels sont les projets prioritaires pour 2025 ?</span><div class="faq-icon">+</div></div><div class="faq-body"><p>Nos trois chantiers prioritaires : (1) finalisation de la rénovation des deux crèches, (2) deuxième phase du programme de replantation avec 300 nouveaux palmiers, (3) clôture d'un second cimetière pour protéger les sépultures.</p></div></div>
-    <div class="faq-item"><div class="faq-line"></div><div class="faq-q"><span>Quel lien avec la communauté locale de Tighremt ?</span><div class="faq-icon">+</div></div><div class="faq-body"><p>L'association travaille en étroite collaboration avec les élus locaux et les familles du douar. Chaque projet est validé avec les bénéficiaires, la main-d'œuvre est locale autant que possible.</p></div></div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-bar"></div>
+      <div class="faq-header">
+        <span class="faq-question">Comment faire un don et est-il déductible des impôts ?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-body">
+        <p class="faq-answer">Vous pouvez faire un don en ligne via notre page dédiée. En tant qu'association loi 1901 d'intérêt général, vos dons ouvrent droit à une réduction d'impôt de 66 % du montant versé (dans la limite de 20 % du revenu imposable). Un reçu fiscal vous est adressé après chaque don.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-bar"></div>
+      <div class="faq-header">
+        <span class="faq-question">Comment les fonds sont-ils utilisés et contrôlés ?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-body">
+        <p class="faq-answer">100 % des dons vont directement aux projets terrain. L'association publie un rapport financier annuel présenté en assemblée générale. Chaque projet fait l'objet d'un suivi photographique et documenté. Nos comptes sont tenus par un trésorier bénévole et vérifiés régulièrement.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-bar"></div>
+      <div class="faq-header">
+        <span class="faq-question">Peut-on devenir bénévole ou participer aux missions ?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-body">
+        <p class="faq-answer">Oui ! Que vous soyez en France ou au Maroc, il existe des façons de contribuer : collecte de fonds, organisation d'événements, missions terrain, compétences numériques, communication… Contactez-nous via le formulaire de contact pour nous rejoindre.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-bar"></div>
+      <div class="faq-header">
+        <span class="faq-question">Quels sont les projets prioritaires pour 2025 ?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-body">
+        <p class="faq-answer">Nos trois chantiers prioritaires sont : (1) la finalisation de la rénovation des deux crèches avec leur équipement informatique, (2) la deuxième phase du programme de replantation de la palmeraie avec 300 nouveaux palmiers, et (3) la clôture d'un second cimetière pour protéger les sépultures.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-bar"></div>
+      <div class="faq-header">
+        <span class="faq-question">Quel lien avec la communauté locale de Tighremt ?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-body">
+        <p class="faq-answer">L'association travaille en étroite collaboration avec les élus locaux, les habitants et les familles du douar. Chaque projet est validé avec les bénéficiaires, la main-d'œuvre est locale autant que possible, et les familles sont associées aux décisions via des réunions de quartier régulières.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- FOOTER -->
-<div class="footer-spacer"></div>
-<footer>
-  <div class="footer-cta-bg">Ensemble pour Tighremt</div>
-  <div class="footer-top">
-    <div class="footer-brand">
-      <h3>Association Palmeraies Tighremt</h3>
-      <p>Loi 1901 · Fondée en 2010 · Province de Tata, Maroc. Sauvegarde de la palmeraie et développement humain du douar de Tighremt.</p>
-      <div class="footer-clock" id="footerClock">Tata, Maroc · GMT+1 — 00:00:00</div>
+<!-- FOOTER REVEAL WRAPPER -->
+<div id="footer-reveal">
+  <div style="height:40vh;background:var(--cream)"></div>
+  <footer>
+    <div class="footer-bg"></div>
+    <div class="footer-cta">
+      <p class="footer-cta-text">Ensemble pour Tighremt</p>
     </div>
-    <div class="footer-col"><h4>Navigation</h4><ul><li><a href="https://palmeraies-tighremt-tata.vercel.app/">Accueil</a></li><li><a href="https://palmeraies-tighremt-tata.vercel.app/mission">Mission</a></li><li><a href="https://palmeraies-tighremt-tata.vercel.app/projets">Projets</a></li><li><a href="https://palmeraies-tighremt-tata.vercel.app/galerie">Galerie</a></li><li><a href="https://palmeraies-tighremt-tata.vercel.app/actualites">Actualités</a></li></ul></div>
-    <div class="footer-col"><h4>Agir</h4><ul><li><a href="https://palmeraies-tighremt-tata.vercel.app/don">Faire un don</a></li><li><a href="https://palmeraies-tighremt-tata.vercel.app/contact">Devenir bénévole</a></li><li><a href="https://palmeraies-tighremt-tata.vercel.app/contact">Nous contacter</a></li></ul><div style="margin-top:1.5rem"><h4>Newsletter</h4><div class="footer-newsletter"><input type="email" placeholder="Votre email"><button>→</button></div></div></div>
-    <div class="footer-col"><h4>Contact</h4><ul><li><a href="mailto:palmeraies.tighremt.tata@gmail.com">palmeraies.tighremt<br>.tata@gmail.com</a></li><li><a href="#">Tata · Maroc</a></li></ul></div>
-  </div>
-  <div class="footer-divider"></div>
-  <div class="footer-bottom">
-    <p class="footer-legal">© 2025 Association Palmeraies Tighremt · Tous droits réservés</p>
-    <div class="footer-socials">
-      <a href="#" class="footer-social">f</a>
-      <a href="#" class="footer-social">in</a>
-      <a href="#" class="footer-social">ig</a>
-    </div>
-  </div>
-</footer>
 
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h3>Association Palmeraies Tighremt</h3>
+        <p>Loi 1901 · Fondée en 2010 · Province de Tata, Maroc. Œuvrer pour la sauvegarde de la palmeraie et le développement humain du douar de Tighremt.</p>
+        <div class="footer-clock" id="footerClock">GMT+1 — 00:00:00</div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/">Accueil</a></li>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/mission">Mission</a></li>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/projets">Projets</a></li>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/galerie">Galerie</a></li>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/actualites">Actualités</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Agir</h4>
+        <ul>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/don">Faire un don</a></li>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/contact">Devenir bénévole</a></li>
+          <li><a href="https://palmeraies-tighremt-tata.vercel.app/contact">Nous contacter</a></li>
+        </ul>
+        <div style="margin-top:1.5rem">
+          <h4>Newsletter</h4>
+          <div class="footer-newsletter">
+            <input type="email" placeholder="Votre email">
+            <button>→</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:palmeraies.tighremt.tata@gmail.com">palmeraies.tighremt<br>.tata@gmail.com</a></li>
+          <li><a href="#">Tata · Maroc</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <p class="footer-legal">© 2024 Association Palmeraies Tighremt · Tous droits réservés</p>
+      <div class="footer-socials">
+        <a href="#" class="footer-social">f</a>
+        <a href="#" class="footer-social">in</a>
+        <a href="#" class="footer-social">ig</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
 <script>
+/* ── SMOOTH SCROLL (native fallback) ────────── */
+gsap.ticker.lagSmoothing(0);
+
+/* ── GSAP SETUP ──────────────────────────────── */
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ limitCallbacks: true });
 
-/* ── 1. PRELOADER ─────────────────────────────── */
-const preloader = document.getElementById('preloader');
-const preCount  = document.getElementById('preCount');
-const preBar    = document.getElementById('preBar');
-let count = 0;
-const countInterval = setInterval(() => {
-  count += Math.ceil(Math.random() * 18);
-  if (count >= 100) { count = 100; clearInterval(countInterval); }
-  preCount.textContent = count;
-  preBar.style.width = count + '%';
-  if (count === 100) {
-    setTimeout(() => {
-      gsap.to(preloader, {
-        yPercent: -100, duration: 1.1, ease: 'power3.inOut',
-        onComplete: () => { preloader.style.display = 'none'; initPage(); }
-      });
-    }, 400);
-  }
-}, 40);
-
-/* ── 2. CURSOR ────────────────────────────────── */
-const dot  = document.getElementById('curDot');
-const ring = document.getElementById('curRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-function tickCursor() {
-  dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
-  rx += (mx - rx) * 0.10; ry += (my - ry) * 0.10;
-  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-  requestAnimationFrame(tickCursor);
-}
-tickCursor();
-document.querySelectorAll('a,button,.g-cell,.work-item,.svc,.faq-q').forEach(el => {
-  el.addEventListener('mouseenter', () => { dot.style.transform = 'translate(-50%,-50%) scale(2.5)'; ring.style.width = '60px'; ring.style.height = '60px'; ring.style.borderColor = 'rgba(200,169,110,0.7)'; });
-  el.addEventListener('mouseleave', () => { dot.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.width = '40px'; ring.style.height = '40px'; ring.style.borderColor = 'rgba(200,169,110,0.45)'; });
+/* ── CUSTOM CURSOR ───────────────────────────── */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx = 0, my = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+gsap.ticker.add(() => {
+  const rx = parseFloat(cursorRing.style.left) || 0;
+  const ry = parseFloat(cursorRing.style.top) || 0;
+  cursorRing.style.left = gsap.utils.interpolate(rx, mx, 0.12) + 'px';
+  cursorRing.style.top = gsap.utils.interpolate(ry, my, 0.12) + 'px';
+});
+document.querySelectorAll('a,button,.gallery-cell,.project-card,.service-item,.faq-header').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '16px'; cursor.style.height = '16px';
+    cursorRing.style.width = '56px'; cursorRing.style.height = '56px';
+    cursorRing.style.borderColor = 'rgba(200,169,110,0.8)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '8px'; cursor.style.height = '8px';
+    cursorRing.style.width = '36px'; cursorRing.style.height = '36px';
+    cursorRing.style.borderColor = 'rgba(200,169,110,0.5)';
+  });
 });
 
-/* ── 3. SCROLLTRIGGER INIT ────────────────────── */
-function initPage() {
-  initHero();
-  initGallery();
-  initStatement();
-  initWho();
-  initWork();
-  initServices();
-  initStats();
-  initTestimonials();
-  initFAQ();
-  initClock();
-  ScrollTrigger.refresh();
-}
+/* ── SLOT MACHINE COUNTER ────────────────────── */
+function buildSlot(containerId, digits, sep) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  const digitStr = String(digits);
+  const chars = sep ? digitStr.replace(/(\d)(?=(\d{3})+$)/g, '$1' + sep) : digitStr;
 
-/* ── 4. HERO ──────────────────────────────────── */
-function initHero() {
-  const words = document.querySelectorAll('.hero-word');
-  const tl = gsap.timeline({ delay: 0.1 });
-  tl.to(words, { y: '0%', duration: 1.1, ease: 'power3.out', stagger: 0.1 })
-    .to('#heroCenter', { rotate: 0, scale: 1, opacity: 1, duration: 1.0, ease: 'power3.out' }, '-=0.7')
-    .to('#heroScroll', { opacity: 1, duration: 0.7 }, '-=0.3');
-  // Parallax
-  gsap.to('#heroBg', {
-    y: '30%', ease: 'none',
-    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
-  });
-}
-
-/* ── 5. GALLERY ───────────────────────────────── */
-function initGallery() {
-  gsap.to('.g-cell', {
-    opacity: 1, y: 0, duration: 0.85, ease: 'power3.out', stagger: 0.09,
-    scrollTrigger: { trigger: '#gallery', start: 'top 80%', toggleActions: 'play none none none' }
-  });
-  // Drag to scroll
-  const strip = document.getElementById('galleryStrip');
-  let isDown = false, startX, scrollLeft;
-  strip.addEventListener('mousedown', e => { isDown = true; strip.style.cursor = 'grabbing'; startX = e.pageX - strip.offsetLeft; scrollLeft = strip.scrollLeft; });
-  strip.addEventListener('mouseup', () => { isDown = false; strip.style.cursor = 'grab'; });
-  strip.addEventListener('mouseleave', () => { isDown = false; });
-  strip.addEventListener('mousemove', e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - strip.offsetLeft; strip.scrollLeft = scrollLeft - (x - startX) * 1.2; });
-}
-
-/* ── 6. STATEMENT ─────────────────────────────── */
-function initStatement() {
-  // SplitText manual
-  function splitWords(el) {
-    const txt = el.innerHTML;
-    const parts = txt.split(/(<br>|<em>[^<]*<\/em>|\s+)/g).filter(Boolean);
-    el.innerHTML = parts.map(p => {
-      if (p === '<br>' || p.trim() === '') return p;
-      if (p.startsWith('<em>')) return `<span class="word-wrap" style="display:inline-block;overflow:hidden;vertical-align:bottom"><span style="display:inline-block;transform:translateY(110%)">${p}</span></span>`;
-      return `<span class="word-wrap" style="display:inline-block;overflow:hidden;vertical-align:bottom"><span style="display:inline-block;transform:translateY(110%)">${p}</span></span>`;
-    }).join('');
-    return el.querySelectorAll('.word-wrap > span');
+  for (const ch of chars) {
+    if (ch === sep) {
+      const s = document.createElement('span');
+      s.className = 'slot-sep'; s.textContent = ch;
+      container.appendChild(s);
+      continue;
+    }
+    const d = parseInt(ch);
+    const col = document.createElement('div');
+    col.className = 'slot-digit-col';
+    // Build a column 0–9, 0–9, then target
+    const total = 20 + d + 1;
+    for (let i = 0; i < total; i++) {
+      const span = document.createElement('div');
+      span.className = 'slot-digit';
+      span.textContent = i % 10;
+      col.appendChild(span);
+    }
+    const startY = 0;
+    const endY = -(2.6 * (total - 1));
+    gsap.fromTo(col,
+      { y: startY + 'rem' },
+      { y: endY + 'rem', duration: 1.4 + Math.random() * 0.4,
+        ease: 'power3.out', delay: 0.3 + Math.random() * 0.3 }
+    );
+    container.appendChild(col);
   }
-  const words = splitWords(document.getElementById('stmtH2'));
-  gsap.to(words, {
-    y: '0%', duration: 1.0, ease: 'power3.out', stagger: 0.06,
-    scrollTrigger: { trigger: '#statement', start: 'top 70%' }
-  });
-  gsap.to('#stmtText', { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', scrollTrigger: { trigger: '#stmtText', start: 'top 80%' } });
-  gsap.to('#stmtCta', { opacity: 1, duration: 0.7, scrollTrigger: { trigger: '#stmtCta', start: 'top 85%' } });
+}
+buildSlot('slot1', 1200, ' ');
+buildSlot('slot2', 120, '');
+buildSlot('slot3', 14, '');
+
+/* ── MANUAL SPLITTEXT ────────────────────────── */
+function splitWords(el) {
+  const text = el.textContent.trim();
+  const words = text.split(/\s+/);
+  el.innerHTML = words.map(w =>
+    `<span class="word-wrap"><span class="word-inner">${w}</span></span>`
+  ).join(' ');
+  return el.querySelectorAll('.word-inner');
 }
 
-/* ── 7. WHO WE ARE ────────────────────────────── */
-function initWho() {
-  ['#whoW1','#whoW2','#whoW3'].forEach((id, i) => {
-    gsap.to(id, {
-      y: '0%', duration: 1.2, ease: 'power3.out', delay: i * 0.12,
-      scrollTrigger: { trigger: '#who', start: 'top 75%' }
-    });
-  });
-  gsap.to('#whoContent', { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', delay: 0.2, scrollTrigger: { trigger: '#who', start: 'top 70%' } });
-}
+/* ── HERO ENTRANCE ───────────────────────────── */
+const heroWords = splitWords(document.getElementById('heroTitle'));
+const tl = gsap.timeline({ delay: 0.2 });
+tl.to('#heroEyebrow', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
+  .to(heroWords, {
+    y: '0%', duration: 1.0, ease: 'power3.out',
+    stagger: 0.08
+  }, '-=0.4')
+  .to('#heroSub', { opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.3')
+  .to('#heroBottom', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.3');
 
-/* ── 8. WORK LIST ─────────────────────────────── */
-function initWork() {
-  gsap.to('.work-item', {
-    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08,
-    scrollTrigger: { trigger: '#work', start: 'top 75%' }
-  });
-}
+/* ── HERO PARALLAX BG ─────────────────────────── */
+gsap.to('#heroBg', {
+  y: '25%',
+  ease: 'none',
+  scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
+});
 
-/* ── 9. SERVICES ──────────────────────────────── */
-function initServices() {
-  gsap.to('.svc', {
-    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.07,
-    scrollTrigger: { trigger: '#services', start: 'top 70%' }
-  });
-}
+/* ── NAV SCROLL ──────────────────────────────── */
+ScrollTrigger.create({
+  start: '80px top',
+  onEnter: () => document.getElementById('navbar').classList.add('scrolled'),
+  onLeaveBack: () => document.getElementById('navbar').classList.remove('scrolled'),
+});
 
-/* ── 10. STATS ────────────────────────────────── */
-function initStats() {
-  document.querySelectorAll('.stat').forEach((block, i) => {
-    gsap.to(block, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', delay: i * 0.1, scrollTrigger: { trigger: '#stats', start: 'top 80%' } });
-    const numEl = block.querySelector('.stat-num');
-    const target = parseInt(numEl.dataset.target);
-    ScrollTrigger.create({
-      trigger: '#stats', start: 'top 80%', once: true,
-      onEnter: () => {
-        gsap.to({ v: 0 }, {
-          v: target, duration: 1.8, ease: 'power2.out', delay: i * 0.1,
-          onUpdate() { numEl.textContent = Math.round(this.targets()[0].v).toLocaleString('fr-FR'); }
-        });
-      }
-    });
+/* ── GALLERY STAGGER + PARALLAX ─────────────── */
+gsap.to('.gallery-cell', {
+  y: 0, opacity: 1,
+  duration: 0.9, ease: 'power3.out',
+  stagger: 0.1,
+  scrollTrigger: { trigger: '#gallery', start: 'top 75%', end: 'bottom 80%', toggleActions: 'play none none none' }
+});
+document.querySelectorAll('.gallery-cell').forEach(cell => {
+  const speed = parseFloat(cell.dataset.speed || 1);
+  const img = cell.querySelector('img');
+  gsap.to(img, {
+    y: () => (1 - speed) * 80,
+    ease: 'none',
+    scrollTrigger: { trigger: cell, start: 'top bottom', end: 'bottom top', scrub: 1.2 }
   });
-}
+});
 
-/* ── 11. TESTIMONIALS ─────────────────────────── */
-function initTestimonials() {
-  let idx = 0;
-  const cards = document.querySelectorAll('.test-card');
-  const dots  = document.querySelectorAll('.test-dot');
-  const track = document.getElementById('testTrack');
-  function goTo(n) {
-    idx = (n + cards.length) % cards.length;
-    track.style.transform = `translateX(-${idx * 50}%)`;
-    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+/* ── ASSOCIATION SECTION ─────────────────────── */
+const assocWords = splitWords(document.querySelector('.assoc-title'));
+gsap.to(assocWords, {
+  y: '0%', duration: 1.0, ease: 'power3.out', stagger: 0.06,
+  scrollTrigger: { trigger: '#association', start: 'top 70%', toggleActions: 'play none none none' }
+});
+gsap.to('#assocBody', {
+  y: 0, opacity: 1, duration: 0.9, ease: 'power2.out',
+  scrollTrigger: { trigger: '#assocBody', start: 'top 80%' }
+});
+gsap.to('#assocCta', {
+  opacity: 1, duration: 0.6, ease: 'power2.out',
+  scrollTrigger: { trigger: '#assocCta', start: 'top 85%' }
+});
+// Image zoom-out scrub
+gsap.to('#assocImg', {
+  scale: 1, ease: 'none',
+  scrollTrigger: { trigger: '#association', start: 'top 80%', end: 'bottom 20%', scrub: 1.5 }
+});
+// Badge reveal
+ScrollTrigger.create({
+  trigger: '#association',
+  start: 'top 60%',
+  onEnter: () => {
+    const badge = document.getElementById('assocBadge');
+    badge.style.opacity = '1';
+    badge.style.transform = 'translateX(-50%) translateY(0)';
   }
-  document.getElementById('tNext').addEventListener('click', () => goTo(idx + 1));
-  document.getElementById('tPrev').addEventListener('click', () => goTo(idx - 1));
-  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
-  setInterval(() => goTo(idx + 1), 5500);
-  // title SplitText
-  const words = document.getElementById('testH2').querySelectorAll ? null : null;
-  gsap.from('#testH2', { y: 50, opacity: 0, duration: 1.0, ease: 'power3.out', scrollTrigger: { trigger: '#testimonials', start: 'top 75%' } });
-}
+});
 
-/* ── 12. FAQ ──────────────────────────────────── */
-function initFAQ() {
-  gsap.to('.faq-item', {
-    opacity: 1, x: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1,
-    scrollTrigger: { trigger: '#faq', start: 'top 75%' }
-  });
-  document.querySelectorAll('.faq-item').forEach(item => {
-    item.querySelector('.faq-q').addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(o => {
-        o.classList.remove('open');
-        o.querySelector('.faq-body').style.maxHeight = '0';
-        o.querySelector('.faq-icon').textContent = '+';
+/* ── PROJECTS COUNTER PIN ────────────────────── */
+const cards = document.querySelectorAll('.project-card');
+gsap.to(cards, {
+  opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+  stagger: 0.15,
+  scrollTrigger: { trigger: '.projects-list', start: 'top 80%' }
+});
+
+// Update slot counter as user scrolls through cards
+const counterInner = document.getElementById('projCounterInner');
+const cardHeight = 6; // rem
+cards.forEach((card, i) => {
+  ScrollTrigger.create({
+    trigger: card,
+    start: 'top center',
+    onEnter: () => {
+      gsap.to(counterInner, {
+        y: -(cardHeight * i) + 'rem',
+        duration: 0.5, ease: 'power3.out'
       });
-      if (!isOpen) {
-        item.classList.add('open');
-        item.querySelector('.faq-body').style.maxHeight = item.querySelector('.faq-body').scrollHeight + 'px';
-        item.querySelector('.faq-icon').textContent = '+';
-      }
-    });
+    },
+    onEnterBack: () => {
+      gsap.to(counterInner, {
+        y: -(cardHeight * i) + 'rem',
+        duration: 0.5, ease: 'power3.out'
+      });
+    }
   });
-}
+});
 
-/* ── 13. CLOCK ────────────────────────────────── */
-function initClock() {
-  function tick() {
-    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Casablanca' }));
-    const h = String(now.getHours()).padStart(2,'0'), m = String(now.getMinutes()).padStart(2,'0'), s = String(now.getSeconds()).padStart(2,'0');
-    document.getElementById('footerClock').textContent = `Tata, Maroc · GMT+1 — ${h}:${m}:${s}`;
-  }
-  tick(); setInterval(tick, 1000);
-}
+/* ── ABOUT / WHO WE ARE ──────────────────────── */
+document.querySelectorAll('.about-img').forEach((img, i) => {
+  gsap.to(img, {
+    opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: i * 0.12,
+    scrollTrigger: { trigger: '#about', start: 'top 75%' }
+  });
+  const speed = parseFloat(img.dataset.speed || 1);
+  gsap.to(img.querySelector('img'), {
+    y: () => (1 - speed) * 60,
+    ease: 'none',
+    scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: 1 }
+  });
+});
+gsap.to('#aboutText', {
+  opacity: 1, y: 0, duration: 0.9, ease: 'power2.out',
+  scrollTrigger: { trigger: '#aboutText', start: 'top 75%' }
+});
+const aboutTitleWords = splitWords(document.getElementById('aboutTitle'));
+gsap.to(aboutTitleWords, {
+  y: '0%', duration: 1, ease: 'power3.out', stagger: 0.07,
+  scrollTrigger: { trigger: '#about', start: 'top 70%' }
+});
 
-window.addEventListener('resize', () => ScrollTrigger.refresh());
+/* ── SERVICES ────────────────────────────────── */
+gsap.to('.service-item', {
+  opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+  stagger: 0.08,
+  scrollTrigger: { trigger: '#services', start: 'top 70%' }
+});
+
+/* ── STATS COUNTERS ──────────────────────────── */
+document.querySelectorAll('.stat-block').forEach((block, i) => {
+  gsap.to(block, {
+    opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', delay: i * 0.1,
+    scrollTrigger: { trigger: '#stats', start: 'top 80%' }
+  });
+  const numEl = block.querySelector('.stat-num');
+  const target = parseInt(numEl.dataset.target);
+  ScrollTrigger.create({
+    trigger: '#stats', start: 'top 80%', once: true,
+    onEnter: () => {
+      gsap.to({ val: 0 }, {
+        val: target, duration: 1.8 + i * 0.2, ease: 'power2.out',
+        delay: i * 0.1,
+        onUpdate() {
+          numEl.textContent = Math.round(this.targets()[0].val).toLocaleString('fr-FR');
+        }
+      });
+    }
+  });
+});
+
+/* ── TESTIMONIALS CAROUSEL ───────────────────── */
+let testIdx = 0;
+const testCards = document.querySelectorAll('.test-card');
+const testDots = document.querySelectorAll('.test-dot');
+const testTrack = document.getElementById('testTrack');
+const cardW = 50; // %
+let testInterval;
+
+function goTo(idx) {
+  testIdx = (idx + testCards.length) % testCards.length;
+  const offset = testIdx * (cardW + 2); // 2 = gap approximation in %
+  testTrack.style.transform = `translateX(-${testIdx * 50}%)`;
+  testDots.forEach((d, i) => d.classList.toggle('active', i === testIdx));
+}
+document.getElementById('testNext').addEventListener('click', () => { goTo(testIdx + 1); resetInterval(); });
+document.getElementById('testPrev').addEventListener('click', () => { goTo(testIdx - 1); resetInterval(); });
+testDots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.i); resetInterval(); }));
+
+function resetInterval() {
+  clearInterval(testInterval);
+  testInterval = setInterval(() => goTo(testIdx + 1), 5000);
+}
+resetInterval();
+
+/* ── FAQ ACCORDION ───────────────────────────── */
+gsap.to('.faq-item', {
+  opacity: 1, x: 0, duration: 0.7, ease: 'power3.out',
+  stagger: 0.1,
+  scrollTrigger: { trigger: '#faq', start: 'top 75%' }
+});
+document.querySelectorAll('.faq-item').forEach(item => {
+  const header = item.querySelector('.faq-header');
+  const body = item.querySelector('.faq-body');
+  const icon = item.querySelector('.faq-icon');
+  header.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o => {
+      o.classList.remove('open');
+      o.querySelector('.faq-body').style.maxHeight = '0';
+      o.querySelector('.faq-icon').textContent = '+';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+      icon.textContent = '+';
+    }
+  });
+});
+
+/* ── FOOTER CLOCK ────────────────────────────── */
+function updateClock() {
+  const now = new Date();
+  const maroc = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Casablanca' }));
+  const h = String(maroc.getHours()).padStart(2, '0');
+  const m = String(maroc.getMinutes()).padStart(2, '0');
+  const s = String(maroc.getSeconds()).padStart(2, '0');
+  document.getElementById('footerClock').textContent = `Tata, Maroc (GMT+1) — ${h}:${m}:${s}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ── REFRESH SCROLLTRIGGER ───────────────────── */
+window.addEventListener('load', () => {
+  ScrollTrigger.refresh();
+});
+window.addEventListener('scroll', () => ScrollTrigger.update());
 </script>
 </body>
 </html>
