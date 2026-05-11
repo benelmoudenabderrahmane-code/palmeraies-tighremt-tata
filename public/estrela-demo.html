@@ -749,6 +749,18 @@ footer{
 }
 
 /* ══════════════════════════════════════════════
+   PAGE OVERLAY — Estrela-style fade-to-black
+══════════════════════════════════════════════ */
+.page-overlay{
+  position:fixed;inset:0;
+  z-index:9997;
+  background:#020202;
+  opacity:0;visibility:hidden;
+  pointer-events:none;
+}
+html.is-transitioning{overflow:hidden;pointer-events:none}
+
+/* ══════════════════════════════════════════════
    UTILITIES
 ══════════════════════════════════════════════ */
 .reveal-section{margin-bottom:0}
@@ -781,6 +793,9 @@ footer{
 </head>
 
 <body>
+
+<!-- PAGE OVERLAY (Estrela-style transition) -->
+<div class="page-overlay" id="pageOverlay"></div>
 
 <!-- CURSOR -->
 <div class="cursor" id="cursor"></div>
@@ -1302,6 +1317,39 @@ footer{
 
 <!-- ══════════════════════════════════════════════ -->
 <script>
+/* ── PAGE TRANSITION — Estrela Studio style ─── */
+const pageOverlay = document.getElementById('pageOverlay');
+
+// Entry: page fades IN from black (new page reveal)
+gsap.set(pageOverlay, { opacity: 1, visibility: 'visible' });
+gsap.to(pageOverlay, {
+  opacity: 0,
+  duration: 0.75,
+  ease: 'power2.inOut',
+  delay: 0.05,
+  onComplete: () => {
+    pageOverlay.style.visibility = 'hidden';
+    document.documentElement.classList.remove('is-transitioning');
+  }
+});
+
+// Exit: fade to black on external link clicks, then navigate
+document.querySelectorAll('a[href]').forEach(link => {
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    document.documentElement.classList.add('is-transitioning');
+    pageOverlay.style.visibility = 'visible';
+    gsap.to(pageOverlay, {
+      opacity: 1,
+      duration: 0.55,
+      ease: 'power2.inOut',
+      onComplete: () => { window.location.href = href; }
+    });
+  });
+});
+
 /* ── SMOOTH SCROLL (native fallback) ────────── */
 gsap.ticker.lagSmoothing(0);
 
