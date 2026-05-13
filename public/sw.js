@@ -1,5 +1,5 @@
 /* Service Worker — Palmeraies Tighremt */
-const CACHE   = 'tighremt-v4';
+const CACHE   = 'tighremt-v5';
 const PRECACHE = ['/', '/mission', '/projets', '/don', '/contact', '/histoire', '/equipe'];
 
 self.addEventListener('install', e => {
