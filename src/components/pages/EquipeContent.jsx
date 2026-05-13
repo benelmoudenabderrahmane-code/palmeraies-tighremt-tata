@@ -5,6 +5,7 @@ import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { TeamCarousel } from '@/components/ui/TeamCarousel';
 import { TextEffect } from '@/components/ui/TextEffect';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 /* ─── Team data ──────────────────────────────────────────────── */
 const MEMBRES = [
@@ -310,6 +311,8 @@ export default function EquipeContent() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ══ TEAM GRID ════════════════════════════════════════════= */}
       <section style={{ background: C.sand, padding: 'clamp(4rem,8vw,6rem) 1.5rem' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -322,6 +325,8 @@ export default function EquipeContent() {
           </div>
         </div>
       </section>
+
+      <SectionDivider />
 
       {/* ══ TEAM CAROUSEL ════════════════════════════════════════ */}
       <section style={{ background: C.sandMid, padding: '0' }}>
@@ -373,6 +378,8 @@ export default function EquipeContent() {
           </div>
         </div>
       </section>
+
+      <SectionDivider />
 
       {/* ══ JOIN CTA ══════════════════════════════════════════════ */}
       <section style={{ background: C.greenDeep, padding: 'clamp(4rem,8vw,6rem) 1.5rem', position: 'relative', overflow: 'hidden' }}>

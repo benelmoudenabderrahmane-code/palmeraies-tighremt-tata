@@ -5,6 +5,7 @@ import missions from '@/data/missions-benevoles.json';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { toast } from '@/hooks/useToast';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const TYPE_LABELS = { permanent: 'Permanent', mission: 'Mission', ponctuel: 'Ponctuel' };
 const TYPE_COLORS = { permanent: C.greenDeep, mission: C.ochre, ponctuel: C.accent };
@@ -41,6 +42,7 @@ export default function BenevolesContent() {
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Vos compétences peuvent changer des vies à Tighremt.</p>
         </div>
       </section>
+      <SectionDivider />
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '3rem 1.5rem' }}>
         <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: C.greenDeep, marginBottom: '1.5rem' }}>Missions disponibles</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>

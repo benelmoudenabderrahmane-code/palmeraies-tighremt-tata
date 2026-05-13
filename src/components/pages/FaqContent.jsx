@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import faqData from '@/data/faq.json';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const LABELS = { association: "L'Association", dons: 'Les Dons', benevoles: 'Bénévolat', projets: 'Nos Projets' };
 
@@ -41,6 +42,7 @@ export default function FaqContent() {
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Tout ce que vous souhaitez savoir sur l&apos;association.</p>
         </div>
       </section>
+      <SectionDivider />
       <section style={{ maxWidth: 780, margin: '0 auto', padding: '4rem 1.5rem' }}>
         {faqData.map((section, i) => (
           <div key={section.categorie} className={`reveal reveal-delay-${i + 1}`} style={{ marginBottom: '3rem' }}>

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import partenaires from '@/data/partenaires.json';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 export default function PartenairesContent() {
   useScrollReveal();
@@ -15,6 +16,7 @@ export default function PartenairesContent() {
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Ensemble pour Tighremt.</p>
         </div>
       </section>
+      <SectionDivider />
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '4rem 1.5rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '2rem' }}>
           {partenaires.map((p, i) => (

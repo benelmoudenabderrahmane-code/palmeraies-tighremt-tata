@@ -3,6 +3,7 @@ import { Calendar, MapPin, Clock, ExternalLink } from 'lucide-react';
 import evenements from '@/data/evenements.json';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const TYPE_COLORS = { association: C.greenDeep, collecte: C.ochre, projet: C.accent };
 
@@ -48,6 +49,7 @@ export default function EvenementsContent() {
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Retrouvez tous nos prochains rendez-vous.</p>
         </div>
       </section>
+      <SectionDivider />
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '3rem 1.5rem' }}>
         {upcoming.length > 0 && (
           <>
