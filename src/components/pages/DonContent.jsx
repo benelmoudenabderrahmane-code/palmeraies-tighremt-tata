@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const Grainient = dynamic(() => import('@/components/ui/Grainient'), { ssr: false });
 const DonationProgress = dynamic(() => import('@/components/ui/DonationProgress'), { ssr: false });
@@ -343,6 +344,7 @@ export default function DonContent() {
           <ChevronDown size={12} />
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 2. COUNTERS ══════════════════════════════════════════ */}
       <section style={{ background: '#fff', padding: 'clamp(3rem,6vw,4.5rem) 1.5rem', borderBottom: `1px solid ${C.sandDark}` }}>
@@ -492,6 +494,7 @@ export default function DonContent() {
           </p>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 4. MODES ══════════════════════════════════════════════ */}
       <section style={{ background: C.sandMid, padding: 'clamp(3.5rem,7vw,5rem) 1.5rem' }}>
@@ -532,6 +535,7 @@ export default function DonContent() {
           </div>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 5. TRANSPARENCY ══════════════════════════════════════ */}
       <section ref={barsRef} style={{ background: '#fff', padding: 'clamp(4rem,8vw,6rem) 1.5rem' }}>
@@ -560,6 +564,7 @@ export default function DonContent() {
           </div>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 6. URGENCY BANNER ════════════════════════════════════ */}
       <section style={{ background: C.greenDeep, padding: 'clamp(3.5rem,7vw,5rem) 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>

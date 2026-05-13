@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
+import SectionDivider from '@/components/ui/SectionDivider';
 import { TextEffect } from '@/components/ui/TextEffect';
 
 const ImageComparison = dynamic(
@@ -756,11 +757,17 @@ export default function ProjetsContent() {
 
       <PageHero />
 
+      <SectionDivider />
+
       <ProjectsIndex />
+
+      <SectionDivider />
 
       {PROJECTS.map((project, i) => (
         <ProjectBlock key={project.id} project={project} index={i} />
       ))}
+
+      <SectionDivider />
 
       {/* Bottom CTA */}
       <section style={{

@@ -9,6 +9,7 @@ import { MaskedAvatars } from '@/components/ui/masked-avatars';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+import SectionDivider from '@/components/ui/SectionDivider';
 
 const TEAM_AVATARS = [
   { avatar: 'https://i.pravatar.cc/150?u=palmeraies1', name: 'Bénévole' },
@@ -218,6 +219,7 @@ export default function MissionContent() {
           </div>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 2. ORIGINE & CONTEXTE ═══════════════════════════════════════════ */}
       <section id="mission" style={{ background: C.sand, padding: 'clamp(5rem,10vw,8rem) 1.5rem' }}>
@@ -295,6 +297,7 @@ export default function MissionContent() {
           </div>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 3. NOS 6 MISSIONS ═══════════════════════════════════════════════ */}
       <section style={{ background: C.sandMid, padding: 'clamp(5rem,10vw,8rem) 1.5rem' }}>
@@ -314,6 +317,7 @@ export default function MissionContent() {
           </div>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 4. TIMELINE ════════════════════════════════════════════════════ */}
       <section style={{ background: '#fff', padding: 'clamp(5rem,10vw,8rem) 1.5rem' }}>
@@ -350,6 +354,7 @@ export default function MissionContent() {
           </div>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 5. VALEURS ═════════════════════════════════════════════════════ */}
       <section style={{ background: C.sand, padding: 'clamp(5rem,10vw,8rem) 1.5rem' }}>
@@ -373,6 +378,7 @@ export default function MissionContent() {
           </div>
         </div>
       </section>
+      <SectionDivider />
 
       {/* ══ 6. COMPTEURS ═══════════════════════════════════════════════════ */}
       <div className="reveal" style={{
