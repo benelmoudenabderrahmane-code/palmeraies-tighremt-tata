@@ -14,13 +14,21 @@ export default function BenevolesContent() {
   const [form, setForm] = useState({ nom: '', email: '', mission: '', message: '' });
   const [sending, setSending] = useState(false);
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    if (!form.email.includes('@')) { toast.error('Email invalide'); return; }
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!EMAIL_RE.test(form.email)) { toast.error('Email invalide'); return; }
     setSending(true);
-    await new Promise(r => setTimeout(r, 800));
+
+    const missionLabel = missions.find(m => m.id === form.mission)?.titre || form.mission || 'Non précisée';
+    const subject = encodeURIComponent(`Candidature bénévole — ${form.nom} — ${missionLabel}`);
+    const body = encodeURIComponent(
+      `Nom complet : ${form.nom}\nEmail : ${form.email}\nMission souhaitée : ${missionLabel}\n\nMessage :\n${form.message || '(Aucun message)'}`
+    );
+    window.open(`mailto:palmeraies.tighremt.tata@gmail.com?subject=${subject}&body=${body}`);
+
     setSending(false);
-    toast.success('Candidature envoyée ! Nous vous répondrons sous 48h.');
+    toast.success('Votre candidature a été préparée — envoyez l\'email qui vient de s\'ouvrir.');
     setForm({ nom: '', email: '', mission: '', message: '' });
   };
 
