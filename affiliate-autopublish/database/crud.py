@@ -1,8 +1,7 @@
 import json
 import secrets
 from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy import select, func
 
 from database.models import Base, Product, AffiliateLink, ClickLog, Post, Job
@@ -11,7 +10,7 @@ from config.settings import get_settings
 settings = get_settings()
 
 engine = create_async_engine(settings.database_url, echo=False)
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def init_db():

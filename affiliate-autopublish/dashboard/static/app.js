@@ -314,6 +314,29 @@ async function loadProducts() {
   </table>`;
 }
 
+async function publishPost(postId, platform) {
+  let videoUrl = '';
+  if (platform === 'instagram' || platform === 'facebook') {
+    videoUrl = prompt(
+      platform === 'instagram'
+        ? 'Instagram Reels need a PUBLIC HTTPS video URL. Paste it here (use ngrok or cloud storage):'
+        : 'Optional: paste a public video URL (or leave blank to upload the file directly):',
+      ''
+    );
+    if (platform === 'instagram' && !videoUrl) return;
+  }
+  const fd = new FormData();
+  if (videoUrl) fd.append('video_url', videoUrl);
+  const res = await fetch(`/api/post/${postId}/publish`, { method: 'POST', body: fd });
+  const data = await res.json();
+  if (res.ok) {
+    alert('✅ Published: ' + data.url);
+    loadProducts();
+  } else {
+    alert('❌ ' + (data.detail || JSON.stringify(data)));
+  }
+}
+
 function useProductForVideo(id, name) {
   document.querySelector('[data-tab="video"]').click();
   state.video.productId = id;

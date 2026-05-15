@@ -1,6 +1,8 @@
 import asyncio
 import json
+import logging
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request
@@ -11,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from affiliate.click_tracker import handle_redirect
 from affiliate.link_manager import generate_affiliate_link
+from config.logging_config import setup_logging
 from config.settings import get_settings
 from database.crud import (
     AsyncSessionLocal,
@@ -35,6 +38,8 @@ from scrapers.generic import scrape_generic
 from scrapers.walmart import scrape_walmart
 
 settings = get_settings()
+setup_logging()
+logger = logging.getLogger(__name__)
 
 # Ensure media dir exists at startup
 Path("media").mkdir(exist_ok=True)
@@ -42,11 +47,14 @@ Path("media").mkdir(exist_ok=True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info("Starting affiliate-autopublish")
     await init_db()
     asyncio.create_task(job_queue.run_worker())
     setup_scheduler()
     start_scheduler()
+    logger.info("Startup complete")
     yield
+    logger.info("Shutting down")
 
 
 app = FastAPI(title="Affiliate AutoPublish", lifespan=lifespan)
@@ -211,24 +219,107 @@ async def publish_deal_post_now(
     post_id: int = Form(...),
     session: AsyncSession = Depends(get_session),
 ):
-    from publishers.facebook_group import post_to_facebook_group
-    from datetime import datetime
+    """Backwards-compat alias — same behavior as /api/post/{id}/publish for FB Group posts."""
+    return await _publish_post(post_id, session, video_url=None)
 
+
+@app.post("/api/post/{post_id}/publish")
+async def publish_post(
+    post_id: int,
+    video_url: str = Form(""),
+    session: AsyncSession = Depends(get_session),
+):
+    """
+    Dispatch publishing based on post.platform:
+      - facebook_group  → FB Graph API photo upload
+      - youtube / youtube_shorts → YouTube Data API
+      - facebook        → FB Page video upload
+      - instagram       → IG Reels (requires public video_url)
+      - tiktok          → TikTok Content Posting API v2
+    """
+    return await _publish_post(post_id, session, video_url=video_url or None)
+
+
+async def _publish_post(post_id: int, session: AsyncSession, video_url: str | None) -> dict:
     post = await session.get(Post, post_id)
     if not post:
         raise HTTPException(404, "Post not found")
 
+    platform = post.platform
+    logger.info(f"Publishing post {post_id} to {platform}")
+
     try:
-        url = await post_to_facebook_group(post.image_path, post.post_text)
+        url = await _dispatch_publisher(post, video_url)
         post.status = "published"
         post.platform_post_id = url
         post.published_at = datetime.utcnow()
         await session.commit()
+        logger.info(f"Published post {post_id}: {url}")
         return {"url": url, "status": "published"}
     except PermissionError as e:
+        post.status = "failed"
+        await session.commit()
+        logger.warning(f"Permission denied for post {post_id}: {e}")
         raise HTTPException(403, str(e))
+    except ValueError as e:
+        # e.g. missing video_url for Instagram
+        logger.warning(f"Bad request for post {post_id}: {e}")
+        raise HTTPException(400, str(e))
     except Exception as e:
+        post.status = "failed"
+        await session.commit()
+        logger.exception(f"Failed to publish post {post_id}")
         raise HTTPException(500, str(e))
+
+
+async def _dispatch_publisher(post: Post, video_url: str | None) -> str:
+    """Route to the correct platform publisher and return the resulting URL."""
+    platform = post.platform
+
+    if platform == "facebook_group":
+        from publishers.facebook_group import post_to_facebook_group
+        return await post_to_facebook_group(post.image_path, post.post_text)
+
+    if platform in ("youtube", "youtube_shorts"):
+        from publishers.youtube import upload_youtube_video
+        # Parse hashtags out of post_text if present
+        tags = [w.lstrip("#") for w in (post.post_text or "").split() if w.startswith("#")][:30]
+        title = (post.post_text or "Best Deal").split("\n", 1)[0][:100]
+        return await upload_youtube_video(
+            video_path=post.video_path,
+            title=title,
+            description=post.post_text or "",
+            tags=tags,
+            thumbnail_path=post.image_path,
+            privacy="public",
+        )
+
+    if platform == "facebook":
+        from publishers.facebook_page import upload_facebook_page_video
+        title = (post.post_text or "").split("\n", 1)[0][:255]
+        return await upload_facebook_page_video(
+            video_path=post.video_path,
+            description=post.post_text or "",
+            title=title,
+            video_url=video_url,
+        )
+
+    if platform == "instagram":
+        from publishers.instagram import upload_instagram_reel
+        return await upload_instagram_reel(
+            video_path=post.video_path,
+            caption=post.post_text or "",
+            video_url=video_url,
+        )
+
+    if platform == "tiktok":
+        from publishers.tiktok import upload_tiktok_video
+        return await upload_tiktok_video(
+            video_path=post.video_path,
+            caption=post.post_text or "",
+        )
+
+    raise ValueError(f"Unknown platform: {platform}")
 
 
 # ── Posts ───────────────────────────────────────────────────────────────────────

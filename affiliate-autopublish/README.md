@@ -101,7 +101,25 @@ Open **http://localhost:8000** in your browser.
 3. Check **TikTok** + **Instagram Reels**
 4. Click **Generate Videos** — watch the progress bar (2–5 minutes)
 5. Video files appear in `media/product_{id}/tiktok/video.mp4`
-6. Use the publish buttons (requires platform API keys configured)
+6. Publish via **Tab: Products** → click 🚀 next to the ready post, OR call
+   `POST /api/post/{post_id}/publish` (form field `video_url` for Instagram)
+
+### ⚠️ Instagram Reels & Facebook Page video uploads — public URL required
+
+Meta's API requires a publicly accessible HTTPS URL for video upload (it does
+not accept localhost files). Two options:
+
+**Option A: ngrok (free, dev only)**
+```bash
+# Install ngrok: https://ngrok.com/download
+ngrok http 8000
+# Copy the https://xxxx.ngrok.io URL
+# When publishing, pass: video_url=https://xxxx.ngrok.io/media/product_42/instagram/video.mp4
+```
+
+**Option B: Cloud storage (production)**
+Upload the generated MP4 to S3/Cloudinary/Bunny, then pass the public URL.
+TikTok and YouTube don't need this — they accept direct file upload.
 
 ---
 

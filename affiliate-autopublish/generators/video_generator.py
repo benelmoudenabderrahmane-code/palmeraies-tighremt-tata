@@ -104,15 +104,23 @@ async def generate_video(
     concat_in = "".join(f"[kb{i}]" for i in range(n))
     filter_parts.append(f"{concat_in}concat=n={n}:v=1:a=0[vraw]")
 
-    # Caption bar at the bottom
-    safe_name = product_name[:50].replace("'", "\\'").replace(":", "\\:")
+    # Caption bar at the bottom — use textfile to fully avoid FFmpeg drawtext escaping hell.
+    # Apostrophes, colons, %, commas, accents all break drawtext when inline.
+    caption_text = product_name[:50]
+    # Strip non-ASCII to avoid font/encoding issues with default fonts
+    caption_ascii = caption_text.encode("ascii", "ignore").decode("ascii").strip()
+    if not caption_ascii:
+        caption_ascii = "Best Deal"
+    caption_file = work_dir / "caption.txt"
+    caption_file.write_text(caption_ascii, encoding="ascii")
+    # textfile path: forward slashes only, escape colon for Windows drive letter
+    caption_path = str(caption_file).replace("\\", "/").replace(":", "\\:")
     filter_parts.append(
         f"[vraw]drawtext="
-        f"text='{safe_name}':"
+        f"textfile='{caption_path}':"
         f"fontsize=42:fontcolor=white:"
         f"box=1:boxcolor=black@0.65:boxborderw=10:"
-        f"x=(w-text_w)/2:y=h-100:"
-        f"enable='1'[vcap]"
+        f"x=(w-text_w)/2:y=h-100[vcap]"
     )
 
     # Audio: mix voice + background music (music at 10% volume)
