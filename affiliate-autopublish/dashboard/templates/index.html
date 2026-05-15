@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🚀 Affiliate AutoPublish</title>
+<link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+<header>
+  <h1>🚀 Affiliate AutoPublish</h1>
+  <nav>
+    <button class="tab-btn active" data-tab="video">🎬 New Video</button>
+    <button class="tab-btn" data-tab="deal">🛍️ Deal Post</button>
+    <button class="tab-btn" data-tab="scheduler">⏰ Scheduler</button>
+    <button class="tab-btn" data-tab="products">📦 Products</button>
+    <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
+    <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ═══ TAB: NEW VIDEO CAMPAIGN ═══ -->
+<section id="tab-video" class="tab active">
+  <h2>New Video Campaign</h2>
+
+  <div class="card">
+    <label>Product URL (Amazon, Walmart, or any store)</label>
+    <div class="input-row">
+      <input id="video-url" type="url" placeholder="https://www.amazon.com/dp/B08N5WRWNW"/>
+      <button onclick="scrapeProduct('video')" id="video-scrape-btn">Scrape</button>
+    </div>
+    <div id="video-product-preview" class="product-preview hidden"></div>
+  </div>
+
+  <div class="card" id="video-affiliate-section" style="display:none">
+    <label>Affiliate Network</label>
+    <select id="video-network" onchange="onNetworkChange('video')">
+      <option value="amazon">Amazon Associates</option>
+      <option value="walmart">Walmart / Impact Radius</option>
+      <option value="howl">Howl (auto-generates howl.me link)</option>
+      <option value="mavely">Mavely (manual paste)</option>
+      <option value="custom">Custom / Other</option>
+    </select>
+    <div id="video-mavely-note" class="note hidden">
+      ℹ️ Mavely has no public API. Generate your link at
+      <a href="https://app.mavely.com" target="_blank">app.mavely.com</a>, then paste it below.
+    </div>
+    <input id="video-custom-link" type="url" placeholder="Paste your affiliate link here" class="hidden" style="margin-top:10px"/>
+    <button id="video-gen-howl" class="hidden" onclick="generateAffiliateLink('video')" style="margin-top:8px">
+      ✨ Generate Howl Link
+    </button>
+    <div id="video-link-display" style="margin-top:8px;font-size:.85rem;color:#4ade80"></div>
+  </div>
+
+  <div class="card" id="video-platforms-section" style="display:none">
+    <label>Publish to Platforms</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="vplatform" value="tiktok" checked/> TikTok</label>
+      <label><input type="checkbox" name="vplatform" value="instagram" checked/> Instagram Reels</label>
+      <label><input type="checkbox" name="vplatform" value="youtube_shorts"/> YouTube Shorts</label>
+      <label><input type="checkbox" name="vplatform" value="facebook"/> Facebook Page</label>
+      <label><input type="checkbox" name="vplatform" value="youtube"/> YouTube (16:9)</label>
+    </div>
+    <div style="margin-top:12px">
+      <label style="display:inline-flex;align-items:center;gap:8px;color:var(--text)">
+        <input type="checkbox" id="use-elevenlabs"/>
+        Use ElevenLabs voice (better quality, uses free tier first)
+      </label>
+    </div>
+    <button onclick="startVideoCampaign()" class="btn-primary" id="video-start-btn">
+      🎬 Generate Videos
+    </button>
+  </div>
+
+  <div id="video-job-status" class="job-status hidden">
+    <p id="video-job-msg">⏳ Initializing...</p>
+  </div>
+</section>
+
+<!-- ═══ TAB: FACEBOOK GROUP DEAL POST ═══ -->
+<section id="tab-deal" class="tab">
+  <h2>New Facebook Group Deal Post</h2>
+
+  <div class="card">
+    <label>Product URL</label>
+    <div class="input-row">
+      <input id="deal-url" type="url" placeholder="https://www.walmart.com/ip/..."/>
+      <button onclick="scrapeProduct('deal')" id="deal-scrape-btn">Scrape</button>
+    </div>
+    <div id="deal-product-preview" class="product-preview hidden"></div>
+  </div>
+
+  <div class="card" id="deal-affiliate-section" style="display:none">
+    <label>Affiliate Network</label>
+    <select id="deal-network" onchange="onNetworkChange('deal')">
+      <option value="amazon">Amazon Associates</option>
+      <option value="walmart">Walmart / Impact</option>
+      <option value="howl">Howl (auto)</option>
+      <option value="mavely">Mavely (manual)</option>
+      <option value="custom">Custom</option>
+    </select>
+    <div id="deal-mavely-note" class="note hidden">
+      ℹ️ Get your Mavely link at <a href="https://app.mavely.com" target="_blank">app.mavely.com</a>
+    </div>
+    <input id="deal-custom-link" type="url" placeholder="Paste affiliate link" class="hidden" style="margin-top:10px"/>
+    <button id="deal-gen-howl" class="hidden" onclick="generateAffiliateLink('deal')" style="margin-top:8px">
+      ✨ Generate Howl Link
+    </button>
+    <div id="deal-link-display" style="margin-top:8px;font-size:.85rem;color:#4ade80"></div>
+  </div>
+
+  <div class="card" id="deal-style-section" style="display:none">
+    <label>Post Style</label>
+    <select id="deal-style">
+      <option value="best_deal">🔥 Best Deal</option>
+      <option value="price_drop">💥 Price Drop</option>
+      <option value="limited_time">⏰ Limited Time</option>
+      <option value="top_rated">⭐ Top Rated</option>
+    </select>
+    <button onclick="generateDealPost()" class="btn-primary" id="deal-gen-btn">
+      ✍️ Generate Deal Post
+    </button>
+  </div>
+
+  <div id="deal-preview" class="deal-preview hidden">
+    <div class="split">
+      <div>
+        <h3>Deal Image Preview</h3>
+        <img id="deal-image-preview" src="" alt="Deal Image" style="width:100%;border-radius:10px"/>
+      </div>
+      <div>
+        <h3>Post Text (editable)</h3>
+        <textarea id="deal-text-preview" rows="10" style="width:100%"></textarea>
+        <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+          <button onclick="publishDealNow()" class="btn-primary">📤 Post to Group Now</button>
+          <button onclick="addToQueue()">📅 Add to Auto-Queue</button>
+        </div>
+        <div id="deal-publish-status" style="margin-top:8px;font-size:.85rem"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TAB: AUTO-POSTING SCHEDULER ═══ -->
+<section id="tab-scheduler" class="tab">
+  <h2>Auto-Posting Scheduler</h2>
+  <div class="card">
+    <label>Posts per day (uses ready deal posts in queue)</label>
+    <input id="posts-per-day" type="number" value="3" min="1" max="10" style="max-width:120px"/>
+    <label style="margin-top:14px">Posting hours (24h, comma-separated)</label>
+    <input id="posting-hours" type="text" value="9,13,18" style="max-width:200px"/>
+    <button onclick="saveScheduler()" class="btn-primary">💾 Save Schedule</button>
+    <div id="scheduler-status" style="margin-top:10px;font-size:.85rem;color:#4ade80"></div>
+  </div>
+  <div class="card">
+    <h3>Posts in Queue</h3>
+    <div id="queued-posts-list">
+      <button onclick="loadQueuedPosts()" style="margin-bottom:12px">🔄 Refresh</button>
+      <div id="queued-posts-table"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TAB: PRODUCTS LIBRARY ═══ -->
+<section id="tab-products" class="tab">
+  <h2>Products Library</h2>
+  <button onclick="loadProducts()" style="margin-bottom:16px">🔄 Refresh</button>
+  <div id="products-table">Loading...</div>
+</section>
+
+<!-- ═══ TAB: ANALYTICS ═══ -->
+<section id="tab-analytics" class="tab">
+  <h2>Analytics</h2>
+  <button onclick="loadAnalytics()" style="margin-bottom:16px">🔄 Refresh</button>
+  <div class="analytics-grid">
+    <div class="card">
+      <h3>🖱️ Clicks by Network</h3>
+      <div id="clicks-chart"><p class="muted">No data yet.</p></div>
+    </div>
+    <div class="card">
+      <h3>📋 Posts by Platform</h3>
+      <div id="posts-chart"><p class="muted">No data yet.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TAB: SETTINGS ═══ -->
+<section id="tab-settings" class="tab">
+  <h2>Settings</h2>
+  <div class="card">
+    <p class="note">
+      ⚙️ All API keys are stored in your <code>.env</code> file.<br/>
+      Edit <code>affiliate-autopublish/.env</code> then restart the server: <code>uvicorn main:app --reload</code>
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>💰 Cost Guide (Monthly estimate)</h3>
+    <table>
+      <thead><tr><th>Service</th><th>Cost</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Claude Haiku 4.5 (AI text)</td><td style="color:#4ade80">~€0.70/100 posts</td><td>Default model</td></tr>
+        <tr><td>gTTS (voice)</td><td style="color:#4ade80">FREE</td><td>Default voice</td></tr>
+        <tr><td>ElevenLabs (voice)</td><td style="color:#4ade80">FREE (10k chars/mo)</td><td>Optional upgrade</td></tr>
+        <tr><td>YouTube Data API</td><td style="color:#4ade80">FREE</td><td>10k units/day quota</td></tr>
+        <tr><td>Meta Graph API</td><td style="color:#4ade80">FREE</td><td>Needs app review for groups</td></tr>
+        <tr><td>TikTok Content API</td><td style="color:#4ade80">FREE</td><td>Sandbox testing first</td></tr>
+        <tr><td>Amazon PAAPI</td><td style="color:#4ade80">FREE</td><td>With Associates account</td></tr>
+        <tr><td>Impact Radius API</td><td style="color:#4ade80">FREE</td><td>With publisher account</td></tr>
+        <tr><td>Howl API</td><td style="color:#4ade80">FREE</td><td>With publisher account</td></tr>
+        <tr><td><strong>Total</strong></td><td style="color:#4ade80"><strong>~€5–15/month</strong></td><td>Well under €50</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🔑 Required API Keys</h3>
+    <table>
+      <thead><tr><th>Key</th><th>.env Variable</th><th>Where to Get</th></tr></thead>
+      <tbody>
+        <tr><td>Anthropic</td><td><code>ANTHROPIC_API_KEY</code></td><td><a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></td></tr>
+        <tr><td>Amazon Associates</td><td><code>AMAZON_ASSOCIATE_TAG</code></td><td><a href="https://affiliate-program.amazon.com" target="_blank">affiliate-program.amazon.com</a></td></tr>
+        <tr><td>Howl</td><td><code>HOWL_API_KEY</code></td><td><a href="https://app.planethowl.com" target="_blank">app.planethowl.com</a></td></tr>
+        <tr><td>Meta (FB+IG)</td><td><code>META_USER_ACCESS_TOKEN</code></td><td><a href="https://developers.facebook.com/tools/explorer/" target="_blank">Graph API Explorer</a></td></tr>
+        <tr><td>YouTube</td><td><code>YOUTUBE_REFRESH_TOKEN</code></td><td>Run <code>python auth/setup_auth.py</code></td></tr>
+        <tr><td>ElevenLabs (opt)</td><td><code>ELEVENLABS_API_KEY</code></td><td><a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🛍️ Mavely Setup</h3>
+    <p>Mavely does not have a public API for programmatic link creation.</p>
+    <p style="margin-top:8px">
+      1. Go to <a href="https://app.mavely.com" target="_blank">app.mavely.com</a><br/>
+      2. Find your product and generate a Mavely link<br/>
+      3. Paste it in the "Mavely (manual)" input when creating a campaign
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Facebook Group Posting Note</h3>
+    <p>
+      Posting to Facebook Groups requires the <code>publish_to_groups</code> permission.
+      Your Meta app must go through App Review.
+      <a href="https://developers.facebook.com/docs/apps/review" target="_blank">Learn more →</a>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
