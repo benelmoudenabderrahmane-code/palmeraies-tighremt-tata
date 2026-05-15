@@ -41,9 +41,15 @@ Edit `.env` and fill in your keys. At minimum you need:
 | Key | Required for |
 |---|---|
 | `ANTHROPIC_API_KEY` | All AI text generation |
+| `DASHBOARD_PASSWORD` | **Required** — protects dashboard with Basic Auth |
 | `AMAZON_ASSOCIATE_TAG` | Amazon affiliate links |
 | `META_USER_ACCESS_TOKEN` | Facebook Group + Page posts |
 | `META_GROUP_ID` | Auto-posting to your group |
+
+🔒 **Security note:** The dashboard refuses to start if `DASHBOARD_PASSWORD` is empty.
+Pick a strong password — it protects all `/api/*` routes from anyone on your machine
+or network. The `/go/{id}` redirect stays open (so affiliate links work everywhere)
+but is rate-limited to 30 clicks/minute per IP.
 
 Everything else is optional / enhances the system.
 

@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     base_url: str = "http://localhost:8000"
     secret_key: str = "changeme-use-random-string-in-production"
     database_url: str = "sqlite+aiosqlite:///./affiliate.db"
+    # Dashboard Basic Auth (REQUIRED — protects the dashboard + all API routes)
+    dashboard_user: str = "admin"
+    dashboard_password: str = ""   # If empty, app refuses to start in non-localhost mode
 
     class Config:
         env_file = ".env"

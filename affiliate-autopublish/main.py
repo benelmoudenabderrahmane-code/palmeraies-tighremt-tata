@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from affiliate.click_tracker import handle_redirect
 from affiliate.link_manager import generate_affiliate_link
+from auth.security import rate_limit_redirect, require_auth
 from config.logging_config import setup_logging
 from config.settings import get_settings
 from database.crud import (
@@ -57,22 +58,30 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down")
 
 
-app = FastAPI(title="Affiliate AutoPublish", lifespan=lifespan)
+app = FastAPI(
+    title="Affiliate AutoPublish",
+    lifespan=lifespan,
+    # Auth applied per-route; OpenAPI docs also protected.
+    dependencies=[],
+)
 app.mount("/static", StaticFiles(directory="dashboard/static"), name="static")
 app.mount("/media", StaticFiles(directory="media"), name="media")
 templates = Jinja2Templates(directory="dashboard/templates")
 
+# Protected = require Basic Auth. /go/{id} stays open (rate-limited).
+PROTECTED = [Depends(require_auth)]
+
 
 # ── Dashboard ──────────────────────────────────────────────────────────────────
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, dependencies=PROTECTED)
 async def dashboard(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 # ── Scrape ─────────────────────────────────────────────────────────────────────
 
-@app.post("/api/scrape")
+@app.post("/api/scrape", dependencies=PROTECTED)
 async def scrape_product(url: str = Form(...), session: AsyncSession = Depends(get_session)):
     url = url.strip()
     if "amazon." in url:
@@ -116,7 +125,7 @@ async def scrape_product(url: str = Form(...), session: AsyncSession = Depends(g
 
 # ── Products ───────────────────────────────────────────────────────────────────
 
-@app.get("/api/products")
+@app.get("/api/products", dependencies=PROTECTED)
 async def list_products(session: AsyncSession = Depends(get_session)):
     products = await get_products(session)
     return {
@@ -136,7 +145,7 @@ async def list_products(session: AsyncSession = Depends(get_session)):
 
 # ── Affiliate Links ─────────────────────────────────────────────────────────────
 
-@app.post("/api/affiliate/generate")
+@app.post("/api/affiliate/generate", dependencies=PROTECTED)
 async def gen_affiliate(
     product_id: int = Form(...),
     network: str = Form(...),
@@ -153,13 +162,19 @@ async def gen_affiliate(
 
 
 @app.get("/go/{rid}")
-async def click_redirect(rid: str, request: Request, session: AsyncSession = Depends(get_session)):
+async def click_redirect(
+    rid: str,
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+    _: None = Depends(rate_limit_redirect),
+):
+    # NOT auth-protected (affiliate links must work from anywhere) but rate-limited.
     return await handle_redirect(rid, request, session)
 
 
 # ── Video Campaign ──────────────────────────────────────────────────────────────
 
-@app.post("/api/video/generate")
+@app.post("/api/video/generate", dependencies=PROTECTED)
 async def generate_video_campaign(
     product_id: int = Form(...),
     affiliate_link: str = Form(...),
@@ -188,7 +203,7 @@ async def generate_video_campaign(
 
 # ── Deal Post Campaign ──────────────────────────────────────────────────────────
 
-@app.post("/api/deal-post/generate")
+@app.post("/api/deal-post/generate", dependencies=PROTECTED)
 async def generate_deal_post_route(
     product_id: int = Form(...),
     affiliate_link: str = Form(...),
@@ -214,7 +229,7 @@ async def generate_deal_post_route(
     return {"job_id": job.id}
 
 
-@app.post("/api/deal-post/publish-now")
+@app.post("/api/deal-post/publish-now", dependencies=PROTECTED)
 async def publish_deal_post_now(
     post_id: int = Form(...),
     session: AsyncSession = Depends(get_session),
@@ -223,7 +238,7 @@ async def publish_deal_post_now(
     return await _publish_post(post_id, session, video_url=None)
 
 
-@app.post("/api/post/{post_id}/publish")
+@app.post("/api/post/{post_id}/publish", dependencies=PROTECTED)
 async def publish_post(
     post_id: int,
     video_url: str = Form(""),
@@ -324,7 +339,7 @@ async def _dispatch_publisher(post: Post, video_url: str | None) -> str:
 
 # ── Posts ───────────────────────────────────────────────────────────────────────
 
-@app.get("/api/posts")
+@app.get("/api/posts", dependencies=PROTECTED)
 async def list_posts(status: str | None = None, session: AsyncSession = Depends(get_session)):
     posts = await get_posts(session, status=status)
     return {
@@ -347,12 +362,12 @@ async def list_posts(status: str | None = None, session: AsyncSession = Depends(
 
 # ── Job Status + SSE ────────────────────────────────────────────────────────────
 
-@app.get("/api/job/{job_id}/status")
+@app.get("/api/job/{job_id}/status", dependencies=PROTECTED)
 async def job_status(job_id: int):
     return job_queue.get_status(job_id)
 
 
-@app.get("/api/job/{job_id}/stream")
+@app.get("/api/job/{job_id}/stream", dependencies=PROTECTED)
 async def job_stream(job_id: int):
     """Server-Sent Events endpoint for real-time job progress in the dashboard."""
     listener = job_queue.subscribe(job_id)
@@ -382,7 +397,7 @@ async def job_stream(job_id: int):
 
 # ── Analytics ───────────────────────────────────────────────────────────────────
 
-@app.get("/api/analytics")
+@app.get("/api/analytics", dependencies=PROTECTED)
 async def analytics(session: AsyncSession = Depends(get_session)):
     clicks_by_network = await get_clicks_by_network(session)
     posts_by_platform = await get_posts_by_platform(session)
@@ -394,7 +409,7 @@ async def analytics(session: AsyncSession = Depends(get_session)):
 
 # ── Scheduler Config ────────────────────────────────────────────────────────────
 
-@app.post("/api/scheduler/config")
+@app.post("/api/scheduler/config", dependencies=PROTECTED)
 async def configure_scheduler(
     posts_per_day: int = Form(3),
     hours: str = Form("9,13,18"),
