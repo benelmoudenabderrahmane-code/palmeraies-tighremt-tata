@@ -76,7 +76,7 @@ PROTECTED = [Depends(require_auth)]
 
 @app.get("/", response_class=HTMLResponse, dependencies=PROTECTED)
 async def dashboard(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 
 # ── Scrape ─────────────────────────────────────────────────────────────────────
