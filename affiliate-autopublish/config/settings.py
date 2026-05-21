@@ -3,7 +3,9 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    # Anthropic
+    # AI providers
+    groq_api_key: str = ""
+    gemini_api_key: str = ""
     anthropic_api_key: str = ""
     # ElevenLabs
     elevenlabs_api_key: str = ""
@@ -13,12 +15,6 @@ class Settings(BaseSettings):
     amazon_paapi_access_key: str = ""
     amazon_paapi_secret_key: str = ""
     amazon_paapi_partner_tag: str = ""
-    # Walmart / Impact Radius
-    impact_account_sid: str = ""
-    impact_auth_token: str = ""
-    walmart_campaign_id: str = ""
-    # Howl
-    howl_api_key: str = ""
     # Mavely (manual links only)
     mavely_default_link: str = ""
     # YouTube OAuth2
@@ -36,6 +32,11 @@ class Settings(BaseSettings):
     tiktok_client_key: str = ""
     tiktok_client_secret: str = ""
     tiktok_refresh_token: str = ""
+    # Canva (optional premium deal images)
+    canva_api_token: str = ""
+    canva_brand_template_id: str = "DAG543g8dLc"  # Your deal post template
+    # n8n publishing webhook
+    n8n_webhook_url: str = ""   # e.g. http://localhost:5678/webhook/publish
     # App
     base_url: str = "http://localhost:8000"
     secret_key: str = "changeme-use-random-string-in-production"

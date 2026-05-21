@@ -34,7 +34,7 @@ class AffiliateLink(Base):
 
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
-    network = Column(String(50), nullable=False)   # amazon/walmart/howl/mavely/custom
+    network = Column(String(50), nullable=False)   # howl/amazon/mavely/custom
     original_url = Column(String(2000))
     affiliate_link = Column(String(2000), nullable=False)
     short_redirect_id = Column(String(20), unique=True, nullable=False)
@@ -64,8 +64,8 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True)
-    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
-    post_type = Column(String(20))   # video / deal_post
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=True)   # nullable for shoe_short posts
+    post_type = Column(String(20))   # video / deal_post / shoe_short
     platform = Column(String(50))    # youtube/instagram/facebook_page/facebook_group/tiktok
     post_text = Column(Text)
     image_path = Column(String(500))

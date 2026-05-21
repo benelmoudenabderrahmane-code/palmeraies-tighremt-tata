@@ -1,11 +1,13 @@
 import asyncio
 import json
 import logging
+import shutil
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Form, HTTPException, Request
+import httpx
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -32,11 +34,10 @@ from database.crud import (
 )
 from database.models import Post
 from jobs.queue import job_queue
-from jobs.worker import run_deal_post_campaign, run_full_video_campaign
+from jobs.worker import run_deal_post_campaign, run_full_video_campaign, run_shoe_short_campaign
 from scheduler.auto_post import setup_scheduler, start_scheduler
 from scrapers.amazon import scrape_amazon
 from scrapers.generic import scrape_generic
-from scrapers.walmart import scrape_walmart
 
 settings = get_settings()
 setup_logging()
@@ -49,6 +50,7 @@ Path("media").mkdir(exist_ok=True)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting affiliate-autopublish")
+    _validate_settings()
     await init_db()
     asyncio.create_task(job_queue.run_worker())
     setup_scheduler()
@@ -56,6 +58,13 @@ async def lifespan(app: FastAPI):
     logger.info("Startup complete")
     yield
     logger.info("Shutting down")
+
+
+def _validate_settings() -> None:
+    if not settings.groq_api_key:
+        logger.warning("GROQ_API_KEY not set — AI generation (scripts, deal posts) will fail")
+    if not settings.dashboard_password:
+        logger.warning("DASHBOARD_PASSWORD not set — using default (insecure)")
 
 
 app = FastAPI(
@@ -79,6 +88,12 @@ async def dashboard(request: Request):
     return templates.TemplateResponse(request, "index.html")
 
 
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    """Styled glassmorphism sign-in screen. Browser Basic Auth still gates /."""
+    return templates.TemplateResponse(request, "login.html")
+
+
 # ── Scrape ─────────────────────────────────────────────────────────────────────
 
 @app.post("/api/scrape", dependencies=PROTECTED)
@@ -86,8 +101,6 @@ async def scrape_product(url: str = Form(...), session: AsyncSession = Depends(g
     url = url.strip()
     if "amazon." in url:
         data = await scrape_amazon(url)
-    elif "walmart.com" in url:
-        data = await scrape_walmart(url)
     else:
         data = await scrape_generic(url)
 
@@ -209,6 +222,7 @@ async def generate_deal_post_route(
     affiliate_link: str = Form(...),
     style: str = Form("best_deal"),
     network: str = Form("amazon"),
+    price_override: float = Form(0.0),
     session: AsyncSession = Depends(get_session),
 ):
     job = await create_job(
@@ -225,6 +239,7 @@ async def generate_deal_post_route(
         affiliate_link,
         style,
         network,
+        price_override,
     )
     return {"job_id": job.id}
 
@@ -262,6 +277,7 @@ async def _publish_post(post_id: int, session: AsyncSession, video_url: str | No
 
     platform = post.platform
     logger.info(f"Publishing post {post_id} to {platform}")
+    _preflight_check(platform)
 
     try:
         url = await _dispatch_publisher(post, video_url)
@@ -285,6 +301,30 @@ async def _publish_post(post_id: int, session: AsyncSession, video_url: str | No
         await session.commit()
         logger.exception(f"Failed to publish post {post_id}")
         raise HTTPException(500, str(e))
+
+
+def _preflight_check(platform: str) -> None:
+    """Raise HTTPException 400 if required API keys for the platform are missing."""
+    s = get_settings()   # always fresh — respects hot-reload via /api/settings
+    missing = []
+    if platform in ("youtube", "youtube_shorts"):
+        if not s.youtube_client_id or not s.youtube_refresh_token:
+            missing = ["YOUTUBE_CLIENT_ID", "YOUTUBE_REFRESH_TOKEN"]
+    elif platform in ("facebook", "facebook_group"):
+        if not s.meta_user_access_token:
+            missing = ["META_USER_ACCESS_TOKEN"]
+        if platform == "facebook_group" and not s.meta_group_id:
+            missing.append("META_GROUP_ID")
+        if platform == "facebook" and not s.meta_page_id:
+            missing.append("META_PAGE_ID")
+    elif platform == "instagram":
+        if not s.meta_user_access_token or not s.meta_instagram_account_id:
+            missing = ["META_USER_ACCESS_TOKEN", "META_INSTAGRAM_ACCOUNT_ID"]
+    elif platform == "tiktok":
+        if not s.tiktok_client_key or not s.tiktok_refresh_token:
+            missing = ["TIKTOK_CLIENT_KEY", "TIKTOK_REFRESH_TOKEN"]
+    if missing:
+        raise HTTPException(400, f"Missing keys for {platform}: {', '.join(missing)} — add them in the Settings tab")
 
 
 async def _dispatch_publisher(post: Post, video_url: str | None) -> str:
@@ -337,6 +377,128 @@ async def _dispatch_publisher(post: Post, video_url: str | None) -> str:
     raise ValueError(f"Unknown platform: {platform}")
 
 
+# ── Shoe Shorts (photo → YouTube Short) ────────────────────────────────────────
+
+SHOE_UPLOADS_DIR = Path("media") / "shoe_uploads"
+SHOE_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg", "image/avif", "image/heic", "image/heif"}
+MAX_PHOTOS = 6
+MAX_PHOTO_MB = 20
+
+
+@app.post("/api/shoe-short/upload", dependencies=PROTECTED)
+async def upload_shoe_photos(
+    photos: list[UploadFile] = File(...),
+):
+    """
+    Upload 1–6 shoe photos.
+    Returns saved file paths (relative to media/) for use in /api/shoe-short/generate.
+    """
+    if not photos:
+        raise HTTPException(400, "No photos uploaded")
+    if len(photos) > MAX_PHOTOS:
+        raise HTTPException(400, f"Maximum {MAX_PHOTOS} photos allowed")
+
+    saved: list[str] = []
+    upload_id = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+    dest_dir = SHOE_UPLOADS_DIR / upload_id
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    for i, photo in enumerate(photos):
+        # Accept any image/* content type (browser may report wrong MIME for AVIF/HEIC)
+        ct = (photo.content_type or "").lower()
+        if not ct.startswith("image/") and ct not in ALLOWED_IMAGE_TYPES:
+            raise HTTPException(400, f"File {photo.filename!r} is not a supported image type (got {ct})")
+        content = await photo.read()
+        if len(content) > MAX_PHOTO_MB * 1024 * 1024:
+            raise HTTPException(400, f"File {photo.filename!r} exceeds {MAX_PHOTO_MB} MB limit")
+
+        # Always save as JPEG (converts AVIF, HEIC, WebP, PNG → JPEG for FFmpeg compatibility)
+        dest = dest_dir / f"photo_{i:02d}.jpg"
+        try:
+            from io import BytesIO
+            from PIL import Image as _PILImage
+            try:
+                import pillow_avif  # registers AVIF support if available  # noqa: F401
+            except ImportError:
+                pass
+            img = _PILImage.open(BytesIO(content)).convert("RGB")
+            img.save(str(dest), "JPEG", quality=92)
+        except Exception as _conv_err:
+            logger.warning("Image conversion failed for %s: %s — saving raw", photo.filename, _conv_err)
+            # If Pillow can't open it, save raw and let FFmpeg try
+            dest = dest_dir / f"photo_{i:02d}{Path(photo.filename or 'photo.jpg').suffix or '.jpg'}"
+            dest.write_bytes(content)
+
+        saved.append(str(dest))
+
+    return {"upload_id": upload_id, "paths": saved, "count": len(saved)}
+
+
+@app.post("/api/shoe-short/generate", dependencies=PROTECTED)
+async def generate_shoe_short_route(
+    upload_id: str = Form(...),
+    photo_paths: str = Form(...),          # JSON array of absolute paths from upload step
+    product_name: str = Form(...),
+    price: float = Form(0.0),
+    affiliate_link: str = Form(...),
+    platforms: str = Form("youtube_shorts"),
+    slide_duration: int = Form(3),
+    session: AsyncSession = Depends(get_session),
+):
+    """
+    Kick off a shoe-short job.
+    photo_paths: JSON array of absolute paths returned by /api/shoe-short/upload
+    """
+    try:
+        paths: list[str] = json.loads(photo_paths)
+    except Exception:
+        raise HTTPException(400, "photo_paths must be a JSON array of file paths")
+
+    if not paths:
+        raise HTTPException(400, "No photo paths provided")
+
+    # Validate all paths exist and are inside our uploads directory
+    validated: list[str] = []
+    for p in paths:
+        pp = Path(p)
+        if not pp.exists():
+            raise HTTPException(400, f"Photo not found: {p}")
+        validated.append(str(pp.resolve()))
+
+    platform_list = [pl.strip() for pl in platforms.split(",") if pl.strip()]
+    if not platform_list:
+        platform_list = ["youtube_shorts"]
+
+    job = await create_job(
+        session,
+        "shoe_short",
+        {
+            "photo_paths": validated,
+            "product_name": product_name,
+            "price": price,
+            "affiliate_link": affiliate_link,
+            "platforms": platform_list,
+            "slide_duration": slide_duration,
+        },
+    )
+
+    await job_queue.enqueue(
+        job.id,
+        run_shoe_short_campaign,
+        job.id,
+        validated,
+        product_name,
+        price,
+        affiliate_link,
+        platform_list,
+        slide_duration,
+    )
+
+    return {"job_id": job.id, "status": "queued", "platforms": platform_list}
+
+
 # ── Posts ───────────────────────────────────────────────────────────────────────
 
 @app.get("/api/posts", dependencies=PROTECTED)
@@ -358,6 +520,29 @@ async def list_posts(status: str | None = None, session: AsyncSession = Depends(
             for p in posts
         ]
     }
+
+
+# ── n8n callback ───────────────────────────────────────────────────────────────
+
+@app.post("/api/n8n/published/{post_id}")
+async def n8n_published_callback(post_id: int, request: Request):
+    """
+    Called by n8n after successfully publishing a post.
+    Body: { "platform_post_id": "...", "platform_url": "https://..." }
+    No auth required — n8n calls this from localhost only.
+    """
+    from sqlalchemy import select
+    body = await request.json()
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Post).where(Post.id == post_id).limit(1)
+        )
+        post = result.scalar_one_or_none()
+        if post:
+            post.status = "published"
+            post.platform_post_id = body.get("platform_url") or body.get("platform_post_id", "")
+            await session.commit()
+    return {"ok": True, "post_id": post_id}
 
 
 # ── Job Status + SSE ────────────────────────────────────────────────────────────
@@ -405,6 +590,129 @@ async def analytics(session: AsyncSession = Depends(get_session)):
         "clicks_by_network": clicks_by_network,
         "posts_by_platform": posts_by_platform,
     }
+
+
+# ── Settings Manager ────────────────────────────────────────────────────────────
+
+_SETTINGS_ALLOW = {
+    "GROQ_API_KEY", "ANTHROPIC_API_KEY",
+    "ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID",
+    "AMAZON_ASSOCIATE_TAG", "AMAZON_PAAPI_ACCESS_KEY", "AMAZON_PAAPI_SECRET_KEY", "AMAZON_PAAPI_PARTNER_TAG",
+    "HOWL_API_KEY", "MAVELY_DEFAULT_LINK",
+    "META_USER_ACCESS_TOKEN", "META_GROUP_ID", "META_PAGE_ID",
+    "META_INSTAGRAM_ACCOUNT_ID", "META_APP_ID", "META_APP_SECRET",
+    "YOUTUBE_CLIENT_ID", "YOUTUBE_CLIENT_SECRET", "YOUTUBE_REFRESH_TOKEN",
+    "TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET", "TIKTOK_REFRESH_TOKEN",
+    "CANVA_API_TOKEN", "CANVA_BRAND_TEMPLATE_ID",
+}
+
+
+def _mask(val: str, show: int = 6) -> dict:
+    if not val:
+        return {"set": False, "preview": ""}
+    return {"set": True, "preview": val[:show] + "…"}
+
+
+def _plain(val: str) -> dict:
+    return {"set": bool(val), "preview": val}
+
+
+@app.get("/api/settings", dependencies=PROTECTED)
+async def read_settings_status():
+    s = get_settings()
+    return {
+        "groq_api_key":              _mask(s.groq_api_key),
+        "anthropic_api_key":         _mask(s.anthropic_api_key),
+        "elevenlabs_api_key":        _mask(s.elevenlabs_api_key),
+        "amazon_associate_tag":      _plain(s.amazon_associate_tag),
+        "meta_user_access_token":    _mask(s.meta_user_access_token),
+        "meta_group_id":             _plain(s.meta_group_id),
+        "meta_page_id":              _plain(s.meta_page_id),
+        "meta_instagram_account_id": _plain(s.meta_instagram_account_id),
+        "youtube_refresh_token":     _mask(s.youtube_refresh_token),
+        "tiktok_refresh_token":      _mask(s.tiktok_refresh_token),
+        "canva_api_token":           _mask(s.canva_api_token),
+        "canva_brand_template_id":   _plain(s.canva_brand_template_id),
+    }
+
+
+@app.post("/api/settings", dependencies=PROTECTED)
+async def save_settings(request: Request):
+    body = await request.json()
+    env_path = Path(".env")
+    lines = env_path.read_text(encoding="utf-8").splitlines() if env_path.exists() else []
+    updated: list[str] = []
+    for raw_key, value in body.items():
+        key = raw_key.upper()
+        if key not in _SETTINGS_ALLOW:
+            continue
+        if not str(value).strip():   # skip blanks — don't overwrite existing values
+            continue
+        found = False
+        for i, line in enumerate(lines):
+            stripped = line.lstrip("# ").split("=")[0]
+            if stripped == key:
+                lines[i] = f"{key}={value}"
+                found = True
+                break
+        if not found:
+            lines.append(f"{key}={value}")
+        updated.append(key)
+    env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    get_settings.cache_clear()          # reload immediately — no restart needed
+    return {"updated": updated, "count": len(updated)}
+
+
+@app.get("/api/settings/test/{service}", dependencies=PROTECTED)
+async def test_service(service: str):
+    s = get_settings()
+    try:
+        if service == "groq":
+            if not s.groq_api_key:
+                return {"ok": False, "error": "GROQ_API_KEY not set"}
+            async with httpx.AsyncClient(verify=False, timeout=10) as c:
+                r = await c.get("https://api.groq.com/openai/v1/models",
+                                headers={"Authorization": f"Bearer {s.groq_api_key}"})
+            ok = r.status_code == 200
+            return {"ok": ok, "models": len(r.json().get("data", [])) if ok else 0,
+                    "error": "" if ok else f"HTTP {r.status_code}"}
+
+        if service == "meta":
+            if not s.meta_user_access_token:
+                return {"ok": False, "error": "META_USER_ACCESS_TOKEN not set"}
+            async with httpx.AsyncClient(timeout=10) as c:
+                r = await c.get("https://graph.facebook.com/v18.0/me",
+                                params={"access_token": s.meta_user_access_token,
+                                        "fields": "id,name"})
+            d = r.json()
+            if "error" in d:
+                return {"ok": False, "error": d["error"].get("message", "Token error")}
+            return {"ok": True, "name": d.get("name"), "fb_id": d.get("id")}
+
+        if service == "canva":
+            if not s.canva_api_token:
+                return {"ok": False, "error": "CANVA_API_TOKEN not set"}
+            async with httpx.AsyncClient(verify=False, timeout=10) as c:
+                r = await c.get("https://api.canva.com/rest/v1/users/me",
+                                headers={"Authorization": f"Bearer {s.canva_api_token}"})
+            if r.status_code == 200:
+                return {"ok": True, "user": r.json().get("profile", {}).get("display_name", "OK")}
+            return {"ok": False, "error": f"HTTP {r.status_code}"}
+
+        if service == "elevenlabs":
+            if not s.elevenlabs_api_key:
+                return {"ok": False, "error": "ELEVENLABS_API_KEY not set"}
+            async with httpx.AsyncClient(timeout=10) as c:
+                r = await c.get("https://api.elevenlabs.io/v1/user",
+                                headers={"xi-api-key": s.elevenlabs_api_key})
+            if r.status_code == 200:
+                tier = r.json().get("subscription", {}).get("tier", "unknown")
+                return {"ok": True, "tier": tier}
+            return {"ok": False, "error": f"HTTP {r.status_code}"}
+
+        return {"ok": False, "error": f"Unknown service: {service}"}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
 
 
 # ── Scheduler Config ────────────────────────────────────────────────────────────

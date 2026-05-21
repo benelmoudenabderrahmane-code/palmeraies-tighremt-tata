@@ -3,59 +3,249 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🚀 Affiliate AutoPublish</title>
+<title>Affiliate Autopublish — desk</title>
 <link rel="stylesheet" href="/static/style.css"/>
 </head>
 <body>
 <header>
-  <h1>🚀 Affiliate AutoPublish</h1>
+  <h1 style="display:none">Affiliate Autopublish</h1>
+  <a href="/" class="brand" aria-label="Affiliate Autopublish — home">
+    <span class="brand-mark" aria-hidden="true">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="brand-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#8b67ff"/>
+            <stop offset="1" stop-color="#e068ff"/>
+          </linearGradient>
+          <linearGradient id="brand-shine" x1="0" y1="0" x2="0" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- gradient square -->
+        <rect x="0" y="0" width="36" height="36" rx="10" fill="url(#brand-grad)"/>
+        <!-- subtle inner shine -->
+        <rect x="0" y="0" width="36" height="36" rx="10" fill="url(#brand-shine)"/>
+        <!-- "Æ" ligature, hand-shaped -->
+        <path d="M9 26 L13.5 10 L17 10 L21.5 26 M11.2 21 L19.4 21 M21 18 L29 18 M21 14 L27 14 M21 22 L27 22" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- gold accent dot — the "spark" -->
+        <circle cx="29.5" cy="9" r="2" fill="#e6c478"/>
+      </svg>
+    </span>
+    <span class="brand-word">
+      <span class="brand-name">Affiliate Autopublish</span>
+      <span class="brand-tag">the desk</span>
+    </span>
+  </a>
+
+  <button class="cmdk-trigger" onclick="openCmdK()" style="margin-left:auto" aria-label="Open command palette">
+    <span>Quick action…</span>
+    <kbd>⌘K</kbd>
+  </button>
+
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle theme">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6.364 6.364 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+  </button>
+
   <nav>
-    <button class="tab-btn active" data-tab="video">🎬 New Video</button>
-    <button class="tab-btn" data-tab="deal">🛍️ Deal Post</button>
-    <button class="tab-btn" data-tab="scheduler">⏰ Scheduler</button>
-    <button class="tab-btn" data-tab="products">📦 Products</button>
-    <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
-    <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+    <button class="tab-btn active" data-tab="video"><i data-icon="film"></i>New video</button>
+    <button class="tab-btn" data-tab="shoe"><i data-icon="zap"></i>👟 Shoe Short</button>
+    <button class="tab-btn" data-tab="deal"><i data-icon="tag"></i>Deal post</button>
+    <button class="tab-btn" data-tab="scheduler"><i data-icon="clock"></i>Queue</button>
+    <button class="tab-btn" data-tab="products"><i data-icon="package"></i>Library</button>
+    <button class="tab-btn" data-tab="analytics"><i data-icon="chart"></i>Numbers</button>
+    <button class="tab-btn" data-tab="settings"><i data-icon="settings"></i>Keys</button>
   </nav>
 </header>
+
+<!-- Cursor spotlight + toast stack + cmd-K palette (all decorative until invoked) -->
+<div class="cursor-spotlight" id="cursor-spot"></div>
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+<div class="cmdk-backdrop" id="cmdk-backdrop" onclick="if (event.target === this) closeCmdK()">
+  <div class="cmdk-panel" role="dialog" aria-label="Command palette">
+    <div class="cmdk-input-wrap">
+      <input id="cmdk-input" placeholder="Type a command, or jump to a tab…" autocomplete="off"/>
+      <span class="cmdk-hint">ESC</span>
+    </div>
+    <div class="cmdk-results" id="cmdk-results"></div>
+  </div>
+</div>
+
+<!-- Keyboard shortcuts overlay (press ?) -->
+<div class="kbd-overlay" id="kbd-overlay" onclick="if (event.target === this) closeShortcuts()">
+  <div class="kbd-panel" role="dialog" aria-label="Keyboard shortcuts">
+    <div class="kbd-head">
+      <span class="kbd-title">Keyboard shortcuts</span>
+      <span class="kbd-hint">ESC to close</span>
+    </div>
+    <div class="kbd-grid">
+      <div class="kbd-group">
+        <h4>Navigation</h4>
+        <div class="kbd-row"><span>Open command palette</span><span class="kbd-keys"><kbd>⌘</kbd><kbd>K</kbd></span></div>
+        <div class="kbd-row"><span>Jump to <em>New video</em></span><span class="kbd-keys"><kbd>G</kbd><kbd>V</kbd></span></div>
+        <div class="kbd-row"><span>Jump to <em>Deal post</em></span><span class="kbd-keys"><kbd>G</kbd><kbd>D</kbd></span></div>
+        <div class="kbd-row"><span>Jump to <em>Queue</em></span><span class="kbd-keys"><kbd>G</kbd><kbd>Q</kbd></span></div>
+        <div class="kbd-row"><span>Jump to <em>Library</em></span><span class="kbd-keys"><kbd>G</kbd><kbd>L</kbd></span></div>
+        <div class="kbd-row"><span>Jump to <em>Numbers</em></span><span class="kbd-keys"><kbd>G</kbd><kbd>N</kbd></span></div>
+        <div class="kbd-row"><span>Jump to <em>Keys</em></span><span class="kbd-keys"><kbd>G</kbd><kbd>S</kbd></span></div>
+      </div>
+      <div class="kbd-group">
+        <h4>Actions</h4>
+        <div class="kbd-row"><span>Toggle dark / light</span><span class="kbd-keys"><kbd>T</kbd></span></div>
+        <div class="kbd-row"><span>Toggle sound</span><span class="kbd-keys"><kbd>M</kbd></span></div>
+        <div class="kbd-row"><span>Show this overlay</span><span class="kbd-keys"><kbd>?</kbd></span></div>
+        <div class="kbd-row"><span>Close any overlay</span><span class="kbd-keys"><kbd>Esc</kbd></span></div>
+      </div>
+    </div>
+    <div class="kbd-foot">
+      Inspired by Linear, Vercel, Raycast — the apps where every keystroke earns its place.
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THE DESK TICKER · live stats ═══ -->
+<div class="desk-ticker">
+  <div class="ticker-cell">
+    <div class="label">Revenue · today</div>
+    <div class="value money" id="ticker-revenue">€0.00</div>
+    <div class="delta">— since midnight</div>
+  </div>
+  <div class="ticker-cell">
+    <div class="label">Posts · live</div>
+    <div class="value" id="ticker-posts">0</div>
+    <div class="delta">queued + published</div>
+  </div>
+  <div class="ticker-cell">
+    <div class="label">Click-through</div>
+    <div class="value violet" id="ticker-ctr">0</div>
+    <div class="delta">all networks</div>
+  </div>
+  <div class="ticker-cell">
+    <div class="label">Auto-pilot</div>
+    <div class="value" id="ticker-schedule" style="font-size:18px; padding-top:6px">3×/day · 9·13·18</div>
+    <div class="delta">next: today 13:00</div>
+  </div>
+</div>
 
 <main>
 
 <!-- ═══ TAB: NEW VIDEO CAMPAIGN ═══ -->
 <section id="tab-video" class="tab active">
-  <h2>New Video Campaign</h2>
+  <h2 data-num="01">Spin up a video</h2>
+  <p class="section-lede">Paste a link, pick where it lands, walk away. The script writes itself, the voice records itself, the video edits itself — and posts to whichever feeds you've connected.</p>
+
+  <svg class="hero-illust" viewBox="0 0 540 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="hero-line" x1="0" x2="1">
+        <stop offset="0" stop-color="#8b67ff" stop-opacity=".6"/>
+        <stop offset=".5" stop-color="#e068ff" stop-opacity=".8"/>
+        <stop offset="1" stop-color="#e6c478" stop-opacity=".6"/>
+      </linearGradient>
+      <radialGradient id="node-violet">
+        <stop offset="0" stop-color="#a78aff"/>
+        <stop offset="1" stop-color="#6a47e0"/>
+      </radialGradient>
+      <radialGradient id="node-magenta">
+        <stop offset="0" stop-color="#e068ff"/>
+        <stop offset="1" stop-color="#c14de8"/>
+      </radialGradient>
+      <radialGradient id="node-money">
+        <stop offset="0" stop-color="#6ee7b7"/>
+        <stop offset="1" stop-color="#059669"/>
+      </radialGradient>
+      <radialGradient id="node-gold">
+        <stop offset="0" stop-color="#fde9b3"/>
+        <stop offset="1" stop-color="#e6c478"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Connection lines (animated flow) -->
+    <path class="flow" d="M 50 90 Q 130 50, 200 90" stroke="url(#hero-line)" stroke-width="1.5" stroke-linecap="round"/>
+    <path class="flow" d="M 200 90 Q 270 30, 340 60"  stroke="url(#hero-line)" stroke-width="1.5" stroke-linecap="round"/>
+    <path class="flow" d="M 200 90 Q 270 130, 340 120" stroke="url(#hero-line)" stroke-width="1.5" stroke-linecap="round"/>
+    <path class="flow" d="M 340 60  Q 410 80, 490 90" stroke="url(#hero-line)" stroke-width="1.5" stroke-linecap="round"/>
+    <path class="flow" d="M 340 120 Q 410 100, 490 90" stroke="url(#hero-line)" stroke-width="1.5" stroke-linecap="round"/>
+
+    <!-- Node 1 : Product (left) -->
+    <g class="node node-1">
+      <circle cx="50" cy="90" r="22" fill="url(#node-violet)" opacity=".18"/>
+      <circle cx="50" cy="90" r="14" fill="url(#node-violet)"/>
+      <path d="M 44 86 L 50 82 L 56 86 L 56 96 L 44 96 Z M 48 96 L 48 91 L 52 91 L 52 96" stroke="#fff" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+    </g>
+    <text x="50" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#9b97ad" letter-spacing="2">PRODUCT</text>
+
+    <!-- Node 2 : AI brain (center) -->
+    <g class="node node-2">
+      <circle cx="200" cy="90" r="26" fill="url(#node-magenta)" opacity=".15"/>
+      <circle cx="200" cy="90" r="17" fill="url(#node-magenta)"/>
+      <path d="M 192 88 v -4 a 3 3 0 0 1 3 -3 h 10 a 3 3 0 0 1 3 3 v 4 M 192 92 v 4 a 3 3 0 0 0 3 3 h 10 a 3 3 0 0 0 3 -3 v -4 M 197 88 v 4 M 203 88 v 4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    </g>
+    <text x="200" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#9b97ad" letter-spacing="2">AI WRITES</text>
+
+    <!-- Node 3 : Video (top right) -->
+    <g class="node node-3">
+      <circle cx="340" cy="60" r="20" fill="url(#node-violet)" opacity=".15"/>
+      <circle cx="340" cy="60" r="13" fill="url(#node-violet)"/>
+      <path d="M 336 56 L 344 60 L 336 64 Z" fill="#fff"/>
+    </g>
+    <text x="340" y="35" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#9b97ad" letter-spacing="2">VIDEO</text>
+
+    <!-- Node 4 : Deal post (bottom right) -->
+    <g class="node node-4">
+      <circle cx="340" cy="120" r="20" fill="url(#node-magenta)" opacity=".15"/>
+      <circle cx="340" cy="120" r="13" fill="url(#node-magenta)"/>
+      <path d="M 334 118 L 340 114 L 346 118 L 346 125 L 334 125 Z" stroke="#fff" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+    </g>
+    <text x="340" y="156" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#9b97ad" letter-spacing="2">DEAL POST</text>
+
+    <!-- Node 5 : Money (right) -->
+    <g class="node node-5">
+      <circle cx="490" cy="90" r="24" fill="url(#node-money)" opacity=".18"/>
+      <circle cx="490" cy="90" r="16" fill="url(#node-money)"/>
+      <text x="490" y="95" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="18" fill="#fff" font-weight="500">€</text>
+    </g>
+    <text x="490" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#9b97ad" letter-spacing="2">REVENUE</text>
+
+    <!-- Gold spark, twirling -->
+    <g class="spark" transform-origin="200 90">
+      <circle cx="225" cy="68" r="2" fill="url(#node-gold)"/>
+    </g>
+    <g class="spark" transform-origin="200 90" style="animation-direction: reverse; animation-duration: 9s">
+      <circle cx="170" cy="110" r="1.5" fill="url(#node-gold)" opacity=".7"/>
+    </g>
+  </svg>
 
   <div class="card">
-    <label>Product URL (Amazon, Walmart, or any store)</label>
+    <label>Drop a product link — anywhere it sells</label>
     <div class="input-row">
-      <input id="video-url" type="url" placeholder="https://www.amazon.com/dp/B08N5WRWNW"/>
-      <button onclick="scrapeProduct('video')" id="video-scrape-btn">Scrape</button>
+      <input id="video-url" type="url" placeholder="https://amazon.com/dp/B08N5WRWNW"/>
+      <button onclick="scrapeProduct('video')" id="video-scrape-btn">Pull it in</button>
     </div>
     <div id="video-product-preview" class="product-preview hidden"></div>
   </div>
 
   <div class="card" id="video-affiliate-section" style="display:none">
-    <label>Affiliate Network</label>
+    <label>Where the money lands</label>
     <select id="video-network" onchange="onNetworkChange('video')">
-      <option value="amazon">Amazon Associates</option>
-      <option value="walmart">Walmart / Impact Radius</option>
-      <option value="howl">Howl (auto-generates howl.me link)</option>
-      <option value="mavely">Mavely (manual paste)</option>
+      <option value="howl">Howl (paste your howl.me link)</option>
+      <option value="amazon">Amazon Associates (auto)</option>
+      <option value="mavely">Mavely (paste your link)</option>
       <option value="custom">Custom / Other</option>
     </select>
+    <div id="video-howl-note" class="note hidden">
+      <i data-icon="info"></i> Create your link at <a href="https://app.howl.me/shop" target="_blank">app.howl.me/shop</a>, then paste it below.
+    </div>
     <div id="video-mavely-note" class="note hidden">
-      ℹ️ Mavely has no public API. Generate your link at
-      <a href="https://app.mavely.com" target="_blank">app.mavely.com</a>, then paste it below.
+      <i data-icon="info"></i> Generate your link at <a href="https://app.mavely.com" target="_blank">app.mavely.com</a>, then paste it below.
     </div>
     <input id="video-custom-link" type="url" placeholder="Paste your affiliate link here" class="hidden" style="margin-top:10px"/>
-    <button id="video-gen-howl" class="hidden" onclick="generateAffiliateLink('video')" style="margin-top:8px">
-      ✨ Generate Howl Link
-    </button>
     <div id="video-link-display" style="margin-top:8px;font-size:.85rem;color:#4ade80"></div>
   </div>
 
   <div class="card" id="video-platforms-section" style="display:none">
-    <label>Publish to Platforms</label>
+    <label>Where it goes live</label>
     <div class="checkbox-group">
       <label><input type="checkbox" name="vplatform" value="tiktok" checked/> TikTok</label>
       <label><input type="checkbox" name="vplatform" value="instagram" checked/> Instagram Reels</label>
@@ -70,72 +260,76 @@
       </label>
     </div>
     <button onclick="startVideoCampaign()" class="btn-primary" id="video-start-btn">
-      🎬 Generate Videos
+      <i data-icon="film"></i> Generate Videos
     </button>
   </div>
 
   <div id="video-job-status" class="job-status hidden">
-    <p id="video-job-msg">⏳ Initializing...</p>
+    <p id="video-job-msg"><i data-icon="loader"></i> Initializing…</p>
   </div>
 </section>
 
 <!-- ═══ TAB: FACEBOOK GROUP DEAL POST ═══ -->
 <section id="tab-deal" class="tab">
-  <h2>New Facebook Group Deal Post</h2>
+  <h2 data-num="02">Cook a deal post</h2>
+  <p class="section-lede">A branded image, a punchy caption, your affiliate link. Built in seven seconds, ready for the group, the page, the feed — wherever the click pays.</p>
 
   <div class="card">
-    <label>Product URL</label>
+    <label>Drop a product link — anywhere it sells</label>
     <div class="input-row">
-      <input id="deal-url" type="url" placeholder="https://www.walmart.com/ip/..."/>
-      <button onclick="scrapeProduct('deal')" id="deal-scrape-btn">Scrape</button>
+      <input id="deal-url" type="url" placeholder="https://amazon.com/dp/... or howl.me link"/>
+      <button onclick="scrapeProduct('deal')" id="deal-scrape-btn">Pull it in</button>
     </div>
     <div id="deal-product-preview" class="product-preview hidden"></div>
   </div>
 
   <div class="card" id="deal-affiliate-section" style="display:none">
-    <label>Affiliate Network</label>
+    <label>Where the money lands</label>
     <select id="deal-network" onchange="onNetworkChange('deal')">
-      <option value="amazon">Amazon Associates</option>
-      <option value="walmart">Walmart / Impact</option>
-      <option value="howl">Howl (auto)</option>
-      <option value="mavely">Mavely (manual)</option>
+      <option value="howl">Howl (paste your link)</option>
+      <option value="amazon">Amazon Associates (auto)</option>
+      <option value="mavely">Mavely (paste your link)</option>
       <option value="custom">Custom</option>
     </select>
+    <div id="deal-howl-note" class="note hidden">
+      <i data-icon="info"></i> Create at <a href="https://app.howl.me/shop" target="_blank">app.howl.me/shop</a>, paste below.
+    </div>
     <div id="deal-mavely-note" class="note hidden">
-      ℹ️ Get your Mavely link at <a href="https://app.mavely.com" target="_blank">app.mavely.com</a>
+      <i data-icon="info"></i> Get your link at <a href="https://app.mavely.com" target="_blank">app.mavely.com</a>, paste below.
     </div>
     <input id="deal-custom-link" type="url" placeholder="Paste affiliate link" class="hidden" style="margin-top:10px"/>
-    <button id="deal-gen-howl" class="hidden" onclick="generateAffiliateLink('deal')" style="margin-top:8px">
-      ✨ Generate Howl Link
-    </button>
     <div id="deal-link-display" style="margin-top:8px;font-size:.85rem;color:#4ade80"></div>
   </div>
 
   <div class="card" id="deal-style-section" style="display:none">
-    <label>Post Style</label>
+    <label>Tone of voice</label>
     <select id="deal-style">
-      <option value="best_deal">🔥 Best Deal</option>
-      <option value="price_drop">💥 Price Drop</option>
-      <option value="limited_time">⏰ Limited Time</option>
-      <option value="top_rated">⭐ Top Rated</option>
+      <option value="best_deal">Best Deal</option>
+      <option value="price_drop">Price Drop</option>
+      <option value="limited_time">Limited Time</option>
+      <option value="top_rated">Top Rated</option>
     </select>
-    <button onclick="generateDealPost()" class="btn-primary" id="deal-gen-btn">
-      ✍️ Generate Deal Post
+    <div style="margin-top:12px">
+      <label>Override price <span style="text-transform:none;letter-spacing:0;color:var(--ink-mute);font-size:11px;font-family:'Fraunces',serif;font-style:italic;margin-left:6px">— if Amazon hid it from the scraper</span></label>
+      <input id="deal-price-override" type="number" min="0" step="0.01" placeholder="e.g. 29.99" style="width:160px"/>
+    </div>
+    <button onclick="generateDealPost()" class="btn-primary" id="deal-gen-btn" style="margin-top:12px">
+      <i data-icon="pen"></i> Generate Deal Post
     </button>
   </div>
 
   <div id="deal-preview" class="deal-preview hidden">
     <div class="split">
       <div>
-        <h3>Deal Image Preview</h3>
+        <h3>How it'll look</h3>
         <img id="deal-image-preview" src="" alt="Deal Image" style="width:100%;border-radius:10px"/>
       </div>
       <div>
-        <h3>Post Text (editable)</h3>
+        <h3>What it'll say <span style="font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--ink-mute);font-weight:400">— edit before sending</span></h3>
         <textarea id="deal-text-preview" rows="10" style="width:100%"></textarea>
         <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
-          <button onclick="publishDealNow()" class="btn-primary">📤 Post to Group Now</button>
-          <button onclick="addToQueue()">📅 Add to Auto-Queue</button>
+          <button onclick="publishDealNow()" class="btn-primary"><i data-icon="send"></i> Post to Group Now</button>
+          <button onclick="addToQueue()"><i data-icon="calendar"></i> Add to Auto-Queue</button>
         </div>
         <div id="deal-publish-status" style="margin-top:8px;font-size:.85rem"></div>
       </div>
@@ -145,19 +339,20 @@
 
 <!-- ═══ TAB: AUTO-POSTING SCHEDULER ═══ -->
 <section id="tab-scheduler" class="tab">
-  <h2>Auto-Posting Scheduler</h2>
+  <h2 data-num="03">Auto-pilot &amp; queue</h2>
+  <p class="section-lede">Tell it when to post. It posts. It picks the oldest ready deal from the queue and fires at the hour you set. You sleep, it ships.</p>
   <div class="card">
-    <label>Posts per day (uses ready deal posts in queue)</label>
+    <label>How many drops per day</label>
     <input id="posts-per-day" type="number" value="3" min="1" max="10" style="max-width:120px"/>
-    <label style="margin-top:14px">Posting hours (24h, comma-separated)</label>
+    <label style="margin-top:14px">When they go out — hours, comma-separated</label>
     <input id="posting-hours" type="text" value="9,13,18" style="max-width:200px"/>
-    <button onclick="saveScheduler()" class="btn-primary">💾 Save Schedule</button>
+    <button onclick="saveScheduler()" class="btn-primary"><i data-icon="save"></i> Save Schedule</button>
     <div id="scheduler-status" style="margin-top:10px;font-size:.85rem;color:#4ade80"></div>
   </div>
   <div class="card">
-    <h3>Posts in Queue</h3>
+    <h3>What's lined up</h3>
     <div id="queued-posts-list">
-      <button onclick="loadQueuedPosts()" style="margin-bottom:12px">🔄 Refresh</button>
+      <button onclick="loadQueuedPosts()" style="margin-bottom:12px"><i data-icon="refresh"></i> Refresh</button>
       <div id="queued-posts-table"></div>
     </div>
   </div>
@@ -165,92 +360,573 @@
 
 <!-- ═══ TAB: PRODUCTS LIBRARY ═══ -->
 <section id="tab-products" class="tab">
-  <h2>Products Library</h2>
-  <button onclick="loadProducts()" style="margin-bottom:16px">🔄 Refresh</button>
+  <h2 data-num="04">What we've scraped</h2>
+  <p class="section-lede">Every product you've pulled in, with its photo, its price, and its history. Click one to spin a fresh post or a fresh video. Nothing gets lost.</p>
+  <button onclick="loadProducts()" style="margin-bottom:16px"><i data-icon="refresh"></i> Refresh</button>
   <div id="products-table">Loading...</div>
 </section>
 
 <!-- ═══ TAB: ANALYTICS ═══ -->
 <section id="tab-analytics" class="tab">
-  <h2>Analytics</h2>
-  <button onclick="loadAnalytics()" style="margin-bottom:16px">🔄 Refresh</button>
+  <h2 data-num="05">The numbers</h2>
+  <p class="section-lede">Clicks, by network. Posts, by platform. The only two charts you need to answer "is this working?" — and they update themselves.</p>
+  <button onclick="loadAnalytics()" style="margin-bottom:16px"><i data-icon="refresh"></i> Refresh</button>
   <div class="analytics-grid">
     <div class="card">
-      <h3>🖱️ Clicks by Network</h3>
+      <h3><i data-icon="zap"></i> Where the clicks land</h3>
       <div id="clicks-chart"><p class="muted">No data yet.</p></div>
     </div>
     <div class="card">
-      <h3>📋 Posts by Platform</h3>
+      <h3><i data-icon="send"></i> Where the posts go</h3>
       <div id="posts-chart"><p class="muted">No data yet.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ TAB: SETTINGS ═══ -->
-<section id="tab-settings" class="tab">
-  <h2>Settings</h2>
+<!-- ═══ TAB: SHOE SHORT ═══ -->
+<section id="tab-shoe" class="tab">
+  <h2 data-num="02">👟 Shoe Short Generator</h2>
+  <p class="section-lede">Tu fournis les photos → on crée le Short automatiquement. Upload tes photos de chaussures, remplis les détails, et le système génère une vidéo YouTube Shorts prête à publier.</p>
+
+  <!-- Drop zone -->
   <div class="card">
-    <p class="note">
-      ⚙️ All API keys are stored in your <code>.env</code> file.<br/>
-      Edit <code>affiliate-autopublish/.env</code> then restart the server: <code>uvicorn main:app --reload</code>
-    </p>
+    <h3><i data-icon="film"></i> 1. Upload tes photos</h3>
+    <p class="note">PNG ou JPG · max 6 photos · max 20 MB chacune</p>
+
+    <div id="shoe-dropzone" class="shoe-dropzone" ondrop="shoeHandleDrop(event)" ondragover="event.preventDefault()" ondragleave="shoeDragLeave(event)" ondragenter="shoeDragEnter(event)">
+      <div class="shoe-dropzone-inner">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--violet-4);margin-bottom:12px">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p>Glisse tes photos ici <strong>ou</strong></p>
+        <label class="btn btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+          <i data-icon="package"></i> Choisir les fichiers
+          <input type="file" id="shoe-file-input" accept="image/*,.avif,.heic,.heif" multiple style="display:none" onchange="shoeHandleFiles(this.files)">
+        </label>
+      </div>
+    </div>
+
+    <div id="shoe-preview-grid" class="shoe-preview-grid" style="display:none"></div>
   </div>
 
+  <!-- Product details -->
   <div class="card">
-    <h3>💰 Cost Guide (Monthly estimate)</h3>
+    <h3><i data-icon="tag"></i> 2. Détails du produit</h3>
+
+    <label>Nom de la chaussure *</label>
+    <input id="shoe-name" type="text" placeholder="ex: Nike Air Max 270 – Blanc/Or" maxlength="150" style="width:100%"/>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <div>
+        <label>Prix (€)</label>
+        <input id="shoe-price" type="number" step="0.01" min="0" placeholder="129.99"/>
+      </div>
+      <div>
+        <label>Durée par photo (sec)</label>
+        <input id="shoe-duration" type="number" min="2" max="6" value="3"/>
+      </div>
+    </div>
+
+    <label style="margin-top:12px">Lien affilié *</label>
+    <input id="shoe-link" type="url" placeholder="https://amzn.to/..." style="width:100%"/>
+
+    <label style="margin-top:12px">Plateformes</label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+      <label class="check-chip"><input type="checkbox" name="shoe-platform" value="youtube_shorts" checked> YouTube Shorts</label>
+      <label class="check-chip"><input type="checkbox" name="shoe-platform" value="tiktok"> TikTok</label>
+      <label class="check-chip"><input type="checkbox" name="shoe-platform" value="instagram"> Instagram Reels</label>
+    </div>
+  </div>
+
+  <!-- Generate button -->
+  <div class="card" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <button id="shoe-generate-btn" class="btn btn-primary" onclick="shoeGenerate()" disabled>
+      <i data-icon="zap"></i> Générer le Short
+    </button>
+    <span id="shoe-upload-status" class="note" style="flex:1">Aucune photo uploadée.</span>
+  </div>
+
+  <!-- Progress + result -->
+  <div id="shoe-result-card" class="card" style="display:none">
+    <h3><i data-icon="film"></i> 3. Résultat IA</h3>
+    <div id="shoe-job-status" class="job-status-bar">
+      <div class="job-status-dot"></div>
+      <span id="shoe-job-label">En cours…</span>
+    </div>
+
+    <!-- Product identified by vision AI -->
+    <div id="shoe-product-line" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(139,103,255,.1);border-left:3px solid var(--violet-4);border-radius:6px;font-size:.9rem"></div>
+
+    <!-- Video preview -->
+    <div id="shoe-video-wrap" style="display:none;margin-top:16px;text-align:center">
+      <video id="shoe-video-player" controls style="max-width:360px;width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.3)"></video>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <a id="shoe-video-dl" class="btn btn-ghost" download>⬇ Télécharger la vidéo</a>
+      </div>
+    </div>
+
+    <!-- YouTube description -->
+    <div id="shoe-yt-desc-wrap" style="display:none;margin-top:20px">
+      <h4 style="margin-bottom:8px;font-size:.9rem;color:var(--text-2)">📋 Description YouTube générée</h4>
+      <textarea id="shoe-yt-desc" rows="7" style="width:100%;font-size:.82rem;font-family:monospace;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text-1);resize:vertical" readonly></textarea>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('shoe-yt-desc').value).then(()=>toast('Copié !','success'))" class="btn btn-ghost" style="margin-top:6px;font-size:.8rem">📋 Copier la description</button>
+    </div>
+
+    <!-- Canva brief -->
+    <div id="shoe-canva-wrap" style="display:none;margin-top:16px">
+      <h4 style="margin-bottom:8px;font-size:.9rem;color:var(--text-2)">🎨 Brief Miniature Canva</h4>
+      <div id="shoe-canva-brief" style="padding:12px;background:var(--surface-2);border-radius:8px;font-size:.85rem;color:var(--text-2);line-height:1.6"></div>
+    </div>
+
+    <!-- Pinned comment -->
+    <div id="shoe-pinned-wrap" style="display:none;margin-top:16px">
+      <h4 style="margin-bottom:8px;font-size:.9rem;color:var(--text-2)">📌 Commentaire épinglé</h4>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="shoe-pinned-comment" type="text" readonly style="flex:1;font-size:.85rem"/>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('shoe-pinned-comment').value).then(()=>toast('Copié !','success'))" class="btn btn-ghost" style="font-size:.8rem">📋</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .shoe-dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      padding: 40px 20px;
+      text-align: center;
+      transition: border-color .2s, background .2s;
+      cursor: pointer;
+    }
+    .shoe-dropzone.drag-over {
+      border-color: var(--violet-4);
+      background: rgba(139,103,255,.06);
+    }
+    .shoe-dropzone-inner p { margin: 0 0 12px; color: var(--text-2); }
+    .shoe-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .shoe-preview-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: var(--surface-2);
+    }
+    .shoe-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .shoe-preview-item .remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,.7);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .check-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: .85rem;
+      transition: border-color .15s;
+    }
+    .check-chip:has(input:checked) {
+      border-color: var(--violet-4);
+      background: rgba(139,103,255,.08);
+    }
+    .job-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface-2);
+      border-radius: 8px;
+      font-size: .9rem;
+    }
+    .job-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--violet-4);
+      animation: blink 1.2s infinite;
+    }
+    .job-status-dot.done { background: #6ee7b7; animation: none; }
+    .job-status-dot.error { background: #f87171; animation: none; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  </style>
+
+  <script>
+    // ── Shoe Short JS ────────────────────────────────────────────────────────
+    let _shoeFiles = [];     // File objects selected by user
+    let _shoePaths = [];     // absolute paths returned by upload API
+    let _shoeUploadId = null;
+
+    function shoeDragEnter(e) {
+      e.preventDefault();
+      document.getElementById('shoe-dropzone').classList.add('drag-over');
+    }
+    function shoeDragLeave(e) {
+      document.getElementById('shoe-dropzone').classList.remove('drag-over');
+    }
+    function shoeHandleDrop(e) {
+      e.preventDefault();
+      document.getElementById('shoe-dropzone').classList.remove('drag-over');
+      shoeHandleFiles(e.dataTransfer.files);
+    }
+    function shoeHandleFiles(fileList) {
+      // Accept all image types including AVIF, HEIC (type may be empty for some formats)
+      const files = Array.from(fileList).filter(f =>
+        f.type.startsWith('image/') || f.type === '' ||
+        /\.(avif|heic|heif|jpg|jpeg|png|webp)$/i.test(f.name)
+      );
+      if (!files.length) return;
+      _shoeFiles = [..._shoeFiles, ...files].slice(0, 6);
+      shoeRenderPreviews();
+      shoeUploadAll();
+    }
+    function shoeRenderPreviews() {
+      const grid = document.getElementById('shoe-preview-grid');
+      grid.innerHTML = '';
+      _shoeFiles.forEach((f, i) => {
+        const div = document.createElement('div');
+        div.className = 'shoe-preview-item';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(f);
+        const btn = document.createElement('button');
+        btn.className = 'remove-btn';
+        btn.textContent = '×';
+        btn.onclick = () => { _shoeFiles.splice(i, 1); shoeRenderPreviews(); };
+        div.appendChild(img);
+        div.appendChild(btn);
+        grid.appendChild(div);
+      });
+      grid.style.display = _shoeFiles.length ? 'grid' : 'none';
+    }
+    async function shoeUploadAll() {
+      if (!_shoeFiles.length) return;
+      const status = document.getElementById('shoe-upload-status');
+      const btn = document.getElementById('shoe-generate-btn');
+      status.textContent = 'Upload en cours…';
+      btn.disabled = true;
+
+      const fd = new FormData();
+      _shoeFiles.forEach(f => fd.append('photos', f));
+
+      try {
+        const r = await fetch('/api/shoe-short/upload', { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || 'Upload échoué');
+        _shoePaths = data.paths;
+        _shoeUploadId = data.upload_id;
+        status.textContent = `✅ ${data.count} photo(s) uploadée(s) — prêt à générer.`;
+        btn.disabled = false;
+        toast(`${data.count} photo(s) uploadée(s)`, 'success');
+      } catch (err) {
+        status.textContent = `❌ ${err.message}`;
+        toast(err.message, 'error');
+      }
+    }
+    async function shoeGenerate() {
+      const name = document.getElementById('shoe-name').value.trim();
+      const link = document.getElementById('shoe-link').value.trim();
+      if (!name) { toast('Nom de la chaussure requis', 'error'); return; }
+      if (!link) { toast('Lien affilié requis', 'error'); return; }
+      if (!_shoePaths.length) { toast('Upload tes photos d\'abord', 'error'); return; }
+
+      const price = parseFloat(document.getElementById('shoe-price').value) || 0;
+      const dur   = parseInt(document.getElementById('shoe-duration').value) || 3;
+      const plats = [...document.querySelectorAll('input[name="shoe-platform"]:checked')].map(c => c.value);
+      if (!plats.length) { toast('Choisis au moins une plateforme', 'error'); return; }
+
+      const fd = new FormData();
+      fd.append('upload_id', _shoeUploadId || '');
+      fd.append('photo_paths', JSON.stringify(_shoePaths));
+      fd.append('product_name', name);
+      fd.append('price', price);
+      fd.append('affiliate_link', link);
+      fd.append('platforms', plats.join(','));
+      fd.append('slide_duration', dur);
+
+      document.getElementById('shoe-generate-btn').disabled = true;
+      document.getElementById('shoe-result-card').style.display = 'block';
+      document.getElementById('shoe-job-label').textContent = 'Job créé…';
+      document.getElementById('shoe-video-wrap').style.display = 'none';
+
+      try {
+        const r = await fetch('/api/shoe-short/generate', { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || 'Erreur');
+        toast('Job lancé — génération en cours…', 'info');
+        shoeWatchJob(data.job_id);
+      } catch (err) {
+        document.getElementById('shoe-job-label').textContent = `❌ ${err.message}`;
+        document.getElementById('shoe-job-status').querySelector('.job-status-dot').classList.add('error');
+        toast(err.message, 'error');
+        document.getElementById('shoe-generate-btn').disabled = false;
+      }
+    }
+    async function shoeWatchJob(jobId) {
+      const label = document.getElementById('shoe-job-label');
+      const dot   = document.getElementById('shoe-job-status').querySelector('.job-status-dot');
+
+      // Step labels shown during generation
+      const steps = [
+        '🔍 Analyse vision IA — identification chaussure…',
+        '✍️ Génération script 30 secondes…',
+        '🎬 Création vidéo avec overlays…',
+        '📊 SEO YouTube — titre & tags…',
+        '🚀 Envoi à n8n pour publication…',
+      ];
+      let stepIdx = 0;
+      const stepTimer = setInterval(() => {
+        stepIdx = Math.min(stepIdx + 1, steps.length - 1);
+        label.textContent = steps[stepIdx];
+      }, 8000);
+
+      label.textContent = steps[0];
+
+      const evtSource = new EventSource(`/api/job/${jobId}/stream`);
+      evtSource.onmessage = (e) => {
+        const d = JSON.parse(e.data);
+        if (d.status === 'running') {
+          // Step updates handled by timer above
+        } else if (d.status === 'done') {
+          clearInterval(stepTimer);
+          evtSource.close();
+          dot.classList.add('done');
+          dot.classList.remove('error');
+          label.textContent = '✅ Short 30 sec généré et envoyé à n8n !';
+          toast('Short créé avec succès ! 🎉', 'success');
+
+          const result = d.result || {};
+          const platforms = Object.keys(result);
+
+          if (platforms.length) {
+            const platformData = result[platforms[0]] || {};
+
+            // Product line
+            if (platformData.product_line) {
+              const pl = document.getElementById('shoe-product-line');
+              pl.textContent = '🏷️ ' + platformData.product_line;
+              if (platformData.innovation) pl.textContent += ' · Innovation : ' + platformData.innovation;
+              pl.style.display = 'block';
+            }
+
+            // Video preview
+            const videoPath = platformData.video;
+            if (videoPath) {
+              const rel = videoPath.replace(/\\/g, '/').replace(/^.*?media\//, '/media/');
+              document.getElementById('shoe-video-player').src = rel;
+              document.getElementById('shoe-video-dl').href = rel;
+              document.getElementById('shoe-video-wrap').style.display = 'block';
+            }
+
+            // YouTube description
+            if (platformData.youtube_description) {
+              document.getElementById('shoe-yt-desc').value = platformData.youtube_description;
+              document.getElementById('shoe-yt-desc-wrap').style.display = 'block';
+            }
+
+            // Canva brief
+            if (platformData.canva_brief) {
+              document.getElementById('shoe-canva-brief').textContent = platformData.canva_brief;
+              document.getElementById('shoe-canva-wrap').style.display = 'block';
+            }
+
+            // Pinned comment
+            if (platformData.pinned_comment) {
+              document.getElementById('shoe-pinned-comment').value = platformData.pinned_comment;
+              document.getElementById('shoe-pinned-wrap').style.display = 'block';
+            }
+          }
+          document.getElementById('shoe-generate-btn').disabled = false;
+        } else if (d.status === 'failed') {
+          clearInterval(stepTimer);
+          evtSource.close();
+          dot.classList.add('error');
+          label.textContent = `❌ Échec: ${d.error || 'erreur inconnue'}`;
+          toast('Génération échouée', 'error');
+          document.getElementById('shoe-generate-btn').disabled = false;
+        }
+      };
+      evtSource.onerror = () => {
+        clearInterval(stepTimer);
+        evtSource.close();
+        label.textContent = 'Connection perdue — vérifie le statut manuellement.';
+      };
+    }
+  </script>
+</section>
+
+<!-- ═══ TAB: SETTINGS ═══ -->
+<section id="tab-settings" class="tab">
+  <h2 data-num="06">Keys &amp; plumbing</h2>
+  <p class="section-lede">Every API token, every connection, every secret. Paste once, hot-reloaded instantly — no restart, no fuss.</p>
+
+  <!-- Status overview -->
+  <div class="card">
+    <h3><i data-icon="chart"></i> Connection Status</h3>
+    <div id="settings-status-grid" class="status-grid">
+      <p class="muted" style="font-size:.85rem">Loading…</p>
+    </div>
+  </div>
+
+  <!-- Meta / Facebook Group -->
+  <div class="card">
+    <h3><i data-icon="facebook"></i> Meta — Facebook Group &amp; Instagram</h3>
+    <p class="note" style="margin-bottom:12px">
+      Get token at <a href="https://developers.facebook.com/tools/explorer/" target="_blank">Graph API Explorer</a>
+      → pick your app → add permissions: <code>publish_to_groups</code>, <code>pages_manage_posts</code>,
+      <code>instagram_basic</code>, <code>instagram_content_publish</code> → Generate Token.
+    </p>
+    <label>User Access Token</label>
+    <div class="input-row">
+      <input id="s-meta-token" type="password" placeholder="EAAxxxxxx…" autocomplete="off" style="flex:1"/>
+      <button onclick="testService('meta')" id="s-meta-test-btn"><i data-icon="search"></i> Test</button>
+    </div>
+    <div id="s-meta-test-result" class="test-result"></div>
+
+    <label>Facebook Group ID</label>
+    <input id="s-meta-group-id" type="text" placeholder="1174813066850818" value="1174813066850818"/>
+
+    <label>Facebook Page ID <span class="muted">(optional)</span></label>
+    <input id="s-meta-page-id" type="text" placeholder="123456789"/>
+
+    <label>Instagram Account ID <span class="muted">(optional)</span></label>
+    <input id="s-meta-ig-id" type="text" placeholder="17841400008460056"/>
+
+    <button onclick="saveSection('meta')" class="btn-primary" style="margin-top:16px"><i data-icon="save"></i> Save Meta Settings</button>
+    <div id="s-meta-save-result" class="test-result"></div>
+  </div>
+
+  <!-- Amazon -->
+  <div class="card">
+    <h3><i data-icon="tag"></i> Amazon Associates</h3>
+    <p class="note" style="margin-bottom:12px">
+      Get your tag at <a href="https://affiliate-program.amazon.com" target="_blank">affiliate-program.amazon.com</a>
+      → Account → Associates Summary → Store ID (e.g. <code>mystore-20</code>).
+    </p>
+    <label>Associate Tag</label>
+    <input id="s-amazon-tag" type="text" placeholder="mystore-20" style="max-width:220px"/>
+    <button onclick="saveSection('amazon')" class="btn-primary" style="margin-top:16px"><i data-icon="save"></i> Save Amazon Tag</button>
+    <div id="s-amazon-save-result" class="test-result"></div>
+  </div>
+
+  <!-- Canva -->
+  <div class="card">
+    <h3><i data-icon="palette"></i> Canva Premium Deal Images</h3>
+    <p class="note" style="margin-bottom:12px">
+      Your template is already configured (<code>DAG543g8dLc</code>). To activate:
+      run <code>python auth/canva_setup.py</code> in terminal, or paste your token below.
+    </p>
+    <label>Canva API Token</label>
+    <div class="input-row">
+      <input id="s-canva-token" type="password" placeholder="eyJ…" autocomplete="off" style="flex:1"/>
+      <button onclick="testService('canva')" id="s-canva-test-btn"><i data-icon="search"></i> Test</button>
+    </div>
+    <div id="s-canva-test-result" class="test-result"></div>
+
+    <label>Brand Template ID</label>
+    <input id="s-canva-template" type="text" value="DAG543g8dLc" style="max-width:220px"/>
+
+    <button onclick="saveSection('canva')" class="btn-primary" style="margin-top:16px"><i data-icon="save"></i> Save Canva Settings</button>
+    <div id="s-canva-save-result" class="test-result"></div>
+  </div>
+
+  <!-- AI & Voice -->
+  <div class="card">
+    <h3><i data-icon="bot"></i> AI &amp; Voice</h3>
+    <label>Groq API Key
+      <button id="s-groq-test-btn" onclick="testService('groq')" style="margin-left:8px;font-size:.78rem;padding:3px 10px"><i data-icon="search"></i> Test</button>
+    </label>
+    <div id="s-groq-test-result" class="test-result" style="margin-bottom:6px"></div>
+    <input id="s-groq-key" type="password" placeholder="gsk_…" autocomplete="off"/>
+
+    <label style="margin-top:16px">ElevenLabs API Key <span class="muted">(better voice quality)</span>
+      <button id="s-el-test-btn" onclick="testService('elevenlabs')" style="margin-left:8px;font-size:.78rem;padding:3px 10px"><i data-icon="search"></i> Test</button>
+    </label>
+    <div id="s-el-test-result" class="test-result" style="margin-bottom:6px"></div>
+    <input id="s-el-key" type="password" placeholder="xi_api_…" autocomplete="off"/>
+
+    <button onclick="saveSection('ai')" class="btn-primary" style="margin-top:16px"><i data-icon="save"></i> Save AI/Voice Keys</button>
+    <div id="s-ai-save-result" class="test-result"></div>
+  </div>
+
+  <!-- Video platforms -->
+  <div class="card">
+    <h3><i data-icon="video"></i> YouTube &amp; TikTok</h3>
+    <p class="note" style="margin-bottom:8px">
+      YouTube: run <code>python auth/setup_auth.py</code> to authorize (fills token automatically).<br/>
+      TikTok: create app at <a href="https://developers.tiktok.com" target="_blank">developers.tiktok.com</a>.
+    </p>
+    <label>YouTube Refresh Token</label>
+    <input id="s-yt-token" type="password" placeholder="1//…" autocomplete="off"/>
+    <label style="margin-top:12px">TikTok Refresh Token</label>
+    <input id="s-tt-token" type="password" placeholder="act.…" autocomplete="off"/>
+    <button onclick="saveSection('video_platforms')" class="btn-primary" style="margin-top:16px"><i data-icon="save"></i> Save Video Platform Keys</button>
+    <div id="s-video-save-result" class="test-result"></div>
+  </div>
+
+  <!-- Cost guide -->
+  <div class="card">
+    <h3><i data-icon="coins"></i> Monthly Cost Guide</h3>
     <table>
       <thead><tr><th>Service</th><th>Cost</th><th>Notes</th></tr></thead>
       <tbody>
-        <tr><td>Claude Haiku 4.5 (AI text)</td><td style="color:#4ade80">~€0.70/100 posts</td><td>Default model</td></tr>
+        <tr><td>Groq Llama 3 (AI text)</td><td style="color:#4ade80">FREE</td><td>Default — no change needed</td></tr>
         <tr><td>gTTS (voice)</td><td style="color:#4ade80">FREE</td><td>Default voice</td></tr>
-        <tr><td>ElevenLabs (voice)</td><td style="color:#4ade80">FREE (10k chars/mo)</td><td>Optional upgrade</td></tr>
+        <tr><td>ElevenLabs (voice)</td><td style="color:#4ade80">FREE 10k/mo</td><td>Optional voice upgrade</td></tr>
+        <tr><td>Canva images</td><td style="color:#4ade80">Your Pro plan</td><td>Your existing subscription</td></tr>
         <tr><td>YouTube Data API</td><td style="color:#4ade80">FREE</td><td>10k units/day quota</td></tr>
-        <tr><td>Meta Graph API</td><td style="color:#4ade80">FREE</td><td>Needs app review for groups</td></tr>
-        <tr><td>TikTok Content API</td><td style="color:#4ade80">FREE</td><td>Sandbox testing first</td></tr>
-        <tr><td>Amazon PAAPI</td><td style="color:#4ade80">FREE</td><td>With Associates account</td></tr>
-        <tr><td>Impact Radius API</td><td style="color:#4ade80">FREE</td><td>With publisher account</td></tr>
-        <tr><td>Howl API</td><td style="color:#4ade80">FREE</td><td>With publisher account</td></tr>
-        <tr><td><strong>Total</strong></td><td style="color:#4ade80"><strong>~€5–15/month</strong></td><td>Well under €50</td></tr>
+        <tr><td>Meta Graph API</td><td style="color:#4ade80">FREE</td><td>publish_to_groups needs approval</td></tr>
+        <tr><td>TikTok Content API</td><td style="color:#4ade80">FREE</td><td>Sandbox → production</td></tr>
+        <tr><td>Amazon Associates</td><td style="color:#4ade80">FREE</td><td>Earns commissions!</td></tr>
       </tbody>
     </table>
-  </div>
-
-  <div class="card">
-    <h3>🔑 Required API Keys</h3>
-    <table>
-      <thead><tr><th>Key</th><th>.env Variable</th><th>Where to Get</th></tr></thead>
-      <tbody>
-        <tr><td>Anthropic</td><td><code>ANTHROPIC_API_KEY</code></td><td><a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></td></tr>
-        <tr><td>Amazon Associates</td><td><code>AMAZON_ASSOCIATE_TAG</code></td><td><a href="https://affiliate-program.amazon.com" target="_blank">affiliate-program.amazon.com</a></td></tr>
-        <tr><td>Howl</td><td><code>HOWL_API_KEY</code></td><td><a href="https://app.planethowl.com" target="_blank">app.planethowl.com</a></td></tr>
-        <tr><td>Meta (FB+IG)</td><td><code>META_USER_ACCESS_TOKEN</code></td><td><a href="https://developers.facebook.com/tools/explorer/" target="_blank">Graph API Explorer</a></td></tr>
-        <tr><td>YouTube</td><td><code>YOUTUBE_REFRESH_TOKEN</code></td><td>Run <code>python auth/setup_auth.py</code></td></tr>
-        <tr><td>ElevenLabs (opt)</td><td><code>ELEVENLABS_API_KEY</code></td><td><a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h3>🛍️ Mavely Setup</h3>
-    <p>Mavely does not have a public API for programmatic link creation.</p>
-    <p style="margin-top:8px">
-      1. Go to <a href="https://app.mavely.com" target="_blank">app.mavely.com</a><br/>
-      2. Find your product and generate a Mavely link<br/>
-      3. Paste it in the "Mavely (manual)" input when creating a campaign
-    </p>
-  </div>
-
-  <div class="card">
-    <h3>⚠️ Facebook Group Posting Note</h3>
-    <p>
-      Posting to Facebook Groups requires the <code>publish_to_groups</code> permission.
-      Your Meta app must go through App Review.
-      <a href="https://developers.facebook.com/docs/apps/review" target="_blank">Learn more →</a>
-    </p>
   </div>
 </section>
 
 </main>
+
+<footer style="
+  max-width:1140px;
+  margin:0 auto;
+  padding:32px 28px 48px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  border-top:1px solid var(--border-soft);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color:var(--ink-mute);
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+">
+  <span>built by hand · running quietly · <span style="color:var(--money)">●</span> all systems go</span>
+  <span style="font-family:'Instrument Serif', serif; font-style:italic; font-size:14px; text-transform:none; letter-spacing:0; color:var(--ink-soft)">
+    "make money while you sleep — but check on it sometimes."
+  </span>
+</footer>
 
 <script src="/static/app.js"></script>
 </body>
