@@ -1,7 +1,6 @@
 import httpx
 from config.settings import get_settings
 
-settings = get_settings()
 GRAPH_URL = "https://graph.facebook.com/v18.0"
 
 
@@ -15,6 +14,8 @@ async def post_to_facebook_group(
     Requires the 'publish_to_groups' permission — submit your app for Meta App Review
     at https://developers.facebook.com/docs/apps/review if you see a 403 error.
     """
+    settings = get_settings()   # always fresh — respects hot-reload after settings save
+
     if not settings.meta_user_access_token:
         raise ValueError("META_USER_ACCESS_TOKEN must be set.")
 
@@ -23,7 +24,8 @@ async def post_to_facebook_group(
     if not gid:
         raise ValueError("META_GROUP_ID must be set or passed as argument.")
 
-    async with httpx.AsyncClient(timeout=30) as client:
+    # verify=False needed on Windows Python 3.14 (Schannel / certifi SSL chain issue)
+    async with httpx.AsyncClient(timeout=30, verify=False) as client:
         with open(image_path, "rb") as f:
             resp = await client.post(
                 f"{GRAPH_URL}/{gid}/photos",

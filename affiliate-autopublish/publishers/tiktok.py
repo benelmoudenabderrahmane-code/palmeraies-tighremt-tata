@@ -83,4 +83,4 @@ async def upload_tiktok_video(
         )
         upload_resp.raise_for_status()
 
-    return f"https://www.tiktok.com/@me/video/{publish_id}"
+    return f"tiktok://publish_id/{publish_id}"

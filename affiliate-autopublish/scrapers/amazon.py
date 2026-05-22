@@ -36,8 +36,12 @@ async def scrape_amazon(url: str) -> dict:
 
         try:
             await page.goto(url, wait_until="domcontentloaded", timeout=30000)
-            # Random delay to avoid bot detection
             await asyncio.sleep(random.uniform(2, 4))
+            # Wait for price to render (JS-driven)
+            try:
+                await page.wait_for_selector(".a-price-whole", timeout=5000)
+            except Exception:
+                pass
             html = await page.content()
         finally:
             await browser.close()
@@ -50,13 +54,36 @@ async def scrape_amazon(url: str) -> dict:
 
     name = text("#productTitle") or text("h1.a-size-large") or "Amazon Product"
 
-    # Price extraction — Amazon uses split whole/fraction spans
-    price_whole = text(".a-price-whole")
-    price_frac = text(".a-price-fraction")
-    try:
-        price = float(f"{price_whole.replace(',', '').rstrip('.')}.{price_frac or '00'}")
-    except (ValueError, AttributeError):
-        price = 0.0
+    # Price extraction — try multiple Amazon price selectors
+    price = 0.0
+    price_selectors = [
+        (".a-price-whole", ".a-price-fraction"),
+        ("#corePriceDisplay_desktop_feature_div .a-price-whole",
+         "#corePriceDisplay_desktop_feature_div .a-price-fraction"),
+        ("#apex_offerDisplay_desktop .a-price-whole",
+         "#apex_offerDisplay_desktop .a-price-fraction"),
+        ("#tp_price_block_total_price_ww .a-price-whole",
+         "#tp_price_block_total_price_ww .a-price-fraction"),
+    ]
+    for whole_sel, frac_sel in price_selectors:
+        whole = text(whole_sel)
+        if whole:
+            frac = text(frac_sel)
+            try:
+                price = float(f"{whole.replace(',', '').rstrip('.')}.{frac or '00'}")
+                break
+            except (ValueError, AttributeError):
+                continue
+    # Last resort: look for any .a-offscreen price text like "$24.99"
+    if price == 0.0:
+        for tag in soup.select(".a-offscreen"):
+            raw = tag.get_text(strip=True).replace("$", "").replace(",", "")
+            try:
+                price = float(raw)
+                if price > 0:
+                    break
+            except ValueError:
+                continue
 
     # Original (strikethrough) price
     original_tag = soup.select_one(".a-text-price .a-offscreen")

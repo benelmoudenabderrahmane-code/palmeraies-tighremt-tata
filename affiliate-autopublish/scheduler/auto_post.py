@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -7,7 +7,7 @@ from sqlalchemy import select
 from database.crud import AsyncSessionLocal
 from database.models import Post
 
-scheduler = AsyncIOScheduler(timezone="UTC")
+scheduler = AsyncIOScheduler()
 
 
 async def _auto_post_job():
@@ -29,11 +29,11 @@ async def _auto_post_job():
             url = await post_to_facebook_group(post.image_path, post.post_text)
             post.status = "published"
             post.platform_post_id = url
-            post.published_at = datetime.utcnow()
+            post.published_at = datetime.now(timezone.utc)
         except Exception as exc:
             post.status = "failed"
-            # Keep the error message in case of retry
-            post.post_text = f"[FAILED: {exc}]\n\n{post.post_text}"
+            # Store error in platform_post_id so post_text stays clean for retry
+            post.platform_post_id = f"ERROR: {exc}"
 
         await session.commit()
 

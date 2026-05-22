@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Affiliate Autopublish — desk</title>
 <link rel="stylesheet" href="/static/style.css"/>
+<link rel="stylesheet" href="/static/multi_platform.css"/>
+<link rel="stylesheet" href="/static/premium_visual.css"/>
+<link rel="stylesheet" href="/static/advanced_ui.css"/>
 </head>
 <body>
 <header>
@@ -49,12 +52,15 @@
   </button>
 
   <nav>
-    <button class="tab-btn active" data-tab="video"><i data-icon="film"></i>New video</button>
+    <button class="tab-btn active" data-tab="multi"><i data-icon="zap"></i>🚀 Multi-Platform</button>
+    <button class="tab-btn" data-tab="trending"><i data-icon="chart"></i>🔥 Trending</button>
+    <button class="tab-btn" data-tab="video"><i data-icon="film"></i>New video</button>
     <button class="tab-btn" data-tab="shoe"><i data-icon="zap"></i>👟 Shoe Short</button>
     <button class="tab-btn" data-tab="deal"><i data-icon="tag"></i>Deal post</button>
     <button class="tab-btn" data-tab="scheduler"><i data-icon="clock"></i>Queue</button>
     <button class="tab-btn" data-tab="products"><i data-icon="package"></i>Library</button>
     <button class="tab-btn" data-tab="analytics"><i data-icon="chart"></i>Numbers</button>
+    <button class="tab-btn" data-tab="health"><i data-icon="settings"></i>💚 Health</button>
     <button class="tab-btn" data-tab="settings"><i data-icon="settings"></i>Keys</button>
   </nav>
 </header>
@@ -131,8 +137,85 @@
 
 <main>
 
+<!-- ═══ KPI HERO STRIP — visible across all tabs ═══ -->
+<div id="kpi-strip" class="kpi-strip"></div>
+
+<!-- ═══ TAB: MULTI-PLATFORM PIPELINE ═══ -->
+<section id="tab-multi" class="tab active">
+  <h2 data-num="00">Multi-Platform Publish</h2>
+  <p class="section-lede">Upload your filmed video → AI generates SEO for YouTube + TikTok + Instagram + Facebook → publishes to all 4 in parallel with always-clickable affiliate links.</p>
+
+  <div class="card">
+    <h3>1️⃣ Upload your video</h3>
+    <input type="file" id="mp-video-file" accept="video/mp4,video/mov,video/webm" />
+    <div id="mp-video-preview" style="margin-top:12px"></div>
+    <div id="mp-upload-status" class="status-line"></div>
+  </div>
+
+  <div class="card" id="mp-product-card" style="display:none">
+    <h3>2️⃣ Product info</h3>
+    <label>Product name <input type="text" id="mp-product-name" placeholder="Nike Alphafly 3 Glam"/></label>
+    <label>Niche <input type="text" id="mp-niche" placeholder="running shoes / tech gadgets / beauty…"/></label>
+    <label>Price (EUR) <input type="number" id="mp-price" step="0.01" value="0"/></label>
+    <label>Affiliate link (howl.link / amazon …) <input type="text" id="mp-affiliate" placeholder="https://howl.link/…"/></label>
+    <label>Key features (one per line)
+      <textarea id="mp-features" rows="3" placeholder="Carbon plate&#10;ZoomX foam&#10;Marathon racing"></textarea>
+    </label>
+
+    <h4 style="margin-top:18px">Platforms</h4>
+    <label><input type="checkbox" class="mp-platform" value="youtube" checked/> YouTube Shorts</label>
+    <label><input type="checkbox" class="mp-platform" value="tiktok" checked/> TikTok</label>
+    <label><input type="checkbox" class="mp-platform" value="instagram" checked/> Instagram Reels</label>
+    <label><input type="checkbox" class="mp-platform" value="facebook" checked/> Facebook</label>
+
+    <div style="display:flex;gap:12px;margin-top:18px">
+      <button id="mp-preview-btn" class="btn-secondary">👁 Preview SEO</button>
+      <button id="mp-publish-btn" class="btn-primary">🚀 Publish to all platforms</button>
+    </div>
+  </div>
+
+  <div class="card" id="mp-seo-preview" style="display:none">
+    <h3>3️⃣ SEO preview (avant publication)</h3>
+    <div id="mp-seo-content"></div>
+  </div>
+
+  <div class="card" id="mp-results" style="display:none">
+    <h3>✅ Publication results</h3>
+    <div id="mp-results-content"></div>
+  </div>
+</section>
+
+
+<!-- ═══ TAB: TRENDING PRODUCTS ═══ -->
+<section id="tab-trending" class="tab">
+  <h2 data-num="00">Trending Products to Film</h2>
+  <p class="section-lede">Amazon best sellers + movers across all categories. Pick a product, copy the affiliate link, film your video — system handles the rest.</p>
+
+  <div class="card">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <select id="trending-category">
+        <option value="">All categories</option>
+        <option value="electronics">Electronics</option>
+        <option value="fashion">Fashion</option>
+        <option value="sports">Sports</option>
+        <option value="beauty">Beauty</option>
+        <option value="home">Home</option>
+        <option value="tech_gadgets">Tech gadgets</option>
+        <option value="shoes">Shoes</option>
+        <option value="fitness">Fitness</option>
+        <option value="new_releases">New releases</option>
+      </select>
+      <button id="trending-refresh" class="btn-primary">🔄 Refresh trending</button>
+      <span id="trending-count" style="opacity:0.7"></span>
+    </div>
+  </div>
+
+  <div id="trending-grid" class="trending-grid"></div>
+</section>
+
+
 <!-- ═══ TAB: NEW VIDEO CAMPAIGN ═══ -->
-<section id="tab-video" class="tab active">
+<section id="tab-video" class="tab">
   <h2 data-num="01">Spin up a video</h2>
   <p class="section-lede">Paste a link, pick where it lands, walk away. The script writes itself, the voice records itself, the video edits itself — and posts to whichever feeds you've connected.</p>
 
@@ -370,7 +453,11 @@
 <section id="tab-analytics" class="tab">
   <h2 data-num="05">The numbers</h2>
   <p class="section-lede">Clicks, by network. Posts, by platform. The only two charts you need to answer "is this working?" — and they update themselves.</p>
-  <button onclick="loadAnalytics()" style="margin-bottom:16px"><i data-icon="refresh"></i> Refresh</button>
+
+  <!-- ═ Premium analytics charts ═ -->
+  <div id="analytics-charts"></div>
+
+  <button onclick="loadAnalytics()" style="margin-bottom:16px"><i data-icon="refresh"></i> Refresh legacy</button>
   <div class="analytics-grid">
     <div class="card">
       <h3><i data-icon="zap"></i> Where the clicks land</h3>
@@ -904,6 +991,27 @@
   </div>
 </section>
 
+<!-- ═══ TAB: HEALTH CHECK ═══ -->
+<section id="tab-health" class="tab">
+  <h2 data-num="99">System Health</h2>
+  <p class="section-lede">Real-time status of every integration. Anything red needs setup before that publisher works.</p>
+
+  <div class="card">
+    <button id="health-refresh" class="btn-primary">🔄 Run check</button>
+    <div id="health-summary" style="margin-top:20px"></div>
+  </div>
+
+  <div class="card">
+    <h3>Publish Queue</h3>
+    <div id="queue-status-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h3>Platform Performance (7 days)</h3>
+    <div id="platform-breakdown"></div>
+  </div>
+</section>
+
 </main>
 
 <footer style="
@@ -929,5 +1037,12 @@
 </footer>
 
 <script src="/static/app.js"></script>
+<script src="/static/multi_platform.js"></script>
+<script src="/static/health.js"></script>
+<script src="/static/premium_visual.js"></script>
+<script src="/static/cmdk_palette.js"></script>
+<script src="/static/drag_drop.js"></script>
+<script src="/static/particles.js"></script>
+<script src="/static/advanced_features.js"></script>
 </body>
 </html>

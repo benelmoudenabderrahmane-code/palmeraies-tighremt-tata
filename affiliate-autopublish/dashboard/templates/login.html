@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign in · Affiliate Autopublish</title>
+<link rel="stylesheet" href="/static/style.css"/>
+<style>
+  /* ── Login-page-only styles ──────────────────────────────────────── */
+  body { display: grid; place-items: center; min-height: 100vh; padding: 24px; overflow: hidden; }
+  body::before { z-index: 0; }
+  body::after { z-index: 1; }
+
+  /* Animated gradient mesh blob behind the card */
+  .mesh {
+    position: fixed;
+    inset: -10%;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(70px) saturate(140%);
+    opacity: .55;
+  }
+  .mesh-blob {
+    position: absolute;
+    border-radius: 50%;
+    mix-blend-mode: screen;
+    animation: drift 18s ease-in-out infinite;
+  }
+  .mesh-blob.b1 { width: 520px; height: 520px; top: -10%;  left: -10%; background: radial-gradient(circle, #8b67ff, transparent 70%); }
+  .mesh-blob.b2 { width: 480px; height: 480px; top: 35%;   right: -8%; background: radial-gradient(circle, #e068ff, transparent 70%); animation-delay: -6s; }
+  .mesh-blob.b3 { width: 420px; height: 420px; bottom: -10%; left: 30%; background: radial-gradient(circle, #e6c478, transparent 70%); animation-delay: -12s; }
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(60px, -40px) scale(1.05); }
+    66%      { transform: translate(-50px, 50px) scale(0.95); }
+  }
+
+  /* The glass card */
+  .login-card {
+    position: relative;
+    z-index: 5;
+    width: min(420px, 92vw);
+    padding: 36px 36px 30px;
+    background: rgba(21, 19, 30, 0.55);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 20px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 30px 80px -20px rgba(0, 0, 0, 0.6),
+      0 0 60px -10px rgba(139, 103, 255, 0.3);
+  }
+  [data-theme="light"] .login-card {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .login-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+    text-decoration: none;
+    border-bottom: none;
+  }
+  .login-brand svg { filter: drop-shadow(0 6px 14px rgba(139, 103, 255, 0.45)); transform: rotate(-3deg); }
+  .login-brand .brand-word { display: flex; flex-direction: column; gap: 0; line-height: 1; }
+  .login-brand .brand-name { font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--ink); letter-spacing: -0.025em; }
+  .login-brand .brand-tag  { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.32em; color: var(--ink-mute); margin-top: 5px; }
+
+  .login-title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .login-lede {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-bottom: 30px;
+  }
+
+  .login-form label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-mute);
+    margin-bottom: 8px;
+    margin-top: 18px;
+    display: block;
+  }
+  .login-form label:first-child { margin-top: 0; }
+  .login-form input {
+    width: 100%;
+    background: rgba(10, 9, 14, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: var(--ink);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all .2s ease;
+  }
+  [data-theme="light"] .login-form input {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  .login-form input:focus {
+    border-color: var(--violet-500);
+    box-shadow: 0 0 0 4px rgba(139, 103, 255, 0.15);
+  }
+
+  .login-btn {
+    width: 100%;
+    margin-top: 26px;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--violet-500), var(--magenta-500));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 6px 18px -2px rgba(139, 103, 255, 0.5);
+    transition: all .18s cubic-bezier(.4, 0, .2, 1);
+  }
+  .login-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 12px 28px -4px rgba(224, 104, 255, 0.6);
+  }
+
+  .login-foot {
+    text-align: center;
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+  }
+  .login-foot .dot { color: var(--money); }
+</style>
+</head>
+<body>
+
+<div class="mesh" aria-hidden="true">
+  <div class="mesh-blob b1"></div>
+  <div class="mesh-blob b2"></div>
+  <div class="mesh-blob b3"></div>
+</div>
+
+<div class="login-card">
+  <a href="/" class="login-brand">
+    <svg width="40" height="40" viewBox="0 0 36 36" fill="none">
+      <defs>
+        <linearGradient id="lg-g" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#8b67ff"/>
+          <stop offset="1" stop-color="#e068ff"/>
+        </linearGradient>
+        <linearGradient id="lg-s" x1="0" y1="0" x2="0" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <rect width="36" height="36" rx="10" fill="url(#lg-g)"/>
+      <rect width="36" height="36" rx="10" fill="url(#lg-s)"/>
+      <path d="M9 26 L13.5 10 L17 10 L21.5 26 M11.2 21 L19.4 21 M21 18 L29 18 M21 14 L27 14 M21 22 L27 22" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="29.5" cy="9" r="2" fill="#e6c478"/>
+    </svg>
+    <span class="brand-word">
+      <span class="brand-name">Affiliate Autopublish</span>
+      <span class="brand-tag">the desk</span>
+    </span>
+  </a>
+
+  <h1 class="login-title">Welcome back.</h1>
+  <p class="login-lede">Sign in to your trading desk — your queue is waiting.</p>
+
+  <form class="login-form" method="get" action="/">
+    <label for="user">Username</label>
+    <input type="text" id="user" name="u" placeholder="admin" autocomplete="username" autofocus/>
+
+    <label for="pass">Password</label>
+    <input type="password" id="pass" name="p" placeholder="••••••••••••" autocomplete="current-password"/>
+
+    <button type="submit" class="login-btn">Enter the desk →</button>
+  </form>
+
+  <div class="login-foot">
+    <span class="dot">●</span> all systems live · running quietly
+  </div>
+</div>
+
+</body>
+</html>

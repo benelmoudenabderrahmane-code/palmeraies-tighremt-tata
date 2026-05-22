@@ -1,0 +1,179 @@
+/* ════════════════════════════════════════════════════════════
+ *  MULTI-PLATFORM TAB + TRENDING GRID
+ * ════════════════════════════════════════════════════════════ */
+
+#tab-multi .card,
+#tab-trending .card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 16px;
+}
+
+#tab-multi h3,
+#tab-multi h4 {
+  margin-top: 0;
+  color: var(--gold, #d4af37);
+}
+
+#tab-multi label {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+
+#tab-multi label input[type="text"],
+#tab-multi label input[type="number"],
+#tab-multi label textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: inherit;
+  font-family: inherit;
+  font-size: 0.95em;
+}
+
+#tab-multi label input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.status-line {
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  opacity: 0.8;
+}
+
+/* ── Trending grid ─────────────────────────────── */
+.trending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.trending-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.trending-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.trending-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background: #fff;
+  padding: 8px;
+}
+
+.t-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.t-category {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.t-body h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.92em;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.t-meta {
+  font-size: 0.82em;
+  opacity: 0.75;
+  margin-bottom: 12px;
+}
+
+.t-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.t-actions a,
+.t-actions button {
+  flex: 1;
+  text-align: center;
+  padding: 6px 8px;
+  font-size: 0.8em;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+#mp-results table th,
+#mp-results table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  font-size: 0.9em;
+}
+
+/* ════════════ HEALTH TAB ════════════ */
+.health-stat {
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 18px 24px;
+  text-align: center;
+  flex: 1;
+}
+.health-stat.ok    { border-left: 3px solid #22c55e; }
+.health-stat.warn  { border-left: 3px solid #eab308; }
+.health-stat .big  { font-size: 2.4em; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+.health-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+.health-table th, .health-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-align: left;
+}
+.health-table th {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.queue-card {
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.queue-card .qc-num {
+  font-size: 2em;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.queue-card.success { border-top: 3px solid #22c55e; }
+.queue-card.error   { border-top: 3px solid #ef4444; }

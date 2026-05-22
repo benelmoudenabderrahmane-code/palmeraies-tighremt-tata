@@ -34,7 +34,10 @@ from database.crud import (
 )
 from database.models import Post
 from jobs.queue import job_queue
-from jobs.worker import run_deal_post_campaign, run_full_video_campaign, run_shoe_short_campaign
+from jobs.worker import run_deal_post_campaign, run_full_video_campaign, run_shoe_short_campaign, run_multi_platform_publish
+from scrapers.amazon_trending import discover_trending_products, get_daily_picks, CATEGORIES
+from affiliate.vercel_redirect import create_redirect, list_redirects
+from generators.multi_platform_seo import generate_multi_platform_seo
 from scheduler.auto_post import setup_scheduler, start_scheduler
 from scrapers.amazon import scrape_amazon
 from scrapers.generic import scrape_generic
@@ -731,3 +734,432 @@ async def configure_scheduler(
 
     setup_scheduler(posts_per_day, hour_list)
     return {"message": f"Scheduler updated: {posts_per_day} posts/day at hours {hour_list}"}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MULTI-PLATFORM PIPELINE — the new core
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/trending/products", dependencies=PROTECTED)
+async def get_trending_products(category: str = "", limit: int = 30):
+    """
+    Discover trending Amazon products to film today.
+    Optional ?category=electronics filters to a single category.
+    """
+    try:
+        if category and category in CATEGORIES:
+            products = await discover_trending_products(categories=[category])
+        else:
+            products = await discover_trending_products()
+        return {"products": products[:limit], "count": len(products[:limit]),
+                "categories": list(CATEGORIES.keys())}
+    except Exception as exc:
+        logger.error("Trending discovery failed: %s", exc)
+        return {"products": [], "count": 0, "error": str(exc)[:200]}
+
+
+@app.get("/api/trending/daily-picks", dependencies=PROTECTED)
+async def daily_picks(count: int = 5):
+    """Top N products to film today (cached/quick endpoint)."""
+    try:
+        picks = await get_daily_picks(count=count)
+        return {"picks": picks, "count": len(picks)}
+    except Exception as exc:
+        return {"picks": [], "count": 0, "error": str(exc)[:200]}
+
+
+@app.post("/api/multi-platform/upload", dependencies=PROTECTED)
+async def multi_platform_upload(video: UploadFile = File(...)):
+    """
+    Upload a user-filmed video to the server.
+    Returns the saved path for use with /api/multi-platform/publish.
+    """
+    if not video.content_type or not video.content_type.startswith("video/"):
+        raise HTTPException(400, "File must be a video")
+
+    uploads_dir = Path("media") / "user_videos"
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_name = "".join(c for c in (video.filename or "video.mp4") if c.isalnum() or c in "._-")
+    dest = uploads_dir / f"{ts}_{safe_name}"
+
+    with open(dest, "wb") as f:
+        shutil.copyfileobj(video.file, f)
+
+    rel = str(dest).replace("\\", "/")
+    return {
+        "video_path": rel,
+        "video_url": f"{settings.base_url}/media/user_videos/{dest.name}",
+        "size_mb": round(dest.stat().st_size / 1024 / 1024, 2),
+    }
+
+
+@app.post("/api/multi-platform/publish", dependencies=PROTECTED)
+async def multi_platform_publish(
+    video_path: str = Form(...),
+    product_name: str = Form(...),
+    affiliate_link: str = Form(...),
+    niche: str = Form(""),
+    price: float = Form(0.0),
+    features: str = Form(""),                                 # JSON list
+    platforms: str = Form("youtube,tiktok,instagram,facebook"),
+    vercel_domain: str = Form("nike-redirect.vercel.app"),
+):
+    """
+    Trigger the full multi-platform publish pipeline:
+      1. Create Vercel redirect for the affiliate link
+      2. Generate platform-specific SEO via Groq
+      3. Publish in parallel to YT/TT/IG/FB
+      4. Return per-platform status + URLs
+    """
+    try:
+        features_list = json.loads(features) if features.strip().startswith("[") else (
+            [f.strip() for f in features.split(",") if f.strip()] if features else []
+        )
+    except json.JSONDecodeError:
+        features_list = []
+
+    platforms_list = [p.strip() for p in platforms.split(",") if p.strip()]
+
+    async with AsyncSessionLocal() as session:
+        job = await create_job(session, "multi_platform_publish", {
+            "video_path": video_path,
+            "product_name": product_name,
+            "platforms": platforms_list,
+        })
+        job_id = job.id
+
+    asyncio.create_task(_run_multi_publish_safe(
+        job_id=job_id,
+        video_path=video_path,
+        product_name=product_name,
+        affiliate_link=affiliate_link,
+        niche=niche,
+        price=price,
+        features=features_list,
+        platforms=platforms_list,
+        vercel_domain=vercel_domain,
+    ))
+
+    return {"job_id": job_id, "status": "queued", "platforms": platforms_list}
+
+
+async def _run_multi_publish_safe(**kwargs):
+    """Wrap run_multi_platform_publish with error capture."""
+    job_id = kwargs.pop("job_id")
+    try:
+        await run_multi_platform_publish(job_id=job_id, **kwargs)
+    except Exception as exc:
+        logger.exception("Multi-platform publish job %s failed: %s", job_id, exc)
+        async with AsyncSessionLocal() as session:
+            await update_job(session, job_id, status="failed",
+                              result=json.dumps({"error": str(exc)[:500]}))
+
+
+@app.post("/api/multi-platform/seo-preview", dependencies=PROTECTED)
+async def seo_preview(
+    product_name: str = Form(...),
+    affiliate_link: str = Form(...),
+    niche: str = Form(""),
+    price: float = Form(0.0),
+    features: str = Form(""),
+):
+    """
+    Generate (and preview) the SEO bundle BEFORE publishing.
+    Useful for the dashboard to show users exactly what will be posted.
+    """
+    try:
+        features_list = json.loads(features) if features.strip().startswith("[") else (
+            [f.strip() for f in features.split(",") if f.strip()] if features else []
+        )
+    except json.JSONDecodeError:
+        features_list = []
+
+    vercel_url = create_redirect(product_name, affiliate_link)
+    seo = await generate_multi_platform_seo(
+        product_name=product_name,
+        affiliate_link=vercel_url,
+        niche=niche,
+        price=price,
+        features=features_list,
+    )
+    return {"vercel_url": vercel_url, "seo": seo}
+
+
+@app.get("/api/redirects", dependencies=PROTECTED)
+async def get_redirects():
+    """List all Vercel redirects currently configured (per-product affiliate links)."""
+    return {"redirects": list_redirects()}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HEALTH CHECK + ANALYTICS V2
+# ═══════════════════════════════════════════════════════════════════════════════
+
+from utils.health_check import check_all_systems
+from analytics.dashboard_metrics import (
+    get_overview, get_platform_breakdown, get_clicks_timeline,
+    get_top_products, get_publish_queue_status,
+)
+
+
+@app.get("/api/health", dependencies=PROTECTED)
+async def system_health():
+    """Returns which integrations are ready vs which need setup."""
+    return await check_all_systems()
+
+
+@app.get("/api/analytics/overview", dependencies=PROTECTED)
+async def analytics_overview():
+    return await get_overview()
+
+
+@app.get("/api/analytics/platform-breakdown", dependencies=PROTECTED)
+async def analytics_platforms(days: int = 7):
+    return await get_platform_breakdown(days=days)
+
+
+@app.get("/api/analytics/clicks-timeline", dependencies=PROTECTED)
+async def analytics_clicks(days: int = 30):
+    return {"timeline": await get_clicks_timeline(days=days)}
+
+
+@app.get("/api/analytics/top-products", dependencies=PROTECTED)
+async def analytics_top(limit: int = 10):
+    return {"products": await get_top_products(limit=limit)}
+
+
+@app.get("/api/queue/status", dependencies=PROTECTED)
+async def queue_status():
+    return await get_publish_queue_status()
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ADVANCED FEATURES — Thumbnail AI, Predictor, Translator, Schedule
+# ═══════════════════════════════════════════════════════════════════════════════
+
+from generators.thumbnail_ai import generate_youtube_thumbnail
+from generators.performance_predictor import predict_performance
+from generators.caption_translator import translate_seo_bundle, translate_text, LANG_NAMES
+
+
+@app.post("/api/thumbnail/generate", dependencies=PROTECTED)
+async def gen_thumbnail(
+    product_name: str = Form(...),
+    price: float = Form(0.0),
+    niche: str = Form("default"),
+    format: str = Form("youtube"),                 # "youtube" or "shorts"
+    product_image_url: str = Form(""),             # optional remote URL
+):
+    """Generate a high-CTR thumbnail for YouTube."""
+    import uuid
+    out_dir = Path("media") / "thumbnails"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{uuid.uuid4().hex[:10]}.jpg"
+
+    # Optional: download product image
+    local_image = None
+    if product_image_url.startswith("http"):
+        try:
+            async with httpx.AsyncClient(verify=False, timeout=15) as client:
+                resp = await client.get(product_image_url)
+                if resp.status_code == 200:
+                    tmp = out_dir / f"src_{uuid.uuid4().hex[:8]}.jpg"
+                    tmp.write_bytes(resp.content)
+                    local_image = str(tmp)
+        except Exception as exc:
+            logger.warning("Failed to fetch product image: %s", exc)
+
+    generate_youtube_thumbnail(
+        output_path=str(out_path),
+        product_name=product_name,
+        price=price,
+        product_image_path=local_image,
+        niche=niche,
+        format=format,
+    )
+    rel = str(out_path).replace("\\", "/").replace("media/", "")
+    return {
+        "thumbnail_path": str(out_path),
+        "thumbnail_url": f"{settings.base_url}/media/{rel}",
+    }
+
+
+@app.post("/api/predictor/score", dependencies=PROTECTED)
+async def score_performance(
+    title: str = Form(""),
+    caption: str = Form(""),
+    hashtags: str = Form(""),
+    niche: str = Form(""),
+    product_name: str = Form(""),
+    features: str = Form(""),
+):
+    """Predict viral potential before publishing."""
+    try:
+        tags = json.loads(hashtags) if hashtags.strip().startswith("[") else [
+            t.strip() for t in hashtags.split() if t.strip()
+        ]
+    except json.JSONDecodeError:
+        tags = []
+    try:
+        feats = json.loads(features) if features.strip().startswith("[") else [
+            f.strip() for f in features.split("\n") if f.strip()
+        ]
+    except json.JSONDecodeError:
+        feats = []
+
+    return predict_performance(
+        title=title, caption=caption, hashtags=tags,
+        niche=niche, product_name=product_name, features=feats,
+    )
+
+
+@app.post("/api/translate/seo", dependencies=PROTECTED)
+async def translate_seo(
+    seo_json: str = Form(...),
+    target_languages: str = Form("en,es"),
+    source_lang: str = Form("fr"),
+):
+    """Translate a full SEO bundle into N target languages."""
+    try:
+        seo = json.loads(seo_json)
+    except json.JSONDecodeError as exc:
+        raise HTTPException(400, f"Invalid SEO JSON: {exc}")
+
+    langs = [l.strip() for l in target_languages.split(",") if l.strip()]
+    bundle = await translate_seo_bundle(seo, langs, source_lang)
+    return {"bundle": bundle, "languages": list(bundle.keys())}
+
+
+@app.get("/api/languages", dependencies=PROTECTED)
+async def available_languages():
+    return {"languages": LANG_NAMES}
+
+
+# ── Schedule publishing ────────────────────────────────────────────────────────
+
+@app.post("/api/schedule/publish", dependencies=PROTECTED)
+async def schedule_publish(
+    video_path: str = Form(...),
+    product_name: str = Form(...),
+    affiliate_link: str = Form(...),
+    publish_at: str = Form(...),                # ISO datetime
+    niche: str = Form(""),
+    price: float = Form(0.0),
+    features: str = Form(""),
+    platforms: str = Form("youtube,tiktok,instagram,facebook"),
+):
+    """
+    Queue a video for delayed publish.
+    publish_at must be ISO 8601 (e.g. 2026-05-22T18:00:00).
+    """
+    try:
+        scheduled = datetime.fromisoformat(publish_at)
+    except ValueError:
+        raise HTTPException(400, "publish_at must be ISO 8601 datetime")
+
+    if scheduled < datetime.utcnow():
+        raise HTTPException(400, "publish_at must be in the future")
+
+    try:
+        feats = json.loads(features) if features.strip().startswith("[") else (
+            [f.strip() for f in features.split(",") if f.strip()] if features else []
+        )
+    except json.JSONDecodeError:
+        feats = []
+
+    meta = json.dumps({
+        "product_name": product_name,
+        "niche": niche,
+        "price": price,
+        "features": feats,
+        "platforms": [p.strip() for p in platforms.split(",")],
+        "scheduled_for": publish_at,
+    })
+
+    async with AsyncSessionLocal() as session:
+        post = await create_post(
+            session,
+            product_id=None,
+            post_type="multi_platform_video",
+            platform="scheduled",
+            post_text=meta,
+            video_path=video_path,
+            image_path=None,
+            affiliate_link=affiliate_link,
+            status="queued",
+        )
+
+    return {
+        "scheduled": True,
+        "post_id": post.id,
+        "publish_at": publish_at,
+        "platforms": platforms,
+    }
+
+
+@app.get("/api/schedule/upcoming", dependencies=PROTECTED)
+async def schedule_upcoming():
+    """List scheduled publishes."""
+    from sqlalchemy import select
+    async with AsyncSessionLocal() as session:
+        stmt = (
+            select(Post)
+            .where(Post.status == "queued")
+            .where(Post.post_type == "multi_platform_video")
+            .order_by(Post.created_at)
+        )
+        posts = (await session.execute(stmt)).scalars().all()
+
+    upcoming = []
+    for p in posts:
+        meta = {}
+        if p.post_text and p.post_text.startswith("{"):
+            try: meta = json.loads(p.post_text)
+            except: pass
+        upcoming.append({
+            "post_id": p.id,
+            "product_name": meta.get("product_name", f"Post {p.id}"),
+            "scheduled_for": meta.get("scheduled_for"),
+            "platforms": meta.get("platforms", []),
+            "created_at": str(p.created_at),
+            "video_path": p.video_path,
+        })
+    return {"upcoming": upcoming, "count": len(upcoming)}
+
+
+# ── SSE live progress ─────────────────────────────────────────────────────────
+
+@app.get("/api/job/{job_id}/sse")
+async def job_sse(job_id: int):
+    """
+    Server-Sent Events stream for live job progress.
+    Connect from JS:
+      const sse = new EventSource(`/api/job/${jobId}/sse`);
+      sse.onmessage = (e) => console.log(JSON.parse(e.data));
+    """
+    from database.crud import get_session
+    from database.models import Job
+
+    async def event_stream():
+        last_status = None
+        for _ in range(240):  # 4 minutes max
+            async with AsyncSessionLocal() as session:
+                job = await session.get(Job, job_id)
+                if not job:
+                    yield f"data: {json.dumps({'error': 'not found'})}\n\n"
+                    return
+                payload = {
+                    "id": job.id,
+                    "status": job.status,
+                    "type": job.job_type,
+                    "result": job.params,
+                }
+                if job.status != last_status:
+                    yield f"data: {json.dumps(payload)}\n\n"
+                    last_status = job.status
+                if job.status in ("done", "failed"):
+                    return
+            await asyncio.sleep(1)
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

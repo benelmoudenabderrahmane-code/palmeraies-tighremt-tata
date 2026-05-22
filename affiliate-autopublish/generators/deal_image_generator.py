@@ -1,16 +1,37 @@
 import os
+import re
 from pathlib import Path
 from io import BytesIO
 
 import httpx
 from PIL import Image, ImageDraw, ImageFont
 
+
+def _strip_emoji(text: str) -> str:
+    """Remove emoji and non-BMP characters that Pillow/TTF fonts can't render."""
+    return re.sub(r"[^\x00-\x7FÀ-ɏ]", "", text).strip()
+
 FONTS_DIR = Path(__file__).parent.parent / "assets" / "fonts"
+_ANTON_URL = "https://github.com/google/fonts/raw/main/ofl/anton/Anton-Regular.ttf"
+
+
+def _ensure_font() -> Path:
+    """Return path to Anton-Regular.ttf, downloading it if absent."""
+    font_path = FONTS_DIR / "Anton-Regular.ttf"
+    if font_path.exists():
+        return font_path
+    FONTS_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        import urllib.request
+        urllib.request.urlretrieve(_ANTON_URL, str(font_path))
+    except Exception:
+        pass
+    return font_path
 
 
 def _load_font(size: int) -> ImageFont.FreeTypeFont:
-    """Load Anton font, fall back to PIL default if not found."""
-    font_path = FONTS_DIR / "Anton-Regular.ttf"
+    """Load Anton font (auto-downloaded), fall back to PIL default if unavailable."""
+    font_path = _ensure_font()
     try:
         return ImageFont.truetype(str(font_path), size)
     except (OSError, IOError):
@@ -20,9 +41,16 @@ def _load_font(size: int) -> ImageFont.FreeTypeFont:
             return ImageFont.load_default()
 
 
+_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+    "Referer": "https://www.amazon.com/",
+}
+
+
 async def _download_image(url: str) -> Image.Image | None:
     try:
-        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
+        async with httpx.AsyncClient(timeout=15, follow_redirects=True, headers=_HEADERS, verify=False) as client:
             resp = await client.get(url)
             if resp.status_code == 200:
                 return Image.open(BytesIO(resp.content)).convert("RGBA")
@@ -58,7 +86,10 @@ async def create_deal_image(
     discount_pct: float = 0.0,
     output_path: str = "deal.jpg",
 ) -> str:
-    """Generate a 1200×1200 deal image. Returns the saved file path."""
+    """Generate a deal image. Tries Canva template first, falls back to Pillow."""
+    from generators.canva_deal_image_generator import create_canva_deal_image
+    if await create_canva_deal_image(product_name, price, image_url, network, output_path):
+        return output_path
     W, H = 1200, 1200
     img = Image.new("RGB", (W, H), (255, 255, 255))
     draw = ImageDraw.Draw(img)
@@ -67,7 +98,7 @@ async def create_deal_image(
     draw.rectangle([0, 0, W, 110], fill=(10, 10, 10))
     banner_font = _load_font(52)
     store = network.upper()
-    banner_text = f"{store} BEST DEAL 🔥🔥"
+    banner_text = _strip_emoji(f"{store} BEST DEAL")
     draw.text((W // 2, 55), banner_text, font=banner_font, fill=(255, 255, 255), anchor="mm")
 
     # Product name (wrapped, dark text)
@@ -101,9 +132,9 @@ async def create_deal_image(
     draw.rectangle([0, H - 140, W, H], fill=(10, 10, 10))
     cta_font = _load_font(46)
     if discount_pct > 0:
-        cta_text = f"SAVE {discount_pct:.0f}% OFF TODAY! 💥"
+        cta_text = f"SAVE {discount_pct:.0f}% OFF TODAY!"
     else:
-        cta_text = "LIMITED TIME OFFER ⏰ GRAB IT NOW!"
+        cta_text = "LIMITED TIME OFFER - GRAB IT NOW!"
     draw.text((W // 2, H - 70), cta_text, font=cta_font, fill=(255, 220, 0), anchor="mm")
 
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)

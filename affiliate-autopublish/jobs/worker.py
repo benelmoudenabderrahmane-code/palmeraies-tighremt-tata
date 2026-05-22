@@ -14,6 +14,9 @@ from generators.shoe_vision_analyzer import analyze_shoe_photos
 from generators.shoe_script_generator import generate_shoe_script
 from publishers.n8n_webhook import send_to_n8n
 from publishers.youtube_publisher import upload_to_youtube
+from publishers.orchestrator import publish_to_all_platforms
+from generators.multi_platform_seo import generate_multi_platform_seo
+from affiliate.vercel_redirect import create_redirect
 
 MEDIA_DIR = Path("media")
 
@@ -370,3 +373,68 @@ async def run_shoe_short_campaign(
 
         await update_job(session, job_id, status="done", result=json.dumps(results))
         return results
+
+
+async def run_multi_platform_publish(
+    job_id: int,
+    video_path: str,
+    product_name: str,
+    affiliate_link: str,
+    niche: str = "",
+    price: float = 0.0,
+    features: list[str] | None = None,
+    platforms: list[str] | None = None,
+    vercel_domain: str = "nike-redirect.vercel.app",
+) -> dict:
+    """NEW core pipeline — user uploads filmed video → Vercel redirect → multi-platform SEO → publish parallel to YT/TT/IG/FB."""
+    platforms = platforms or ["youtube", "tiktok", "instagram", "facebook"]
+
+    async with AsyncSessionLocal() as session:
+        await update_job(session, job_id, status="running")
+
+        # 1. Vercel redirect (always-clickable affiliate URL)
+        vercel_url = create_redirect(product_name, affiliate_link, vercel_domain)
+
+        # 2. SEO bundle for every platform
+        seo = await generate_multi_platform_seo(
+            product_name=product_name,
+            affiliate_link=vercel_url,
+            niche=niche,
+            price=price,
+            features=features or [],
+        )
+
+        # 3. Build public URL for Instagram
+        rel = video_path.replace("\\", "/").lstrip("./").replace("media/", "")
+        from config.settings import get_settings as _gs
+        base = _gs().base_url.rstrip("/")
+        video_public_url = f"{base}/media/{rel}"
+
+        # 4. Publish parallel
+        publish_results = await publish_to_all_platforms(
+            video_path=video_path,
+            video_public_url=video_public_url,
+            seo=seo,
+            affiliate_link=vercel_url,
+            platforms=platforms,
+        )
+
+        # 5. Persist Posts
+        posts: dict[str, int] = {}
+        for platform, result in publish_results.items():
+            cap = ""
+            if platform == "youtube":   cap = seo["youtube"]["description"]
+            elif platform == "tiktok":  cap = seo["tiktok"]["caption"]
+            elif platform == "instagram": cap = seo["instagram"]["caption"]
+            elif platform == "facebook": cap = seo["facebook"]["post_text"]
+            post = await create_post(
+                session, product_id=None, post_type="multi_platform_video",
+                platform=platform, post_text=cap, video_path=video_path,
+                image_path=None, affiliate_link=vercel_url,
+                status="published" if result["status"] == "success" else "failed",
+            )
+            posts[platform] = post.id
+
+        final = {"vercel_url": vercel_url, "seo": seo, "publish": publish_results, "posts": posts}
+        await update_job(session, job_id, status="done", result=json.dumps(final, ensure_ascii=False))
+        return final
