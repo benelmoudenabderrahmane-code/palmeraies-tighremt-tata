@@ -519,6 +519,7 @@ export default function DonContent() {
               { Icon: HandHelping, title: 'Devenir bénévole', desc: 'Médecins, ingénieurs, enseignants — chaque compétence compte', cta: 'Rejoindre l\'équipe →', href: '/contact', ext: false, color: C.greenDeep },
             ].map((m, i) => (
               <a key={i} href={m.href} {...(m.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})} className="card-premium"
+                aria-label={m.href.startsWith('mailto:') ? `Envoyer un email à ${m.href.replace('mailto:', '')}` : m.title}
                 style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.4rem 1.6rem', background: '#fff', borderRadius: '1rem', border: `1px solid ${C.sandDark}`, textDecoration: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
                 <div style={{ width: 48, height: 48, borderRadius: '0.875rem', background: `${m.color}14`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `1px solid ${m.color}25` }}>
                   <m.Icon size={22} color={m.color} strokeWidth={1.6} />
