@@ -130,6 +130,8 @@ export default function ActualitesContent() {
               src={featured.image}
               alt={featured.titre}
               className="actu-vedette-img"
+              width={1600}
+              height={900}
               loading="eager"
             />
             {/* Dégradé vert nuit vers le bas */}
@@ -183,7 +185,7 @@ export default function ActualitesContent() {
                 {/* Image 3:2 */}
                 <div className="actu-card-ratio">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={article.image} alt={article.titre} loading="lazy" />
+                  <img src={article.image} alt={article.titre} width={600} height={400} loading="lazy" />
                 </div>
 
                 {/* Corps */}

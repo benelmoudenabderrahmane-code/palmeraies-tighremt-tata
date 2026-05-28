@@ -166,7 +166,9 @@ export default function GalerieContent() {
                   <img
                     src={img.src}
                     alt={img.alt}
-                    loading={i < 2 ? 'eager' : 'lazy'}
+                    width={img.w}
+                    height={img.h}
+                    loading={i < 3 ? 'eager' : 'lazy'}
                   />
                   <div className="gal-overlay">
                     <span className="gal-caption">{img.alt}</span>

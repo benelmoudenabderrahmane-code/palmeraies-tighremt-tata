@@ -378,6 +378,8 @@ function SectionActualites() {
                   src={second.image}
                   alt={second.titre}
                   className="actu-card-img"
+                  width={600}
+                  height={400}
                   loading="lazy"
                 />
               </div>
