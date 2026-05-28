@@ -48,6 +48,23 @@ function writeSubscribers(list) {
   fs.writeFileSync(FILE, JSON.stringify(list, null, 2));
 }
 
+/* ── Turnstile verification ──────────────────────────────── */
+const TURNSTILE_SECRET =
+  process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
+
+async function verifyTurnstile(token, ip) {
+  if (!token) return false;
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret: TURNSTILE_SECRET, response: token, remoteip: ip }),
+    });
+    const data = await res.json();
+    return data.success === true;
+  } catch { return false; }
+}
+
 /* ── Route handler ──────────────────────────────────────── */
 export async function POST(req) {
   try {
@@ -62,8 +79,14 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Trop de requêtes, réessayez plus tard.' }, { status: 429 });
     }
 
-    // Validate email
-    const { email } = await req.json();
+    // Parse body
+    const { email, turnstileToken } = await req.json();
+
+    // Turnstile verification
+    const turnstileOk = await verifyTurnstile(turnstileToken, ip);
+    if (!turnstileOk) {
+      return NextResponse.json({ error: 'Vérification échouée, réessayez.' }, { status: 400 });
+    }
     if (!email || !EMAIL_RE.test(email.trim())) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
     }

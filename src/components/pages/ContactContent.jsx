@@ -4,20 +4,23 @@ import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import dynamic from 'next/dynamic';
+import Turnstile from '@/components/ui/Turnstile';
 const MapLeaflet = dynamic(() => import('@/components/ui/MapLeaflet'), { ssr: false });
 
 export default function ContactContent() {
   useScrollReveal();
 
-  const [form, setForm]     = useState({ prenom: '', nom: '', email: '', sujet: '', message: '' });
-  const [sent, setSent]     = useState(false);
+  const [form, setForm]       = useState({ prenom: '', nom: '', email: '', sujet: '', message: '' });
+  const [sent, setSent]       = useState(false);
   const [sending, setSending] = useState(false);
+  const [token, setToken]     = useState(null);
 
   const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.email || !form.message) return;
+    if (!token) { return; }
     setSending(true);
 
     const body = encodeURIComponent(
@@ -169,24 +172,25 @@ export default function ContactContent() {
                   />
                 </div>
 
+                <Turnstile onVerify={setToken} onExpire={() => setToken(null)} />
                 <button
                   type="submit"
-                  disabled={sending || !form.email || !form.message}
+                  disabled={sending || !form.email || !form.message || !token}
                   className="btn-micro"
                   style={{
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem',
                     padding: '1rem 2rem',
-                    background: (sending || !form.email || !form.message) ? C.sandDark : C.greenDeep,
-                    color: (sending || !form.email || !form.message) ? C.inkMuted : '#fff',
+                    background: (sending || !form.email || !form.message || !token) ? C.sandDark : C.greenDeep,
+                    color: (sending || !form.email || !form.message || !token) ? C.inkMuted : '#fff',
                     border: 'none', borderRadius: 999, fontWeight: 600, fontSize: '0.95rem',
-                    cursor: (sending || !form.email || !form.message) ? 'not-allowed' : 'pointer',
-                    boxShadow: (sending || !form.email || !form.message) ? 'none' : `0 8px 24px ${C.greenDeep}40`,
+                    cursor: (sending || !form.email || !form.message || !token) ? 'not-allowed' : 'pointer',
+                    boxShadow: (sending || !form.email || !form.message || !token) ? 'none' : `0 8px 24px ${C.greenDeep}40`,
                     marginTop: '0.5rem',
                     transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
                     fontFamily: 'inherit',
                   }}
-                  onMouseEnter={e => { if (!sending && form.email && form.message) e.currentTarget.style.background = C.green; }}
-                  onMouseLeave={e => { if (!sending && form.email && form.message) e.currentTarget.style.background = C.greenDeep; }}
+                  onMouseEnter={e => { if (!sending && form.email && form.message && token) e.currentTarget.style.background = C.green; }}
+                  onMouseLeave={e => { if (!sending && form.email && form.message && token) e.currentTarget.style.background = C.greenDeep; }}
                 >
                   {sending ? (
                     <>

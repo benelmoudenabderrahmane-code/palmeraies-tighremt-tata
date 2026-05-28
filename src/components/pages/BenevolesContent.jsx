@@ -6,19 +6,22 @@ import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { toast } from '@/hooks/useToast';
 import SectionDivider from '@/components/ui/SectionDivider';
+import Turnstile from '@/components/ui/Turnstile';
 
 const TYPE_LABELS = { permanent: 'Permanent', mission: 'Mission', ponctuel: 'Ponctuel' };
 const TYPE_COLORS = { permanent: C.greenDeep, mission: C.ochre, ponctuel: C.accent };
 
 export default function BenevolesContent() {
   useScrollReveal();
-  const [form, setForm] = useState({ nom: '', email: '', mission: '', message: '' });
+  const [form, setForm]   = useState({ nom: '', email: '', mission: '', message: '' });
   const [sending, setSending] = useState(false);
+  const [token, setToken] = useState(null);
 
   const submit = (e) => {
     e.preventDefault();
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!EMAIL_RE.test(form.email)) { toast.error('Email invalide'); return; }
+    if (!token) { toast.error('Veuillez compléter la vérification'); return; }
     setSending(true);
 
     const missionLabel = missions.find(m => m.id === form.mission)?.titre || form.mission || 'Non précisée';
@@ -94,8 +97,9 @@ export default function BenevolesContent() {
                 placeholder="Présentez-vous et expliquez votre motivation..."
                 rows={4} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, border: `1px solid ${C.sandDark}`, fontSize: '0.93rem', resize: 'vertical', outline: 'none', background: '#fff' }} />
             </div>
-            <button type="submit" disabled={sending} className="btn-accent"
-              style={{ padding: '0.85rem', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.95rem', fontWeight: 600, opacity: sending ? 0.7 : 1 }}>
+            <Turnstile onVerify={setToken} onExpire={() => setToken(null)} />
+            <button type="submit" disabled={sending || !token} className="btn-accent"
+              style={{ padding: '0.85rem', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.95rem', fontWeight: 600, opacity: (sending || !token) ? 0.6 : 1 }}>
               <Send size={16} />{sending ? 'Envoi...' : 'Envoyer ma candidature'}
             </button>
           </form>
