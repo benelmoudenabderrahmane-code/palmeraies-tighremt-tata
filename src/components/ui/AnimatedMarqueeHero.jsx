@@ -1,0 +1,215 @@
+'use client';
+import { motion } from 'framer-motion';
+import { C } from '@/lib/tokens';
+
+/**
+ * Hero plein écran avec marquee d'images défilant en bas.
+ * Adapté du pattern AnimatedMarqueeHero — styles inline + tokens de la marque.
+ *
+ * Props:
+ *  - tagline   : petit label en pilule (petites caps)
+ *  - title     : titre principal (string ou JSX)
+ *  - description : sous-titre
+ *  - ctaText   : libellé du bouton
+ *  - ctaHref   : lien (ancre ou page)
+ *  - images    : tableau d'objets { src, alt }
+ */
+
+const FADE = {
+  hidden: { opacity: 0, y: 14 },
+  show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } },
+};
+
+function ActionButton({ children, href }) {
+  return (
+    <motion.a
+      href={href}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.96 }}
+      style={{
+        display: 'inline-block',
+        marginTop: '2rem',
+        padding: '0.85rem 2.25rem',
+        borderRadius: '2rem',
+        background: C.ochre,
+        color: '#fff',
+        fontWeight: 600,
+        fontSize: '0.9rem',
+        letterSpacing: '0.03em',
+        textDecoration: 'none',
+        boxShadow: '0 10px 30px rgba(196,112,63,0.35)',
+        cursor: 'pointer',
+      }}
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+export default function AnimatedMarqueeHero({
+  tagline,
+  title,
+  description,
+  ctaText,
+  ctaHref = '#galerie-grid',
+  images = [],
+}) {
+  // Duplication pour une boucle sans couture
+  const loop = [...images, ...images];
+
+  return (
+    <section
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        minHeight: 620,
+        overflow: 'hidden',
+        background: C.greenDeep,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: '0 1.5rem',
+      }}
+    >
+      {/* Halo doré décoratif */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: '18%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'min(680px, 90vw)',
+          height: 400,
+          background: 'radial-gradient(ellipse at center, rgba(196,169,107,0.16) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Contenu texte ── */}
+      <div style={{ zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 760 }}>
+        {/* Tagline pilule */}
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={FADE}
+          style={{
+            marginBottom: '1.25rem',
+            display: 'inline-block',
+            borderRadius: '2rem',
+            border: '1px solid rgba(196,169,107,0.45)',
+            background: 'rgba(255,255,255,0.04)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            padding: '0.4rem 1.1rem',
+            fontSize: '0.66rem',
+            letterSpacing: '0.24em',
+            textTransform: 'uppercase',
+            fontWeight: 600,
+            color: 'rgba(196,169,107,0.95)',
+          }}
+        >
+          {tagline}
+        </motion.div>
+
+        {/* Titre principal — stagger par mot si string */}
+        <motion.h1
+          initial="hidden"
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
+          style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: 'clamp(2.6rem, 7vw, 5rem)',
+            fontWeight: 300,
+            fontStyle: 'italic',
+            lineHeight: 1.05,
+            color: '#fff',
+            margin: 0,
+          }}
+        >
+          {typeof title === 'string'
+            ? title.split(' ').map((word, i) => (
+                <motion.span key={i} variants={FADE} style={{ display: 'inline-block' }}>
+                  {word}&nbsp;
+                </motion.span>
+              ))
+            : title}
+        </motion.h1>
+
+        {/* Description */}
+        <motion.p
+          initial="hidden"
+          animate="show"
+          variants={FADE}
+          transition={{ delay: 0.5 }}
+          style={{
+            marginTop: '1.25rem',
+            maxWidth: 540,
+            fontSize: '1rem',
+            lineHeight: 1.7,
+            fontWeight: 300,
+            color: 'rgba(255,255,255,0.6)',
+          }}
+        >
+          {description}
+        </motion.p>
+
+        {/* CTA */}
+        <motion.div initial="hidden" animate="show" variants={FADE} transition={{ delay: 0.6 }}>
+          <ActionButton href={ctaHref}>{ctaText}</ActionButton>
+        </motion.div>
+      </div>
+
+      {/* ── Marquee d'images en bas ── */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          height: '38%',
+          minHeight: 200,
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 22%, black 80%, transparent)',
+          maskImage: 'linear-gradient(to bottom, transparent, black 22%, black 80%, transparent)',
+        }}
+      >
+        <motion.div
+          style={{ display: 'flex', gap: '1rem', height: '100%', alignItems: 'center', willChange: 'transform' }}
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ ease: 'linear', duration: 55, repeat: Infinity }}
+        >
+          {loop.map((img, index) => (
+            <div
+              key={index}
+              style={{
+                position: 'relative',
+                flexShrink: 0,
+                aspectRatio: '3 / 4',
+                height: 'clamp(150px, 24vw, 240px)',
+                transform: `rotate(${index % 2 === 0 ? -2 : 4}deg)`,
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={img.src}
+                alt={img.alt || ''}
+                loading="lazy"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '1rem',
+                  boxShadow: '0 12px 30px rgba(0,0,0,0.35)',
+                  border: '3px solid rgba(255,255,255,0.06)',
+                }}
+              />
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}

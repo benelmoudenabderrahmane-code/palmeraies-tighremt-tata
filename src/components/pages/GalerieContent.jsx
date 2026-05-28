@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
+import AnimatedMarqueeHero from '@/components/ui/AnimatedMarqueeHero';
 
 const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false });
 
@@ -20,10 +21,33 @@ const IMAGES = [
   { src: '/images/tighremt/tighremt-panorama.jpg',  alt: 'Village de Tighremt',                     theme: 'village',   w: 1600, h: 700  },
   { src: '/images/tighremt/route-tighremt.jpg',     alt: 'Route du sud marocain',                   theme: 'paysage',   w: 1400, h: 900  },
   { src: '/images/tighremt/palmeraie-chemin.jpg',   alt: 'Chemin de la palmeraie',                  theme: 'palmeraie', w: 1000, h: 750  },
+  { src: '/images/tata/tata-oasis.webp',            alt: 'Oasis de Tata vue du ciel',               theme: 'tata',      w: 1200, h: 800  },
+  { src: '/images/tata/tata-place.webp',            alt: 'Place principale de Tata',                theme: 'tata',      w: 1200, h: 800  },
+  { src: '/images/tata/tata-porte.webp',            alt: 'Porte historique de la ville de Tata',    theme: 'tata',      w: 800,  h: 1000 },
+  { src: '/images/tata/tata-mosquee.webp',          alt: 'Mosquée de Tata',                         theme: 'tata',      w: 900,  h: 1100 },
+  { src: '/images/tata/tata-ville.webp',            alt: 'Ville de Tata',                           theme: 'tata',      w: 1200, h: 800  },
 ];
 
-const THEMES       = ['tous', 'palmeraie', 'village', 'paysage'];
-const THEME_LABELS = { tous: 'Tous', palmeraie: 'Palmeraie', village: 'Village', paysage: 'Paysage' };
+/* Marquee du hero — sélection variée (paysages + portraits) */
+const MARQUEE = [
+  { src: '/images/tata/tata-oasis.webp',            alt: 'Oasis de Tata' },
+  { src: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Palmeraie de Tighremt' },
+  { src: '/images/tighremt/minaret.jpg',            alt: 'Mosquée de Tighremt' },
+  { src: '/images/tata/tata-porte.webp',            alt: 'Porte de Tata' },
+  { src: '/images/tighremt/dattes.jpg',             alt: 'Dattes' },
+  { src: '/images/tighremt/ksar-silhouette.jpg',    alt: 'Ksar de Tighremt' },
+  { src: '/images/tata/tata-place.webp',            alt: 'Place de Tata' },
+  { src: '/images/tighremt/palmeraie-ciel.jpg',     alt: 'Palmiers de Tighremt' },
+  { src: '/images/tata/tata-mosquee.webp',          alt: 'Mosquée de Tata' },
+  { src: '/images/tighremt/tighremt-panorama.jpg',  alt: 'Village de Tighremt' },
+  { src: '/images/tighremt/route-tighremt.jpg',     alt: 'Route du sud marocain' },
+  { src: '/images/tata/tata-ville.webp',            alt: 'Ville de Tata' },
+  { src: '/images/tighremt/palmeraie-chemin.jpg',   alt: 'Chemin de la palmeraie' },
+  { src: '/images/tighremt/ksar-couloir.jpg',       alt: 'Architecture en terre du ksar' },
+];
+
+const THEMES       = ['tous', 'palmeraie', 'village', 'paysage', 'tata'];
+const THEME_LABELS = { tous: 'Tous', palmeraie: 'Palmeraie', village: 'Village', paysage: 'Paysage', tata: 'Tata' };
 
 export default function GalerieContent() {
   useScrollReveal();
@@ -32,7 +56,7 @@ export default function GalerieContent() {
   const filtered = theme === 'tous' ? IMAGES : IMAGES.filter(img => img.theme === theme);
 
   return (
-    <div style={{ paddingTop: '6rem', minHeight: '100vh', background: '#f5f0e8' }}>
+    <div style={{ minHeight: '100vh', background: '#f5f0e8' }}>
       <style>{`
         /* ── Filtres identiques à Actualités ── */
         .gal-filter {
@@ -87,30 +111,15 @@ export default function GalerieContent() {
         .gal-cell:hover .gal-caption { opacity: 1; transform: translateY(0); }
       `}</style>
 
-      {/* ── Hero vert ── */}
-      <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
-        <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
-          <p style={{
-            fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase',
-            color: 'rgba(196,169,107,0.9)', marginBottom: '0.75rem',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-          }}>
-            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
-            Galerie
-            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
-          </p>
-          <h1 style={{
-            fontFamily: 'Cormorant Garamond, serif',
-            fontSize: 'clamp(2rem,5vw,3.5rem)',
-            fontWeight: 300, fontStyle: 'italic', lineHeight: 1.1,
-          }}>
-            Tighremt en images
-          </h1>
-          <p style={{ marginTop: '0.75rem', opacity: 0.6, fontSize: '0.92rem', lineHeight: 1.7 }}>
-            La beauté de la palmeraie et du village à travers nos photos.
-          </p>
-        </div>
-      </section>
+      {/* ── Hero marquee animé ── */}
+      <AnimatedMarqueeHero
+        tagline="Galerie · Tata & Tighremt"
+        title="Tighremt en images"
+        description="La beauté de la palmeraie, du ksar et du village à travers nos photos — et celles de la ville de Tata."
+        ctaText="Découvrir la galerie"
+        ctaHref="#galerie-grid"
+        images={MARQUEE}
+      />
 
       <SectionDivider />
 
@@ -132,7 +141,7 @@ export default function GalerieContent() {
       </div>
 
       {/* ── Bento grid ── */}
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '2.5rem 1.5rem 5rem' }}>
+      <section id="galerie-grid" style={{ maxWidth: 1200, margin: '0 auto', padding: '2.5rem 1.5rem 5rem', scrollMarginTop: '5rem' }}>
         {filtered.length === 0 ? (
           <p style={{
             textAlign: 'center', color: C.inkMuted, padding: '4rem 0',
