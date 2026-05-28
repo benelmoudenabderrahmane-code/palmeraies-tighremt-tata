@@ -50,6 +50,17 @@ export default function EvenementsContent() {
         </div>
       </section>
       <SectionDivider />
+
+      {/* ── Intro contextuelle ── */}
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 0', textAlign: 'center' }}>
+        <p className="reveal" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.1rem,2vw,1.3rem)', fontWeight: 400, color: '#3a3a3a', lineHeight: 1.9, marginBottom: '1rem' }}>
+          L&apos;Association Palmeraies Tighremt organise tout au long de l&apos;année des événements ouverts à ses membres, bénévoles et sympathisants. Collectes solidaires, assemblées générales, missions terrain, rencontres communautaires — chaque rendez-vous est une occasion de se retrouver, de partager et d&apos;avancer ensemble pour Tighremt.
+        </p>
+        <p className="reveal reveal-delay-1" style={{ fontSize: '0.92rem', color: '#6b6b6b', lineHeight: 1.75, maxWidth: 600, margin: '0 auto' }}>
+          Rejoignez-nous lors de nos prochains événements. Votre présence et votre soutien font la force de notre association. Pour être tenu informé, inscrivez-vous à notre lettre d&apos;information ou suivez-nous sur les réseaux sociaux.
+        </p>
+      </div>
+
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '3rem 1.5rem' }}>
         {upcoming.length > 0 && (
           <>

@@ -206,6 +206,23 @@ export default function ContactContent() {
           </div>
         </div>
 
+        {/* ── Pourquoi nous contacter ── */}
+        <div className="reveal" style={{ maxWidth: 1000, margin: '3rem auto 0', padding: '0 1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px,1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+            {[
+              { titre: 'Faire un don', desc: 'Contribuer financièrement à nos projets de restauration de la palmeraie, d\'infrastructure et d\'aide humanitaire.' },
+              { titre: 'Devenir bénévole', desc: 'Rejoindre notre équipe de bénévoles passionnés, quelle que soit votre spécialité : médecin, enseignant, artisan, ingénieur.' },
+              { titre: 'Partenariat', desc: 'Établir un partenariat institutionnel ou associatif pour soutenir le développement durable de la région de Tata.' },
+              { titre: 'Renseignements', desc: 'Poser vos questions sur l\'association, nos actions sur le terrain, ou la situation de la commune de Tighremt.' },
+            ].map(({ titre, desc }) => (
+              <div key={titre} style={{ background: '#fff', borderRadius: '1rem', padding: '1.4rem', border: '1px solid #e0d8c8' }}>
+                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem', fontWeight: 600, color: '#133d20', marginBottom: '0.5rem' }}>{titre}</h3>
+                <p style={{ fontSize: '0.86rem', color: '#6b6b6b', lineHeight: 1.7, fontWeight: 300 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '3rem 1.5rem 0' }}>
           <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', fontWeight: 600, color: '#133d20', marginBottom: '1.5rem' }}>
             Tighremt sur la carte
