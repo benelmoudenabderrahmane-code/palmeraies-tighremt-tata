@@ -7,6 +7,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
 import SectionDivider from '@/components/ui/SectionDivider';
 import { TextEffect } from '@/components/ui/TextEffect';
+import { ContainerScroll, ContainerScale, BentoGrid, BentoCell } from '@/components/ui/ScrollBentoGrid';
 
 const ImageComparison = dynamic(
   () => import('@/components/ui/ImageComparison'),
@@ -707,39 +708,130 @@ function ProjectsIndex() {
   );
 }
 
-/* ── Page hero ─────────────────────────────────────────────────────────── */
-function PageHero() {
+/* ── Bento image card ─────────────────────────────────────────────────────── */
+function BentoCard({ project, fill = false }) {
+  const imgSrc = project.after || project.afterFallback || project.gallery?.[0]?.src;
+  const fallback = project.afterFallback || project.gallery?.[0]?.fallback;
+
   return (
-    <section style={{
-      background: C.greenDeep,
-      color: '#fff',
-      padding: '4rem 1.5rem 3rem',
-      textAlign: 'center',
-      paddingTop: '8rem',
-    }}>
-      <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
-        <p style={{
-          fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase',
-          color: 'rgba(196,169,107,0.9)', marginBottom: '0.75rem',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+    <div style={{ position: 'relative', width: '100%', height: '100%', background: C.greenDeep }}>
+      <img
+        src={imgSrc}
+        alt={project.title}
+        width="900"
+        height="600"
+        loading="lazy"
+        onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
+        style={{
+          position: 'absolute', inset: 0,
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          display: 'block',
+          opacity: 0.85,
+        }}
+      />
+      {/* Dark gradient overlay */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to top, rgba(19,61,32,0.82) 0%, rgba(19,61,32,0.2) 55%, transparent 100%)',
+      }} />
+      {/* Text */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        padding: fill ? '1.5rem 1.75rem' : '0.85rem 1rem',
+      }}>
+        <span style={{
+          fontSize: '0.58rem', letterSpacing: '0.2em', textTransform: 'uppercase',
+          fontWeight: 700, color: '#c4a96b', display: 'block', marginBottom: '0.25rem',
         }}>
-          <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
-          Nos projets
-          <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
-        </p>
-        <h1 style={{
+          {project.category}
+        </span>
+        <div style={{
           fontFamily: 'Cormorant Garamond, serif',
-          fontSize: 'clamp(2rem,5vw,3.5rem)',
-          fontWeight: 300, lineHeight: 1.1,
+          fontSize: fill ? 'clamp(1.1rem,2vw,1.45rem)' : '0.92rem',
+          fontWeight: 500, color: '#fff', lineHeight: 1.2,
         }}>
-          {PROJECTS.length} projets pour<br />
-          <em style={{ fontStyle: 'italic', fontWeight: 400 }}>Tighremt &amp; la région</em>
-        </h1>
-        <p style={{ marginTop: '0.75rem', opacity: 0.6, fontSize: '0.92rem', lineHeight: 1.7 }}>
-          Environnement, infrastructure, éducation, solidarité et mémoire du territoire.
-        </p>
+          {project.title}
+        </div>
       </div>
-    </section>
+    </div>
+  );
+}
+
+/* ── Scroll Bento Hero (replaces PageHero + ProjectsIndex) ───────────────── */
+function ScrollBentoHero() {
+  // Projects layout: [0]=big, [1][2]=tall right, [3][4]=wide bottom-left/right
+  const top5 = PROJECTS.slice(0, 5);
+
+  return (
+    <div style={{ background: C.greenDeep, paddingTop: '6rem', marginBottom: '-1px' }}>
+      <ContainerScroll>
+        {/* ── Sticky hero title ── */}
+        <ContainerScale>
+          <div style={{ textAlign: 'center', padding: '0 1.5rem', maxWidth: 740, position: 'relative', zIndex: 20 }}>
+            <p style={{
+              fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase',
+              color: 'rgba(196,169,107,0.85)', marginBottom: '1rem',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+            }}>
+              <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
+              Nos projets
+              <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
+            </p>
+            <h1 style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontSize: 'clamp(2.4rem,6vw,4.5rem)',
+              fontWeight: 300, lineHeight: 1.05, color: '#fff',
+              margin: '0 0 1rem',
+            }}>
+              {PROJECTS.length} projets pour<br />
+              <em style={{ fontStyle: 'italic', fontWeight: 400, color: '#c4a96b' }}>Tighremt &amp; la région</em>
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.93rem', lineHeight: 1.7, fontWeight: 300 }}>
+              Environnement · Infrastructure · Éducation · Solidarité · Mémoire
+            </p>
+          </div>
+        </ContainerScale>
+
+        {/* ── Bento grid slides up over the title ── */}
+        <BentoGrid style={{ background: C.greenDeep }}>
+          {/* Big dominant cell — col 1-6, row 1-3 */}
+          <BentoCell colSpan={6} rowSpan={3} colStart={1} rowStart={1} delay={0}>
+            <a href={`#${top5[0].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
+              <BentoCard project={top5[0]} fill />
+            </a>
+          </BentoCell>
+
+          {/* Tall right top — col 7-8, row 1-2 */}
+          <BentoCell colSpan={2} rowSpan={2} colStart={7} rowStart={1} delay={0.04}>
+            <a href={`#${top5[1].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
+              <BentoCard project={top5[1]} />
+            </a>
+          </BentoCell>
+
+          {/* Tall right bottom — col 7-8, row 3 */}
+          <BentoCell colSpan={2} rowSpan={1} colStart={7} rowStart={3} delay={0.07}>
+            <a href={`#${top5[2].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
+              <BentoCard project={top5[2]} />
+            </a>
+          </BentoCell>
+
+          {/* Bottom wide left — col 1-4, row 4-5 */}
+          <BentoCell colSpan={4} rowSpan={2} colStart={1} rowStart={4} delay={0.1}>
+            <a href={`#${top5[3].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
+              <BentoCard project={top5[3]} />
+            </a>
+          </BentoCell>
+
+          {/* Bottom wide right — col 5-8, row 4-5 */}
+          <BentoCell colSpan={4} rowSpan={2} colStart={5} rowStart={4} delay={0.13}>
+            <a href={`#${top5[4].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
+              <BentoCard project={top5[4]} />
+            </a>
+          </BentoCell>
+        </BentoGrid>
+      </ContainerScroll>
+    </div>
   );
 }
 
@@ -755,7 +847,7 @@ export default function ProjetsContent() {
         }
       `}</style>
 
-      <PageHero />
+      <ScrollBentoHero />
 
       <SectionDivider />
 
