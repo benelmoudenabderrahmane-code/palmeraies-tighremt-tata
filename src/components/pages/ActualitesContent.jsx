@@ -155,14 +155,6 @@ export default function ActualitesContent() {
         }
         .actu-card:hover .actu-card-ratio img { transform: scale(1.06); }
 
-        /* ── Article vedette : zoom image ── */
-        .actu-featured-wrap:hover .actu-vedette-img { transform: scale(1.05); }
-        .actu-vedette-img {
-          position: absolute; inset: 0; width: 100%; height: 100%;
-          object-fit: cover; display: block;
-          transition: transform 0.72s cubic-bezier(0.16,1,0.3,1);
-        }
-
         /* ── Corps éditorial sous parallaxe ── */
         .actu-parallax-body {
           display: grid;
