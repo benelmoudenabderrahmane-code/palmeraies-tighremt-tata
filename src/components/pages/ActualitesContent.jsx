@@ -1,21 +1,118 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import actualites from '@/data/actualites.json';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
+import TextParallaxContent from '@/components/ui/TextParallaxContent';
 
 const CATEGORIES = ['tous', 'projets', 'association', 'evenements'];
 const CAT_LABELS  = { tous: 'Tous', projets: 'Projets', association: 'Association', evenements: 'Événements' };
+
+const fmtDate = (d, opts) => new Date(d).toLocaleDateString('fr-FR', opts);
+
+/* ── Corps éditorial sous chaque image parallaxe ────────────────────────── */
+function ParallaxArticleBody({ article, index, total }) {
+  return (
+    <div style={{
+      maxWidth: 1040,
+      margin: '0 auto',
+      display: 'grid',
+      gridTemplateColumns: 'minmax(0, 1fr)',
+      gap: '2rem',
+      padding: 'clamp(2.5rem,5vw,4rem) 1rem clamp(3rem,6vw,5rem)',
+    }}>
+      <div className="actu-parallax-body">
+        {/* Colonne méta */}
+        <div className="actu-parallax-meta">
+          <div style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: 'clamp(2.2rem,4vw,3rem)',
+            fontWeight: 600,
+            color: C.sandDark,
+            lineHeight: 1,
+          }}>
+            {String(index + 1).padStart(2, '0')}
+            <span style={{ fontSize: '0.45em', color: C.inkLight, fontWeight: 400 }}>
+              {' '}/ {String(total).padStart(2, '0')}
+            </span>
+          </div>
+          <div style={{ marginTop: '1rem', height: 1, width: 48, background: C.ochre }} />
+          <p style={{
+            marginTop: '1rem',
+            fontSize: '0.7rem',
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            color: C.ochre,
+            fontWeight: 600,
+          }}>
+            {CAT_LABELS[article.categorie]}
+          </p>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: C.inkLight, lineHeight: 1.6 }}>
+            {fmtDate(article.date, { day: 'numeric', month: 'long', year: 'numeric' })}
+            <br />
+            <span style={{ fontStyle: 'italic' }}>{article.auteur}</span>
+          </p>
+        </div>
+
+        {/* Colonne contenu */}
+        <div>
+          <p style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: 'clamp(1.3rem,2.4vw,1.7rem)',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: C.greenDeep,
+            lineHeight: 1.4,
+            marginBottom: '1.5rem',
+          }}>
+            {article.extrait}
+          </p>
+          <p style={{
+            fontSize: 'clamp(0.95rem,1.4vw,1.05rem)',
+            color: C.inkMuted,
+            lineHeight: 1.85,
+            fontWeight: 300,
+            marginBottom: '2rem',
+          }}>
+            {article.contenu}
+          </p>
+          <Link
+            href={`/actualites/${article.id}`}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              background: C.greenDeep,
+              color: '#fff',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              padding: '0.85rem 1.75rem',
+              borderRadius: '2rem',
+              textDecoration: 'none',
+              transition: 'background 0.25s, transform 0.25s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = C.green; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = C.greenDeep; e.currentTarget.style.transform = 'translateY(0)'; }}
+          >
+            Lire l&apos;article complet <ArrowUpRight size={15} />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function ActualitesContent() {
   useScrollReveal();
   const [cat, setCat] = useState('tous');
   const filtered      = cat === 'tous' ? actualites : actualites.filter(a => a.categorie === cat);
-  const featured      = filtered[0]  ?? null;
-  const rest          = filtered.slice(1);
+  const PARALLAX_COUNT = Math.min(2, filtered.length);
+  const featured       = filtered.slice(0, PARALLAX_COUNT);
+  const rest           = filtered.slice(PARALLAX_COUNT);
 
   return (
     <div style={{ paddingTop: '6rem', minHeight: '100vh', background: '#f5f0e8' }}>
@@ -65,6 +162,19 @@ export default function ActualitesContent() {
           object-fit: cover; display: block;
           transition: transform 0.72s cubic-bezier(0.16,1,0.3,1);
         }
+
+        /* ── Corps éditorial sous parallaxe ── */
+        .actu-parallax-body {
+          display: grid;
+          grid-template-columns: 4fr 8fr;
+          gap: clamp(1.5rem, 4vw, 3.5rem);
+          align-items: start;
+        }
+        .actu-parallax-meta { position: sticky; top: 6rem; }
+        @media (max-width: 760px) {
+          .actu-parallax-body { grid-template-columns: 1fr; }
+          .actu-parallax-meta { position: static; }
+        }
       `}</style>
 
       {/* ── Hero ── */}
@@ -111,65 +221,31 @@ export default function ActualitesContent() {
         ))}
       </div>
 
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '2.5rem 1.5rem 5rem' }}>
+      {/* ── Articles vedettes — parallaxe immersive ── */}
+      {featured.map((article, i) => (
+        <TextParallaxContent
+          key={article.id}
+          imgUrl={article.image}
+          alt={article.titre}
+          subheading={`${CAT_LABELS[article.categorie]} · ${fmtDate(article.date, { day: 'numeric', month: 'long', year: 'numeric' })}`}
+          heading={article.titre}
+        >
+          <ParallaxArticleBody article={article} index={i} total={filtered.length} />
+        </TextParallaxContent>
+      ))}
 
-        {/* ── Article vedette — 16:9 full-bleed ── */}
-        {featured && (
-          <Link
-            href={`/actualites/${featured.id}`}
-            className="reveal actu-featured-wrap"
-            style={{
-              display: 'block', textDecoration: 'none',
-              position: 'relative', borderRadius: 14, overflow: 'hidden',
-              marginBottom: '1.5rem',
-              aspectRatio: '16 / 9',
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={featured.image}
-              alt={featured.titre}
-              className="actu-vedette-img"
-              width={1600}
-              height={900}
-              loading="eager"
-            />
-            {/* Dégradé vert nuit vers le bas */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(to top, rgba(19,61,32,0.92) 0%, rgba(19,61,32,0.4) 50%, transparent 100%)',
-            }} />
-            {/* Texte en surimpression */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'clamp(1.5rem,4vw,2.5rem)' }}>
-              <p style={{
-                fontSize: '0.62rem', letterSpacing: '0.22em', textTransform: 'uppercase',
-                color: 'rgba(196,169,107,0.92)', marginBottom: '0.55rem', fontWeight: 500,
-              }}>
-                {CAT_LABELS[featured.categorie]}&nbsp;·&nbsp;
-                {new Date(featured.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </p>
-              <h2 style={{
-                fontFamily: 'Cormorant Garamond, serif',
-                fontSize: 'clamp(1.6rem,3.5vw,2.2rem)',
-                fontWeight: 400, color: '#fff', lineHeight: 1.2,
-                maxWidth: 680, marginBottom: '1rem',
-              }}>
-                {featured.titre}
-              </h2>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.78)',
-                borderBottom: '1px solid rgba(255,255,255,0.3)', paddingBottom: '0.15rem',
-              }}>
-                Lire l&apos;article <ArrowRight size={12} />
-              </span>
-            </div>
-          </Link>
-        )}
+      {rest.length > 0 && <SectionDivider />}
 
-        {/* ── Grille 2×2 ── */}
-        {rest.length > 0 && (
+      {/* ── Grille des autres articles ── */}
+      {rest.length > 0 && (
+        <section style={{ maxWidth: 1200, margin: '0 auto', padding: 'clamp(2.5rem,5vw,3.5rem) 1.5rem 5rem' }}>
+          <p style={{
+            textAlign: 'center', fontSize: '0.66rem', letterSpacing: '0.24em',
+            textTransform: 'uppercase', color: C.ochre, fontWeight: 600,
+            marginBottom: '2rem',
+          }}>
+            Plus d&apos;actualités
+          </p>
           <div className="actu-grid-2col">
             {rest.map((article, i) => (
               <Link
@@ -194,7 +270,7 @@ export default function ActualitesContent() {
                     fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase',
                     color: C.ochre, marginBottom: '0.5rem', fontWeight: 500,
                   }}>
-                    {new Date(article.date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+                    {fmtDate(article.date, { month: 'long', year: 'numeric' })}
                   </p>
                   <h2 style={{
                     fontFamily: 'Cormorant Garamond, serif',
@@ -221,9 +297,11 @@ export default function ActualitesContent() {
               </Link>
             ))}
           </div>
-        )}
+        </section>
+      )}
 
-        {filtered.length === 0 && (
+      {filtered.length === 0 && (
+        <section style={{ maxWidth: 1200, margin: '0 auto', padding: '2.5rem 1.5rem 5rem' }}>
           <p style={{
             textAlign: 'center', color: C.inkMuted,
             padding: '4rem 0', fontFamily: 'Cormorant Garamond, serif',
@@ -231,8 +309,8 @@ export default function ActualitesContent() {
           }}>
             Aucun article dans cette catégorie.
           </p>
-        )}
-      </section>
+        </section>
+      )}
     </div>
   );
 }
