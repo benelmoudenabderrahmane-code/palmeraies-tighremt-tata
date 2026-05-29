@@ -73,7 +73,7 @@ export default function RootLayout({ children }) {
           "description": "Découvrez la beauté de la palmeraie de Tighremt, Maroc. Association loi 1901 œuvrant pour la sauvegarde de cet écosystème unique.",
           "thumbnailUrl": "https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg",
           "uploadDate": "2024-01-01",
-          "contentUrl": "https://palmeries-tighremt.org/palmeraie.mp4",
+          "contentUrl": "https://palmeries-tighremt.org/palmeraie-hd.mp4",
           "embedUrl": "https://palmeries-tighremt.org",
           "publisher": {
             "@type": "Organization",

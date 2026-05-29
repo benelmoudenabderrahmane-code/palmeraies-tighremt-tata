@@ -160,7 +160,7 @@ function Hero() {
       }}>
         <div
           style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden' }}
-          dangerouslySetInnerHTML={{ __html: `<video autoplay loop playsinline muted preload="auto" poster="/images/tighremt/palmeraie-panorama.jpg" style="position:absolute;inset:0;width:100%;height:120%;object-fit:cover;top:-10%;filter:contrast(1.08) saturate(1.18) brightness(1.04);"><source src="/palmeraie.mp4" type="video/mp4"><track kind="captions" src="/captions-fr.vtt" srclang="fr" label="Français" default></video>` }}
+          dangerouslySetInnerHTML={{ __html: `<video autoplay loop playsinline muted preload="auto" poster="/images/tighremt/palmeraie-panorama.jpg" style="position:absolute;inset:0;width:100%;height:120%;object-fit:cover;top:-10%;filter:contrast(1.08) saturate(1.18) brightness(1.04);"><source src="/palmeraie-hd.mp4" type="video/mp4"><track kind="captions" src="/captions-fr.vtt" srclang="fr" label="Français" default></video>` }}
         />
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(110deg, rgba(6,20,10,0.90) 0%, rgba(6,20,10,0.60) 42%, rgba(6,20,10,0.10) 72%, transparent 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(to top, rgba(6,20,10,0.75) 0%, transparent 45%)' }} />
