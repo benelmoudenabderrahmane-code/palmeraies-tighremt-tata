@@ -1,9 +1,8 @@
 'use client';
-import { useState } from 'react';
 import { Mail, Users, Leaf, Crown, Wallet, FileText, ArrowRight, TreePine, Handshake, Lightbulb, Sprout, Star } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import { TeamCarousel } from '@/components/ui/TeamCarousel';
+import TeamTestimonialCarousel from '@/components/ui/TeamTestimonialCarousel';
 import { TextEffect } from '@/components/ui/TextEffect';
 import SectionDivider from '@/components/ui/SectionDivider';
 
@@ -78,175 +77,6 @@ const VALEURS = [
   { Icon: Sprout,     color: C.greenMid,  titre: 'Long terme',           desc: "Pas de projets one-shot : on construit pour les générations suivantes." },
 ];
 
-/* ─── Member card ────────────────────────────────────────────── */
-function MembreCard({ m, index }) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      className={`reveal reveal-delay-${(index % 3) + 1}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: 'relative',
-        background: '#fff',
-        borderRadius: '1.5rem',
-        padding: '0.15rem',
-        transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease',
-        transform: hovered ? 'translateY(-10px) scale(1.02)' : 'translateY(0) scale(1)',
-        boxShadow: hovered
-          ? '0 28px 60px rgba(19,61,32,0.18), 0 8px 20px rgba(0,0,0,0.1)'
-          : '0 4px 16px rgba(0,0,0,0.06)',
-      }}
-    >
-      {/* Animated gradient border */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        borderRadius: '1.5rem',
-        background: hovered ? m.gradient : `linear-gradient(135deg, ${C.sandDark}, ${C.sandMid})`,
-        padding: '2px',
-        transition: 'background 0.4s ease',
-        zIndex: 0,
-      }} />
-
-      {/* Card content */}
-      <div style={{
-        position: 'relative', zIndex: 1,
-        background: hovered ? C.sand : '#fff',
-        borderRadius: 'calc(1.5rem - 2px)',
-        padding: '1.75rem 1.5rem',
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        textAlign: 'center', gap: '1rem',
-        transition: 'background 0.35s ease',
-        overflow: 'hidden',
-      }}>
-
-        {/* Subtle background glow */}
-        <div style={{
-          position: 'absolute', top: -40, left: '50%', transform: 'translateX(-50%)',
-          width: 120, height: 120, borderRadius: '50%',
-          background: hovered ? `${m.roleColor}18` : 'transparent',
-          filter: 'blur(30px)',
-          transition: 'background 0.4s ease, opacity 0.4s ease',
-          pointerEvents: 'none',
-        }} />
-
-        {/* Avatar with animated ring */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          {/* Outer gradient ring */}
-          <div style={{
-            width: 92, height: 92,
-            borderRadius: '50%',
-            background: hovered ? m.gradient : `conic-gradient(${C.sandDark}, ${C.sandMid}, ${C.sandDark})`,
-            padding: '3px',
-            transition: 'background 0.4s ease',
-            transform: hovered ? 'rotate(180deg)' : 'rotate(0deg)',
-            transitionDuration: '0.6s',
-          }}>
-            <div style={{
-              width: '100%', height: '100%',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '3px solid #fff',
-              transform: hovered ? 'rotate(-180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.6s ease',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: hovered
-                ? m.gradient
-                : `linear-gradient(135deg, #d4ccbc, #bfb8a8)`,
-            }}>
-              <span style={{
-                fontFamily: 'Cormorant Garamond, serif',
-                fontSize: '1.35rem',
-                fontWeight: 700,
-                color: hovered ? '#fff' : '#133d20',
-                letterSpacing: '0.04em',
-                transform: hovered ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.6s ease, color 0.4s ease',
-                display: 'block',
-                userSelect: 'none',
-              }}>
-                {m.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
-              </span>
-            </div>
-          </div>
-          {/* Role icon badge */}
-          <div style={{
-            position: 'absolute', bottom: -2, right: -2,
-            width: 26, height: 26, borderRadius: '50%',
-            background: m.gradient,
-            border: '2.5px solid #fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          }}>
-            <m.RoleIcon size={12} color="#fff" strokeWidth={2.5} />
-          </div>
-        </div>
-
-        {/* Name */}
-        <div style={{ zIndex: 1 }}>
-          <div style={{
-            fontWeight: 700, fontSize: '0.95rem',
-            color: C.greenDeep, marginBottom: '0.3rem',
-            lineHeight: 1.25,
-          }}>
-            {m.name}
-          </div>
-
-          {/* Role badge */}
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
-            padding: '0.2rem 0.75rem',
-            borderRadius: 999,
-            background: hovered ? m.gradient : C.sandMid,
-            color: hovered ? '#fff' : m.roleColor,
-            fontSize: '0.68rem', fontWeight: 700,
-            letterSpacing: '0.08em', textTransform: 'uppercase',
-            transition: 'background 0.3s, color 0.3s',
-          }}>
-            {m.role}
-          </div>
-        </div>
-
-        {/* Bio — visible on hover */}
-        <div style={{
-          fontSize: '0.82rem', color: C.inkMuted,
-          lineHeight: 1.6, fontWeight: 300,
-          maxHeight: hovered ? '80px' : '0px',
-          overflow: 'hidden',
-          opacity: hovered ? 1 : 0,
-          transition: 'max-height 0.35s ease, opacity 0.3s ease',
-          zIndex: 1,
-        }}>
-          {m.bio}
-        </div>
-
-        {/* Skills chips */}
-        <div style={{
-          display: 'flex', flexWrap: 'wrap', gap: '0.35rem',
-          justifyContent: 'center', zIndex: 1,
-          opacity: hovered ? 1 : 0.6,
-          transition: 'opacity 0.3s ease',
-        }}>
-          {m.skills.map(s => (
-            <span key={s} style={{
-              fontSize: '0.64rem', padding: '0.22rem 0.6rem',
-              borderRadius: 999,
-              background: hovered ? `${m.roleColor}18` : C.sandMid,
-              color: hovered ? m.roleColor : C.inkLight,
-              border: `1px solid ${hovered ? m.roleColor + '30' : C.sandDark}`,
-              fontWeight: 500, letterSpacing: '0.03em',
-              transition: 'background 0.3s, color 0.3s, border-color 0.3s',
-            }}>
-              {s}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Main export ────────────────────────────────────────────── */
 export default function EquipeContent() {
   useScrollReveal();
@@ -266,6 +96,7 @@ export default function EquipeContent() {
         .equipe-hero-leaf { animation: equipeFloat 6s ease-in-out infinite; }
         .equipe-orb-1     { animation: equipeOrb  9s ease-in-out infinite; }
         .equipe-orb-2     { animation: equipeOrb 12s ease-in-out infinite reverse; }
+        .team-carousel-track::-webkit-scrollbar { display: none; }
       `}</style>
 
       {/* ══ HERO ══════════════════════════════════════════════════ */}
@@ -313,26 +144,11 @@ export default function EquipeContent() {
 
       <SectionDivider />
 
-      {/* ══ TEAM GRID ════════════════════════════════════════════= */}
-      <section style={{ background: C.sand, padding: 'clamp(4rem,8vw,6rem) 1.5rem' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
-            gap: '1.5rem',
-          }}>
-            {MEMBRES.map((m, i) => <MembreCard key={m.name} m={m} index={i} />)}
-          </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* ══ TEAM CAROUSEL ════════════════════════════════════════ */}
-      <section style={{ background: C.sandMid, padding: '0' }}>
-        <div style={{ textAlign: 'center', padding: 'clamp(3rem,5vw,4rem) 1.5rem 0' }}>
+      {/* ══ TEAM CAROUSEL (cartes dépliables) ════════════════════ */}
+      <section style={{ background: C.sand, padding: 'clamp(4rem,8vw,6rem) 0 clamp(3rem,6vw,4rem)' }}>
+        <div style={{ textAlign: 'center', padding: '0 1.5rem', maxWidth: 700, margin: '0 auto' }}>
           <div className="reveal" style={{ fontSize: '0.65rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 600, marginBottom: '0.75rem' }}>
-            En quelques mots
+            Les six bénévoles
           </div>
           <TextEffect
             as="h2"
@@ -344,13 +160,16 @@ export default function EquipeContent() {
               fontFamily: 'Cormorant Garamond, serif',
               fontSize: 'clamp(1.8rem,4vw,2.8rem)',
               fontWeight: 400, color: C.greenDeep,
-              marginBottom: '1.5rem',
+              marginBottom: '1rem',
             }}
           >
-            Ce que nos membres partagent
+            Notre équipe en détail
           </TextEffect>
+          <p className="reveal reveal-delay-1" style={{ fontSize: '0.9rem', color: C.inkMuted, lineHeight: 1.7, fontWeight: 300 }}>
+            Cliquez sur une carte pour découvrir le rôle et le parcours de chaque membre.
+          </p>
         </div>
-        <TeamCarousel members={MEMBRES} />
+        <TeamTestimonialCarousel members={MEMBRES} />
       </section>
 
       {/* ══ VALEURS ══════════════════════════════════════════════ */}
