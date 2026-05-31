@@ -166,7 +166,7 @@ const PROJECTS = [
     stats: [
       { value: '80+',  label: 'enfants bénéficiaires' },
       { value: '6',    label: 'rentrées couvertes' },
-      { value: '100%', label: 'financé par l'association' },
+      { value: '100%', label: "financé par l'association" },
     ],
     gallery: [
       { src: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=75&auto=format&fit=crop', alt: 'Enfants en classe avec leurs fournitures' },
