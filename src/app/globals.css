@@ -374,7 +374,44 @@ html.dark {
   --nav-bg: rgba(15,26,18,0.96);
 }
 html.dark body { background-color: var(--bg); color: var(--text); }
-html.dark .card-premium { background: var(--card-bg); }
+html.dark .card-premium { background: var(--card-bg) !important; border-color: rgba(240,234,216,0.14) !important; }
+
+/* Sections fond sable → fond sombre */
+html.dark section[style*="background: #f5f0e8"],
+html.dark section[style*="background:#f5f0e8"],
+html.dark section[style*="background: rgb(245, 240, 232)"],
+html.dark div[style*="background: #f5f0e8"],
+html.dark div[style*="background:#f5f0e8"],
+html.dark div[style*="min-height: 100vh"][style*="background: #f5f0e8"],
+html.dark div[style*="background: rgb(245, 240, 232)"] { background: #0f1a12 !important; }
+
+/* Fond blanc → fond carte sombre */
+html.dark section[style*="background: #fff"],
+html.dark section[style*="background:#fff"],
+html.dark div[style*="background: #fff"],
+html.dark div[style*="background:#fff"],
+html.dark div[style*="background: white"] { background: #1a2b1e !important; }
+
+/* Filtres galerie + textes */
+html.dark .gal-filter { color: rgba(240,234,216,0.55) !important; }
+html.dark .gal-filter.is-active { color: #c4a96b !important; }
+html.dark .gal-filter::after { background: #c4a96b !important; }
+
+/* Navbar */
+html.dark nav,
+html.dark header { background: var(--nav-bg) !important; border-color: rgba(240,234,216,0.1) !important; }
+
+/* Inputs formulaire contact */
+html.dark .contact-input { background: #1a2b1e !important; border-color: rgba(240,234,216,0.18) !important; color: var(--text) !important; }
+html.dark .contact-input::placeholder { color: rgba(240,234,216,0.35) !important; }
+
+/* Cards blanches génériques */
+html.dark [style*="background: #ffffff"],
+html.dark [style*="background:#ffffff"] { background: #1a2b1e !important; }
+
+/* Textes verts foncés sur fond sable → crème */
+html.dark [style*="color: #133d20"],
+html.dark [style*="color:#133d20"] { color: #d4e8d8 !important; }
 
 @keyframes waPulse {
   0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); }

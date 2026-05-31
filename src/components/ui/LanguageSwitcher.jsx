@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { C } from '@/lib/tokens';
 
 const LANGS = [
-  { code: 'fr', label: 'FR', flag: '🇫🇷', name: 'Français' },
-  { code: 'en', label: 'EN', flag: '🇬🇧', name: 'English' },
-  { code: 'ar', label: 'AR', flag: '🇲🇦', name: 'العربية' },
+  { code: 'fr', label: 'FR', dot: '#002395', name: 'Français' },
+  { code: 'en', label: 'EN', dot: '#CF142B', name: 'English' },
+  { code: 'ar', label: 'AR', dot: '#006233', name: 'العربية' },
 ];
 
 export default function LanguageSwitcher() {
@@ -31,9 +31,9 @@ export default function LanguageSwitcher() {
 
   return (
     <div style={{ position: 'relative' }}>
-      <button onClick={() => setOpen(o => !o)} aria-label={`${cur?.flag}${cur?.label} · ${cur?.name} — changer de langue`} aria-expanded={open} aria-haspopup="listbox"
-        style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.3rem 0.6rem', borderRadius: 8, border: `1px solid ${C.sandDark}`, background: 'transparent', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, color: C.inkMuted }}>
-        <span>{cur?.flag}</span>
+      <button onClick={() => setOpen(o => !o)} aria-label={`${cur?.label} · ${cur?.name} — changer de langue`} aria-expanded={open} aria-haspopup="listbox"
+        style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.6rem', borderRadius: 8, border: `1px solid ${C.sandDark}`, background: 'transparent', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, color: C.inkMuted }}>
+        <span style={{ width: 8, height: 8, borderRadius: '50%', background: cur?.dot, display: 'inline-block', flexShrink: 0 }} />
         <span>{cur?.label}</span>
       </button>
       {open && (
@@ -41,7 +41,7 @@ export default function LanguageSwitcher() {
           {LANGS.map(l => (
             <button key={l.code} onClick={() => select(l.code)}
               style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1rem', background: l.code === current ? C.sandMid : 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.85rem', color: C.ink, textAlign: 'left' }}>
-              <span>{l.flag}</span>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: l.dot, display: 'inline-block', flexShrink: 0 }} />
               <span>{l.name}</span>
             </button>
           ))}

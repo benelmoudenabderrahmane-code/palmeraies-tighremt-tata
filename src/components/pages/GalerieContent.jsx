@@ -172,6 +172,23 @@ export default function GalerieContent() {
           line-height: 1.3;
         }
         .gal-cell:hover .gal-caption { opacity: 1; transform: translateY(0); }
+
+        /* ── Masonry CSS columns ── */
+        .gal-masonry {
+          columns: 3;
+          column-gap: 0.6rem;
+        }
+        .gal-masonry-item {
+          break-inside: avoid;
+          margin-bottom: 0.6rem;
+          height: auto !important;
+        }
+        .gal-masonry-item img {
+          height: auto !important;
+          object-fit: unset !important;
+        }
+        @media (max-width: 900px) { .gal-masonry { columns: 2; } }
+        @media (max-width: 560px) { .gal-masonry { columns: 1; } }
       `}</style>
 
       {/* ── Hero marquee animé ── */}
@@ -203,7 +220,7 @@ export default function GalerieContent() {
         ))}
       </div>
 
-      {/* ── Bento grid ── */}
+      {/* ── Masonry gallery ── */}
       <section id="galerie-grid" style={{ maxWidth: 1200, margin: '0 auto', padding: '2.5rem 1.5rem 5rem', scrollMarginTop: '5rem' }}>
         {filtered.length === 0 ? (
           <p style={{
@@ -213,41 +230,26 @@ export default function GalerieContent() {
             Aucune photo dans ce thème.
           </p>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gridAutoRows: '240px',
-            gap: '0.6rem',
-          }}>
-            {filtered.map((img, i) => {
-              const isBig  = i === 0;
-              const isPano = i === filtered.length - 1 && filtered.length > 3;
-              const delay  = (i % 4) + 1;
-
-              return (
-                <div
-                  key={img.src}
-                  className={`gal-cell reveal reveal-delay-${delay}`}
-                  onClick={() => setLightbox(i)}
-                  style={{
-                    gridColumn: isBig ? 'span 2' : isPano ? '1 / -1' : undefined,
-                    gridRow:    isBig ? 'span 2' : undefined,
-                  }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    width={img.w}
-                    height={img.h}
-                    loading={i < 3 ? 'eager' : 'lazy'}
-                  />
-                  <div className="gal-overlay">
-                    <span className="gal-caption">{img.alt}</span>
-                  </div>
+          <div className="gal-masonry">
+            {filtered.map((img, i) => (
+              <div
+                key={img.src}
+                className={`gal-cell gal-masonry-item reveal reveal-delay-${(i % 4) + 1}`}
+                onClick={() => setLightbox(i)}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  width={img.w}
+                  height={img.h}
+                  loading={i < 6 ? 'eager' : 'lazy'}
+                />
+                <div className="gal-overlay">
+                  <span className="gal-caption">{img.alt}</span>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
       </section>
