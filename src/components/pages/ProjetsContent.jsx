@@ -168,6 +168,7 @@ const PROJECTS = [
       { value: '6',    label: 'rentrées couvertes' },
       { value: '100%', label: "financé par l'association" },
     ],
+    banner: 'https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=1200&q=82&auto=format&fit=crop',
     gallery: [
       { src: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=75&auto=format&fit=crop', alt: 'Enfants en classe avec leurs fournitures' },
       { src: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=900&q=75&auto=format&fit=crop', alt: 'Crayons de couleur et fournitures scolaires' },
@@ -280,6 +281,7 @@ const PROJECTS = [
       { value: '100%',  label: 'organisé par des bénévoles' },
     ],
     banner: '/images/tighremt/tournoi-banner.jpg',
+    bannerLabel: 'En partenariat avec Chantiers Modernes Construction',
     gallery: [
       { src: '/images/tighremt/tournoi-g1.jpg', alt: 'Tournoi de football de Tighremt — photo 1' },
       { src: '/images/tighremt/tournoi-g2.jpg', alt: 'Tournoi de football de Tighremt — photo 2' },
@@ -660,10 +662,28 @@ function ProjectBlock({ project, index }) {
               }}>
                 <img
                   src={project.banner}
-                  alt={project.title}
+                  alt={project.bannerLabel || project.title}
                   style={{ width: '100%', height: 'auto', display: 'block' }}
                 />
               </div>
+              {project.bannerLabel && (
+                <div style={{
+                  marginTop: '0.75rem',
+                  display: 'flex', alignItems: 'center', gap: '0.6rem',
+                  padding: '0.6rem 1rem',
+                  background: `${C.ochre}14`,
+                  border: `1px solid ${C.ochre}30`,
+                  borderRadius: '0.5rem',
+                }}>
+                  <span style={{ color: C.ochre, fontSize: '1rem' }}>🤝</span>
+                  <span style={{
+                    fontSize: '0.78rem', letterSpacing: '0.06em',
+                    color: C.inkMuted, fontWeight: 500,
+                  }}>
+                    {project.bannerLabel}
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
