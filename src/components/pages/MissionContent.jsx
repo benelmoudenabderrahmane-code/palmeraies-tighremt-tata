@@ -381,22 +381,22 @@ export default function MissionContent() {
       <SectionDivider />
 
       {/* ══ 6. COMPTEURS ═══════════════════════════════════════════════════ */}
-      <div className="reveal" style={{
-        maxWidth: 1100, margin: '0 auto',
-        padding: 'clamp(2.5rem,5vw,4rem) clamp(1.5rem,4vw,3rem)',
-        background: C.greenDeep,
-        borderRadius: '0',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(130px,1fr))',
-        gap: '1.5rem',
-      }}>
-        <StatCounter value={1200} suffix="+"  label="Palmiers préservés"   color="#fff" />
-        <StatCounter value={120}  suffix=""   label="Foyers aidés / an"    color="#fff" />
-        <StatCounter value={14}   suffix=""   label="Années d'action"      color="#fff" />
-        <StatCounter value={6}    suffix=""   label="Projets réalisés"     color="#fff" />
-        <StatCounter value={80}   suffix="+"  label="Enfants bénéficiaires" color="#fff" />
-        <StatCounter value={12}   suffix=""   label="Hectares irrigués"    color="#fff" />
-      </div>
+      <section style={{ background: C.greenDeep, width: '100%' }}>
+        <div className="reveal" style={{
+          maxWidth: 1100, margin: '0 auto',
+          padding: 'clamp(2.5rem,5vw,4rem) clamp(1.5rem,4vw,3rem)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(130px,1fr))',
+          gap: '1.5rem',
+        }}>
+          <StatCounter value={1200} suffix="+"  label="Palmiers préservés"   color="#fff" />
+          <StatCounter value={120}  suffix=""   label="Foyers aidés / an"    color="#fff" />
+          <StatCounter value={14}   suffix=""   label="Années d'action"      color="#fff" />
+          <StatCounter value={6}    suffix=""   label="Projets réalisés"     color="#fff" />
+          <StatCounter value={80}   suffix="+"  label="Enfants bénéficiaires" color="#fff" />
+          <StatCounter value={12}   suffix=""   label="Hectares irrigués"    color="#fff" />
+        </div>
+      </section>
 
       {/* ══ 7. CTA ═════════════════════════════════════════════════════════ */}
       <section style={{ background: C.greenDeep, padding: 'clamp(4rem,8vw,6rem) 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>

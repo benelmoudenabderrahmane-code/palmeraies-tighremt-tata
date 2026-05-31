@@ -168,8 +168,6 @@ const PROJECTS = [
       { value: '5',     label: 'distributions annuelles' },
       { value: '3 t',   label: 'de denrées livrées' },
     ],
-    before: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=900&q=75&auto=format&fit=crop',
-    after:  'https://images.unsplash.com/photo-1526976668912-1a811878dd37?w=900&q=75&auto=format&fit=crop',
     gallery: [
       { src: 'https://images.unsplash.com/photo-1594708767771-a5e2d5e55a5e?w=480&q=70&auto=format&fit=crop', alt: 'Colis alimentaires' },
       { src: 'https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=480&q=70&auto=format&fit=crop', alt: 'Distribution de vivres' },
