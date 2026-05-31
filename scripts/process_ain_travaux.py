@@ -9,14 +9,22 @@ QUALITY = 82
 
 # (source, destination)
 JOBS = [
-    ("AVANT.jpg",            "ain-avant.jpg"),
-    ("APRES.JPG",            "ain-apres.jpg"),
-    ("DSCN0042.JPG",         "ain-g1.jpg"),
-    ("20161220_115631.jpg",  "ain-g2.jpg"),
-    ("DSCN0094.JPG",         "ain-g3.jpg"),
-    ("DSCN0107.JPG",         "ain-g4.jpg"),
-    ("DSCN0114.JPG",         "ain-g5.jpg"),
-    ("20161220_115825.jpg",  "ain-g6.jpg"),
+    ("AVANT.jpg",                 "ain-avant.jpg"),
+    ("APRES.JPG",                 "ain-apres.jpg"),
+    ("DSCN0042.JPG",              "ain-g1.jpg"),
+    ("20161220_115631.jpg",       "ain-g2.jpg"),
+    ("DSCN0094.JPG",              "ain-g3.jpg"),
+    ("DSCN0107.JPG",              "ain-g4.jpg"),
+    ("DSCN0114.JPG",              "ain-g5.jpg"),
+    ("20161220_115825.jpg",       "ain-g6.jpg"),
+    # — 7 ajouts pour passer à 15 photos —
+    ("DSCN0051.JPG",              "ain-g7.jpg"),
+    ("DSCN0067.JPG",              "ain-g8.jpg"),
+    ("DSCN0086.JPG",              "ain-g9.jpg"),
+    ("DSCN0108.JPG",              "ain-g10.jpg"),
+    ("DSCN0145.JPG",              "ain-g11.jpg"),
+    ("IMG_20161125_110044.jpg",   "ain-g12.jpg"),
+    ("IMG_20161125_110211.jpg",   "ain-g13.jpg"),
 ]
 
 os.makedirs(DST, exist_ok=True)
