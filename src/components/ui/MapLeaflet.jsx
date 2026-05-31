@@ -1,46 +1,32 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { C } from '@/lib/tokens';
 
+/**
+ * MapLeaflet — carte satellite Google Maps de Tighremt.
+ * Vue hybride (satellite + labels) centrée sur le village.
+ * Coordonnées : 29.7488°N, 8.0028°W — Province de Tata, Maroc.
+ */
 export default function MapLeaflet() {
-  const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
-
-  useEffect(() => {
-    if (mapInstanceRef.current || !mapRef.current) return;
-
-    import('leaflet').then(L => {
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      });
-
-      const map = L.map(mapRef.current).setView([29.7488, -8.0028], 12);
-      mapInstanceRef.current = map;
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(map);
-
-      L.marker([29.7488, -8.0028])
-        .addTo(map)
-        .bindPopup('<strong>Tighremt</strong><br>Province de Tata, Maroc<br><em>Palmeraie Tighremt TATA</em>')
-        .openPopup();
-    });
-
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-    };
-  }, []);
-
   return (
-    <>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-      <div ref={mapRef} style={{ height: 380, borderRadius: 16, overflow: 'hidden', zIndex: 1 }} aria-label="Carte de localisation de Tighremt" />
-    </>
+    <div style={{
+      width: '100%',
+      borderRadius: '1rem',
+      overflow: 'hidden',
+      boxShadow: '0 8px 32px rgba(19,61,32,0.14)',
+      border: `1px solid ${C.sandDark}`,
+      aspectRatio: '16/9',
+      minHeight: 320,
+    }}>
+      <iframe
+        title="Tighremt — carte satellite"
+        src="https://maps.google.com/maps?q=29.7488,-8.0028&t=h&z=13&output=embed"
+        width="100%"
+        height="100%"
+        style={{ border: 0, display: 'block', width: '100%', height: '100%' }}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      />
+    </div>
   );
 }

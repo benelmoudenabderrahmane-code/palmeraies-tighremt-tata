@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { Heart, ChevronDown, ArrowRight } from 'lucide-react';
+import { Heart, ChevronDown, ArrowRight, TreePine, Droplets, HeartHandshake } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
@@ -34,17 +34,20 @@ const CIRCULAR_GALLERY_ITEMS = [
 
 const PILLIERS = [
   {
-    icon: '🌴',
+    Icon: TreePine,
+    color: C.green,
     titre: 'Palmeraie',
     description: 'Replantation et préservation des palmiers dattiers contre la désertification. Plus de 1 200 palmiers sauvegardés à ce jour.',
   },
   {
-    icon: '💧',
+    Icon: Droplets,
+    color: '#3b82f6',
     titre: 'Foggaras & Irrigation',
     description: 'Réhabilitation des canaux d\'irrigation souterrains ancestraux pour garantir l\'eau aux cultivateurs du village.',
   },
   {
-    icon: '🤝',
+    Icon: HeartHandshake,
+    color: C.ochre,
     titre: 'Aide humanitaire',
     description: 'Missions annuelles : aide médicale, soutien scolaire et distribution aux 18 familles vulnérables de Tighremt.',
   },
@@ -254,7 +257,13 @@ function SectionMission() {
               className={`reveal reveal-delay-${i + 1}`}
               style={{ padding: '2rem', borderRadius: 12, border: '1px solid rgba(196,169,107,0.18)', background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(4px)' }}
             >
-              <div style={{ fontSize: '1.8rem', marginBottom: '1rem', lineHeight: 1 }}>{p.icon}</div>
+              <div style={{
+                width: 48, height: 48, borderRadius: '0.875rem', marginBottom: '1rem',
+                background: `${p.color}22`, border: `1.5px solid ${p.color}44`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <p.Icon size={24} color={p.color} strokeWidth={1.6} />
+              </div>
               <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.4rem', fontWeight: 500, color: '#fff', marginBottom: '0.6rem' }}>{p.titre}</h3>
               <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, fontWeight: 300 }}>{p.description}</p>
             </div>
