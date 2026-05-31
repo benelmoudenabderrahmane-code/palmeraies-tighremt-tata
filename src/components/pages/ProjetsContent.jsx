@@ -14,6 +14,11 @@ const ImageComparison = dynamic(
   { ssr: false },
 );
 
+const VideoThumbnailPlayer = dynamic(
+  () => import('@/components/ui/VideoThumbnailPlayer'),
+  { ssr: false },
+);
+
 
 /* ── Project data ──────────────────────────────────────────────────────── */
 // Unsplash fallbacks used until real photos are in public/images/tighremt/
@@ -121,6 +126,12 @@ const PROJECTS = [
     ],
     before: '/images/tighremt/ain-avant.jpg',
     after:  '/images/tighremt/ain-apres.jpg',
+    video: {
+      src:         '/videos/ain-chantier.mp4',
+      thumbnail:   '/images/tighremt/ain-g1.jpg',
+      title:       "Chantier d'Aïn — décembre 2016",
+      description: "Vue du chantier depuis l'oued · Construction du seuil de captage en gabions",
+    },
     gallery: [
       { src: '/images/tighremt/ain-g1.jpg',  alt: "Bassin de rétention rempli — vue après aménagement" },
       { src: '/images/tighremt/ain-g2.jpg',  alt: "Chantier de terrassement sur l'oued d'Aïn" },
@@ -483,6 +494,32 @@ function ProjectBlock({ project, index }) {
 
         {/* ── Masonry gallery ── */}
         <MasonryGallery images={project.gallery} />
+
+        {/* ── Video section (optional) ── */}
+        {project.video && (
+          <div className="reveal" style={{ marginTop: 'clamp(2.5rem,5vw,4rem)' }}>
+            {/* Label */}
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
+              fontSize: '0.65rem', letterSpacing: '0.22em', textTransform: 'uppercase',
+              fontWeight: 700, color: project.categoryColor, marginBottom: '1.25rem',
+            }}>
+              <span style={{ width: 22, height: 1.5, background: project.categoryColor, display: 'block', borderRadius: 1 }} />
+              Vidéo du chantier
+            </div>
+
+            <div style={{ maxWidth: 860, margin: '0 auto' }}>
+              <VideoThumbnailPlayer
+                thumbnailSrc={project.video.thumbnail}
+                videoSrc={project.video.src}
+                title={project.video.title}
+                description={project.video.description}
+                isExternal={false}
+                aspectRatio="16/9"
+              />
+            </div>
+          </div>
+        )}
 
       </div>
     </section>
