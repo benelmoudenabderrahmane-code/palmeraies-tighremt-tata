@@ -263,6 +263,8 @@ const PROJECTS = [
       { value: '200+',  label: 'spectateurs par édition' },
       { value: '100%',  label: 'organisé par des bénévoles' },
     ],
+    before: '/images/tighremt/tournoi-g1.jpg',
+    after:  '/images/tighremt/tournoi-g50.jpg',
     gallery: [
       { src: '/images/tighremt/tournoi-g1.jpg', alt: 'Tournoi de football de Tighremt — photo 1' },
       { src: '/images/tighremt/tournoi-g2.jpg', alt: 'Tournoi de football de Tighremt — photo 2' },
