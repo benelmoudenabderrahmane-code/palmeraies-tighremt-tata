@@ -280,7 +280,7 @@ const PROJECTS = [
       { value: '200+',  label: 'spectateurs par édition' },
       { value: '100%',  label: 'organisé par des bénévoles' },
     ],
-    banner: '/images/tighremt/tournoi-banner.jpg',
+    banner: '/images/tighremt/chantiers-modernes-banner.jpg',
     bannerLabel: 'En partenariat avec Chantiers Modernes Construction',
     gallery: [
       { src: '/images/tighremt/tournoi-g1.jpg', alt: 'Tournoi de football de Tighremt — photo 1' },
