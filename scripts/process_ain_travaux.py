@@ -8,23 +8,32 @@ MAX_W = 1600
 QUALITY = 82
 
 # (source, destination)
+# Before/after slider images (kept as-is — already processed)
+# ain-avant.jpg  ← AVANT.jpg  (source deleted, public copy kept)
+# ain-apres.jpg  ← APRES.JPG  (source deleted, public copy kept)
+
+# Gallery: all remaining photos after user curation (20 photos)
 JOBS = [
-    ("AVANT.jpg",                 "ain-avant.jpg"),
-    ("APRES.JPG",                 "ain-apres.jpg"),
-    ("DSCN0042.JPG",              "ain-g1.jpg"),
-    ("20161220_115631.jpg",       "ain-g2.jpg"),
-    ("DSCN0094.JPG",              "ain-g3.jpg"),
-    ("DSCN0107.JPG",              "ain-g4.jpg"),
-    ("DSCN0114.JPG",              "ain-g5.jpg"),
-    ("20161220_115825.jpg",       "ain-g6.jpg"),
-    # — 7 ajouts pour passer à 15 photos —
-    ("DSCN0051.JPG",              "ain-g7.jpg"),
-    ("DSCN0067.JPG",              "ain-g8.jpg"),
-    ("DSCN0086.JPG",              "ain-g9.jpg"),
-    ("DSCN0108.JPG",              "ain-g10.jpg"),
-    ("DSCN0145.JPG",              "ain-g11.jpg"),
-    ("IMG_20161125_110044.jpg",   "ain-g12.jpg"),
-    ("IMG_20161125_110211.jpg",   "ain-g13.jpg"),
+    ("APRES (2).JPG",            "ain-g1.jpg"),
+    ("DSCN0058.JPG",             "ain-g2.jpg"),
+    ("DSCN0067.JPG",             "ain-g3.jpg"),
+    ("DSCN0077.JPG",             "ain-g4.jpg"),
+    ("DSCN0081.JPG",             "ain-g5.jpg"),
+    ("DSCN0086.JPG",             "ain-g6.jpg"),
+    ("DSCN0087.JPG",             "ain-g7.jpg"),
+    ("DSCN0088.JPG",             "ain-g8.jpg"),
+    ("DSCN0089.JPG",             "ain-g9.jpg"),
+    ("DSCN0090.JPG",             "ain-g10.jpg"),
+    ("DSCN0112.JPG",             "ain-g11.jpg"),
+    ("DSCN0116.JPG",             "ain-g12.jpg"),
+    ("DSCN0118.JPG",             "ain-g13.jpg"),
+    ("DSCN0119.JPG",             "ain-g14.jpg"),
+    ("DSCN0120.JPG",             "ain-g15.jpg"),
+    ("DSCN0121.JPG",             "ain-g16.jpg"),
+    ("DSCN0144.JPG",             "ain-g17.jpg"),
+    ("DSCN0159.JPG",             "ain-g18.jpg"),
+    ("IMG_20161125_110044.jpg",  "ain-g19.jpg"),
+    ("IMG_20161125_110148.jpg",  "ain-g20.jpg"),
 ]
 
 os.makedirs(DST, exist_ok=True)
@@ -43,4 +52,4 @@ for src_name, dst_name in JOBS:
     kb = os.path.getsize(dst_path) // 1024
     print(f"{dst_name:16s} {im.width}x{im.height}  {kb} KB")
 
-print("OK")
+print("OK — 20 photos traitées")
