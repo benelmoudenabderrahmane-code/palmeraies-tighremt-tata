@@ -727,8 +727,8 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
   const rowRef = useRef(null);
   const inView = useInView(rowRef, { once: true, margin: '-60px' });
 
-  const imgSrc = project.after || project.afterFallback;
-  const fallback = project.afterFallback;
+  const imgSrc = project.after || project.afterFallback || project.banner || project.gallery?.[0]?.src;
+  const fallback = project.afterFallback || project.gallery?.[0]?.src;
 
   return (
     <motion.div
@@ -958,8 +958,8 @@ function ProjectsIndex() {
 
 /* ── Bento image card ─────────────────────────────────────────────────────── */
 function BentoCard({ project, fill = false }) {
-  const imgSrc = project.after || project.afterFallback || project.gallery?.[0]?.src;
-  const fallback = project.afterFallback || project.gallery?.[0]?.fallback;
+  const imgSrc = project.after || project.afterFallback || project.banner || project.gallery?.[0]?.src;
+  const fallback = project.afterFallback || project.banner || project.gallery?.[0]?.fallback;
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', background: C.greenDeep }}>
