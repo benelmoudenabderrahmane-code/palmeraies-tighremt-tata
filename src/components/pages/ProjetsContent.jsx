@@ -250,6 +250,142 @@ const PROJECTS = [
       { src: '/images/tighremt/cimetiere-g8.jpg', alt: 'Cimetière protégé et aménagé' },
     ],
   },
+  {
+    id: 'tournoi-foot',
+    bg: C.sand,
+    category: 'Sport & Culture',
+    categoryColor: C.green,
+    title: 'Tournoi de Football de Tighremt',
+    subtitle: 'Douar Tighremt, Province de Tata',
+    desc: "Chaque année, l'association organise le tournoi de football de Tighremt, un événement festif et sportif qui rassemble équipes locales et villages voisins autour d'une compétition amicale. Ce tournoi est bien plus qu'un match : c'est un moment de cohésion, de fierté collective et de lien social pour toute la communauté du douar.",
+    stats: [
+      { value: '8+',    label: 'équipes participantes' },
+      { value: '200+',  label: 'spectateurs par édition' },
+      { value: '100%',  label: 'organisé par des bénévoles' },
+    ],
+    gallery: [
+      { src: '/images/tighremt/tournoi-g1.jpg', alt: 'Tournoi de football de Tighremt — photo 1' },
+      { src: '/images/tighremt/tournoi-g2.jpg', alt: 'Tournoi de football de Tighremt — photo 2' },
+      { src: '/images/tighremt/tournoi-g3.jpg', alt: 'Tournoi de football de Tighremt — photo 3' },
+      { src: '/images/tighremt/tournoi-g4.jpg', alt: 'Tournoi de football de Tighremt — photo 4' },
+      { src: '/images/tighremt/tournoi-g5.jpg', alt: 'Tournoi de football de Tighremt — photo 5' },
+      { src: '/images/tighremt/tournoi-g6.jpg', alt: 'Tournoi de football de Tighremt — photo 6' },
+      { src: '/images/tighremt/tournoi-g7.jpg', alt: 'Tournoi de football de Tighremt — photo 7' },
+      { src: '/images/tighremt/tournoi-g8.jpg', alt: 'Tournoi de football de Tighremt — photo 8' },
+      { src: '/images/tighremt/tournoi-g9.jpg', alt: 'Tournoi de football de Tighremt — photo 9' },
+      { src: '/images/tighremt/tournoi-g10.jpg', alt: 'Tournoi de football de Tighremt — photo 10' },
+      { src: '/images/tighremt/tournoi-g11.jpg', alt: 'Tournoi de football de Tighremt — photo 11' },
+      { src: '/images/tighremt/tournoi-g12.jpg', alt: 'Tournoi de football de Tighremt — photo 12' },
+      { src: '/images/tighremt/tournoi-g13.jpg', alt: 'Tournoi de football de Tighremt — photo 13' },
+      { src: '/images/tighremt/tournoi-g14.jpg', alt: 'Tournoi de football de Tighremt — photo 14' },
+      { src: '/images/tighremt/tournoi-g15.jpg', alt: 'Tournoi de football de Tighremt — photo 15' },
+      { src: '/images/tighremt/tournoi-g16.jpg', alt: 'Tournoi de football de Tighremt — photo 16' },
+      { src: '/images/tighremt/tournoi-g17.jpg', alt: 'Tournoi de football de Tighremt — photo 17' },
+      { src: '/images/tighremt/tournoi-g18.jpg', alt: 'Tournoi de football de Tighremt — photo 18' },
+      { src: '/images/tighremt/tournoi-g19.jpg', alt: 'Tournoi de football de Tighremt — photo 19' },
+      { src: '/images/tighremt/tournoi-g20.jpg', alt: 'Tournoi de football de Tighremt — photo 20' },
+      { src: '/images/tighremt/tournoi-g21.jpg', alt: 'Tournoi de football de Tighremt — photo 21' },
+      { src: '/images/tighremt/tournoi-g22.jpg', alt: 'Tournoi de football de Tighremt — photo 22' },
+      { src: '/images/tighremt/tournoi-g23.jpg', alt: 'Tournoi de football de Tighremt — photo 23' },
+      { src: '/images/tighremt/tournoi-g24.jpg', alt: 'Tournoi de football de Tighremt — photo 24' },
+      { src: '/images/tighremt/tournoi-g25.jpg', alt: 'Tournoi de football de Tighremt — photo 25' },
+      { src: '/images/tighremt/tournoi-g26.jpg', alt: 'Tournoi de football de Tighremt — photo 26' },
+      { src: '/images/tighremt/tournoi-g27.jpg', alt: 'Tournoi de football de Tighremt — photo 27' },
+      { src: '/images/tighremt/tournoi-g28.jpg', alt: 'Tournoi de football de Tighremt — photo 28' },
+      { src: '/images/tighremt/tournoi-g29.jpg', alt: 'Tournoi de football de Tighremt — photo 29' },
+      { src: '/images/tighremt/tournoi-g30.jpg', alt: 'Tournoi de football de Tighremt — photo 30' },
+      { src: '/images/tighremt/tournoi-g31.jpg', alt: 'Tournoi de football de Tighremt — photo 31' },
+      { src: '/images/tighremt/tournoi-g32.jpg', alt: 'Tournoi de football de Tighremt — photo 32' },
+      { src: '/images/tighremt/tournoi-g33.jpg', alt: 'Tournoi de football de Tighremt — photo 33' },
+      { src: '/images/tighremt/tournoi-g34.jpg', alt: 'Tournoi de football de Tighremt — photo 34' },
+      { src: '/images/tighremt/tournoi-g35.jpg', alt: 'Tournoi de football de Tighremt — photo 35' },
+      { src: '/images/tighremt/tournoi-g36.jpg', alt: 'Tournoi de football de Tighremt — photo 36' },
+      { src: '/images/tighremt/tournoi-g37.jpg', alt: 'Tournoi de football de Tighremt — photo 37' },
+      { src: '/images/tighremt/tournoi-g38.jpg', alt: 'Tournoi de football de Tighremt — photo 38' },
+      { src: '/images/tighremt/tournoi-g39.jpg', alt: 'Tournoi de football de Tighremt — photo 39' },
+      { src: '/images/tighremt/tournoi-g40.jpg', alt: 'Tournoi de football de Tighremt — photo 40' },
+      { src: '/images/tighremt/tournoi-g41.jpg', alt: 'Tournoi de football de Tighremt — photo 41' },
+      { src: '/images/tighremt/tournoi-g42.jpg', alt: 'Tournoi de football de Tighremt — photo 42' },
+      { src: '/images/tighremt/tournoi-g43.jpg', alt: 'Tournoi de football de Tighremt — photo 43' },
+      { src: '/images/tighremt/tournoi-g44.jpg', alt: 'Tournoi de football de Tighremt — photo 44' },
+      { src: '/images/tighremt/tournoi-g45.jpg', alt: 'Tournoi de football de Tighremt — photo 45' },
+      { src: '/images/tighremt/tournoi-g46.jpg', alt: 'Tournoi de football de Tighremt — photo 46' },
+      { src: '/images/tighremt/tournoi-g47.jpg', alt: 'Tournoi de football de Tighremt — photo 47' },
+      { src: '/images/tighremt/tournoi-g48.jpg', alt: 'Tournoi de football de Tighremt — photo 48' },
+      { src: '/images/tighremt/tournoi-g49.jpg', alt: 'Tournoi de football de Tighremt — photo 49' },
+      { src: '/images/tighremt/tournoi-g50.jpg', alt: 'Tournoi de football de Tighremt — photo 50' },
+      { src: '/images/tighremt/tournoi-g51.jpg', alt: 'Tournoi de football de Tighremt — photo 51' },
+      { src: '/images/tighremt/tournoi-g52.jpg', alt: 'Tournoi de football de Tighremt — photo 52' },
+      { src: '/images/tighremt/tournoi-g53.jpg', alt: 'Tournoi de football de Tighremt — photo 53' },
+      { src: '/images/tighremt/tournoi-g54.jpg', alt: 'Tournoi de football de Tighremt — photo 54' },
+      { src: '/images/tighremt/tournoi-g55.jpg', alt: 'Tournoi de football de Tighremt — photo 55' },
+      { src: '/images/tighremt/tournoi-g56.jpg', alt: 'Tournoi de football de Tighremt — photo 56' },
+      { src: '/images/tighremt/tournoi-g57.jpg', alt: 'Tournoi de football de Tighremt — photo 57' },
+      { src: '/images/tighremt/tournoi-g58.jpg', alt: 'Tournoi de football de Tighremt — photo 58' },
+      { src: '/images/tighremt/tournoi-g59.jpg', alt: 'Tournoi de football de Tighremt — photo 59' },
+      { src: '/images/tighremt/tournoi-g60.jpg', alt: 'Tournoi de football de Tighremt — photo 60' },
+      { src: '/images/tighremt/tournoi-g61.jpg', alt: 'Tournoi de football de Tighremt — photo 61' },
+      { src: '/images/tighremt/tournoi-g62.jpg', alt: 'Tournoi de football de Tighremt — photo 62' },
+      { src: '/images/tighremt/tournoi-g63.jpg', alt: 'Tournoi de football de Tighremt — photo 63' },
+      { src: '/images/tighremt/tournoi-g64.jpg', alt: 'Tournoi de football de Tighremt — photo 64' },
+      { src: '/images/tighremt/tournoi-g65.jpg', alt: 'Tournoi de football de Tighremt — photo 65' },
+      { src: '/images/tighremt/tournoi-g66.jpg', alt: 'Tournoi de football de Tighremt — photo 66' },
+      { src: '/images/tighremt/tournoi-g67.jpg', alt: 'Tournoi de football de Tighremt — photo 67' },
+      { src: '/images/tighremt/tournoi-g68.jpg', alt: 'Tournoi de football de Tighremt — photo 68' },
+      { src: '/images/tighremt/tournoi-g69.jpg', alt: 'Tournoi de football de Tighremt — photo 69' },
+      { src: '/images/tighremt/tournoi-g70.jpg', alt: 'Tournoi de football de Tighremt — photo 70' },
+      { src: '/images/tighremt/tournoi-g71.jpg', alt: 'Tournoi de football de Tighremt — photo 71' },
+      { src: '/images/tighremt/tournoi-g72.jpg', alt: 'Tournoi de football de Tighremt — photo 72' },
+      { src: '/images/tighremt/tournoi-g73.jpg', alt: 'Tournoi de football de Tighremt — photo 73' },
+      { src: '/images/tighremt/tournoi-g74.jpg', alt: 'Tournoi de football de Tighremt — photo 74' },
+      { src: '/images/tighremt/tournoi-g75.jpg', alt: 'Tournoi de football de Tighremt — photo 75' },
+      { src: '/images/tighremt/tournoi-g76.jpg', alt: 'Tournoi de football de Tighremt — photo 76' },
+      { src: '/images/tighremt/tournoi-g77.jpg', alt: 'Tournoi de football de Tighremt — photo 77' },
+      { src: '/images/tighremt/tournoi-g78.jpg', alt: 'Tournoi de football de Tighremt — photo 78' },
+      { src: '/images/tighremt/tournoi-g79.jpg', alt: 'Tournoi de football de Tighremt — photo 79' },
+      { src: '/images/tighremt/tournoi-g80.jpg', alt: 'Tournoi de football de Tighremt — photo 80' },
+      { src: '/images/tighremt/tournoi-g81.jpg', alt: 'Tournoi de football de Tighremt — photo 81' },
+      { src: '/images/tighremt/tournoi-g82.jpg', alt: 'Tournoi de football de Tighremt — photo 82' },
+      { src: '/images/tighremt/tournoi-g83.jpg', alt: 'Tournoi de football de Tighremt — photo 83' },
+      { src: '/images/tighremt/tournoi-g84.jpg', alt: 'Tournoi de football de Tighremt — photo 84' },
+      { src: '/images/tighremt/tournoi-g85.jpg', alt: 'Tournoi de football de Tighremt — photo 85' },
+      { src: '/images/tighremt/tournoi-g86.jpg', alt: 'Tournoi de football de Tighremt — photo 86' },
+      { src: '/images/tighremt/tournoi-g87.jpg', alt: 'Tournoi de football de Tighremt — photo 87' },
+      { src: '/images/tighremt/tournoi-g88.jpg', alt: 'Tournoi de football de Tighremt — photo 88' },
+      { src: '/images/tighremt/tournoi-g89.jpg', alt: 'Tournoi de football de Tighremt — photo 89' },
+      { src: '/images/tighremt/tournoi-g90.jpg', alt: 'Tournoi de football de Tighremt — photo 90' },
+      { src: '/images/tighremt/tournoi-g91.jpg', alt: 'Tournoi de football de Tighremt — photo 91' },
+      { src: '/images/tighremt/tournoi-g92.jpg', alt: 'Tournoi de football de Tighremt — photo 92' },
+    ],
+  },
+  {
+    id: 'sidi-oasis-foot',
+    bg: C.sandMid,
+    category: 'Sport & Infrastructure',
+    categoryColor: C.greenDeep,
+    title: "Terrain de Football — Sidi Oua'aziz",
+    subtitle: "Douar Tighremt, Province de Tata",
+    desc: "L'association a réalisé l'aménagement et la réhabilitation du terrain de football de Sidi Oua'aziz : nivellement, marquage et mise en état de la surface de jeu pour offrir aux jeunes du douar un espace sportif digne et fonctionnel. Un investissement direct dans la jeunesse et la cohésion sociale de Tighremt.",
+    stats: [
+      { value: '1',     label: 'terrain aménagé' },
+      { value: '100%',  label: 'main-d\'œuvre locale' },
+      { value: '50+',   label: 'jeunes bénéficiaires' },
+    ],
+    before:  '/images/tighremt/sidi-foot-avant.jpg',
+    after:   '/images/tighremt/sidi-foot-apres.jpg',
+    gallery: [
+      { src: '/images/tighremt/sidi-foot-g1.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 1" },
+      { src: '/images/tighremt/sidi-foot-g2.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 2" },
+      { src: '/images/tighremt/sidi-foot-g3.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 3" },
+      { src: '/images/tighremt/sidi-foot-g4.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 4" },
+      { src: '/images/tighremt/sidi-foot-g5.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 5" },
+      { src: '/images/tighremt/sidi-foot-g6.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 6" },
+      { src: '/images/tighremt/sidi-foot-g7.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 7" },
+      { src: '/images/tighremt/sidi-foot-g8.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 8" },
+      { src: '/images/tighremt/sidi-foot-g9.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 9" },
+      { src: '/images/tighremt/sidi-foot-g10.jpg', alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 10" },
+    ],
+  },
 ];
 
 /* ── Gallery ───────────────────────────────────────────────────────────── */
@@ -477,19 +613,21 @@ function ProjectBlock({ project, index }) {
             </div>
           </div>
 
-          {/* Slider column */}
-          <div
-            className="reveal reveal-delay-2"
-            style={{ order: isEven ? 1 : 0 }}
-          >
-            <ImageComparison
-              beforeImage={project.before}
-              afterImage={project.after}
-              beforeFallback={project.beforeFallback}
-              afterFallback={project.afterFallback}
-              height={380}
-            />
-          </div>
+          {/* Slider column (optional — only when before+after are defined) */}
+          {(project.before && project.after) && (
+            <div
+              className="reveal reveal-delay-2"
+              style={{ order: isEven ? 1 : 0 }}
+            >
+              <ImageComparison
+                beforeImage={project.before}
+                afterImage={project.after}
+                beforeFallback={project.beforeFallback}
+                afterFallback={project.afterFallback}
+                height={380}
+              />
+            </div>
+          )}
         </div>
 
         {/* ── Masonry gallery ── */}
