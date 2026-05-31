@@ -279,8 +279,7 @@ const PROJECTS = [
       { value: '200+',  label: 'spectateurs par édition' },
       { value: '100%',  label: 'organisé par des bénévoles' },
     ],
-    before: '/images/tighremt/tournoi-g1.jpg',
-    after:  '/images/tighremt/tournoi-g50.jpg',
+    banner: '/images/tighremt/tournoi-banner.jpg',
     gallery: [
       { src: '/images/tighremt/tournoi-g1.jpg', alt: 'Tournoi de football de Tighremt — photo 1' },
       { src: '/images/tighremt/tournoi-g2.jpg', alt: 'Tournoi de football de Tighremt — photo 2' },
@@ -644,6 +643,27 @@ function ProjectBlock({ project, index }) {
                 afterFallback={project.afterFallback}
                 height={380}
               />
+            </div>
+          )}
+
+          {/* Single banner image (when no before/after slider) */}
+          {project.banner && !(project.before && project.after) && (
+            <div
+              className="reveal reveal-delay-2"
+              style={{ order: isEven ? 1 : 0 }}
+            >
+              <div style={{
+                borderRadius: '1rem',
+                overflow: 'hidden',
+                boxShadow: '0 8px 32px rgba(19,61,32,0.12)',
+                border: `1px solid ${C.sandDark}`,
+              }}>
+                <img
+                  src={project.banner}
+                  alt={project.title}
+                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                />
+              </div>
             </div>
           )}
         </div>
