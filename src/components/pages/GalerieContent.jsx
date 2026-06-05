@@ -145,6 +145,12 @@ export default function GalerieContent() {
           position: relative;
           border-radius: 10px;
           cursor: zoom-in;
+          outline: none;
+        }
+        .gal-cell:focus-visible {
+          outline: 2px solid #e8832a;
+          outline-offset: 3px;
+          border-radius: 10px;
         }
         .gal-cell img {
           width: 100%; height: 100%; object-fit: cover; display: block;
@@ -163,7 +169,7 @@ export default function GalerieContent() {
         .gal-cell:hover .gal-overlay { background: rgba(19,61,32,0.42); }
 
         .gal-caption {
-          font-family: 'Cormorant Garamond', serif;
+          font-family: ${FONT.alt};
           font-style: italic;
           font-size: 0.92rem;
           color: rgba(255,255,255,0.94);
@@ -237,6 +243,10 @@ export default function GalerieContent() {
                 key={img.src}
                 className={`gal-cell gal-masonry-item reveal reveal-delay-${(i % 4) + 1}`}
                 onClick={() => setLightbox(i)}
+                onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && setLightbox(i)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Voir en grand : ${img.alt}`}
               >
                 <Image
                   src={img.src}
