@@ -128,9 +128,9 @@ function Hero() {
         .hero-sub     { animation: focusInSub 1.1s cubic-bezier(0.16,1,0.3,1) 1.15s both; }
         .hero-ctas    { animation: focusInSub 1.0s cubic-bezier(0.16,1,0.3,1) 1.4s both; }
         .hero-stats   { animation: focusInSub 0.9s cubic-bezier(0.16,1,0.3,1) 1.7s both; }
-        @keyframes bounce {
-          0%, 100% { transform: translateX(-50%) translateY(0); }
-          50%       { transform: translateX(-50%) translateY(7px); }
+        @keyframes scrollFloat {
+          0%, 100% { transform: translateX(-50%) translateY(0);   opacity: 0.3; }
+          50%       { transform: translateX(-50%) translateY(6px); opacity: 0.55; }
         }
         .btn-hero-primary {
           display: inline-flex; align-items: center; gap: 0.6rem;
@@ -221,7 +221,7 @@ function Hero() {
           </div>
         </div>
 
-        <div style={{ position: 'absolute', bottom: '2rem', left: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.3)', zIndex: 2, animation: 'bounce 2.4s ease-in-out infinite' }}>
+        <div style={{ position: 'absolute', bottom: '2rem', left: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.3)', zIndex: 2, animation: 'scrollFloat 2.8s cubic-bezier(0.16,1,0.3,1) infinite' }}>
           <span style={{ fontSize: '0.56rem', letterSpacing: '0.28em', textTransform: 'uppercase' }}>Défiler</span>
           <ChevronDown size={13} />
         </div>

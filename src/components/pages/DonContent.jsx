@@ -436,6 +436,7 @@ export default function DonContent() {
                       <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', fontWeight: 600, color: active ? '#fff' : C.greenDeep, marginBottom: '0.4rem' }}>Libre</div>
                       {active ? (
                         <input type="number" min="1" placeholder="Montant €" value={freeAmount} onChange={e => setFreeAmount(e.target.value)} onClick={e => e.stopPropagation()} autoComplete="off" inputMode="numeric"
+                          aria-label="Montant du don en euros"
                           style={{ width: '100%', border: '1px solid rgba(255,255,255,0.4)', borderRadius: 6, padding: '0.35rem 0.5rem', fontSize: '0.85rem', background: 'rgba(255,255,255,0.15)', color: '#fff', textAlign: 'center', outline: 'none', fontFamily: 'inherit' }}
                         />
                       ) : (
