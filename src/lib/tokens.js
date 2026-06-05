@@ -1,3 +1,9 @@
+/* ─── Font Tokens ─── */
+export const FONT = {
+  alt:  "'Cormorant Garamond', serif",
+  body: "'Plus Jakarta Sans', sans-serif",
+};
+
 /* ─── Brand Tokens — Association Palmeraies Tighremt ─── */
 export const C = {
   /* Greens */

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
 import AnimatedMarqueeHero from '@/components/ui/AnimatedMarqueeHero';
@@ -226,7 +226,7 @@ export default function GalerieContent() {
         {filtered.length === 0 ? (
           <p style={{
             textAlign: 'center', color: C.inkMuted, padding: '4rem 0',
-            fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', fontStyle: 'italic',
+            fontFamily: FONT.alt, fontSize: '1.2rem', fontStyle: 'italic',
           }}>
             Aucune photo dans ce thème.
           </p>

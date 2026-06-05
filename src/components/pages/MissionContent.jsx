@@ -6,7 +6,7 @@ import {
   BookOpen, Handshake, Star, CheckCircle,
 } from 'lucide-react';
 import { MaskedAvatars } from '@/components/ui/masked-avatars';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import SectionDivider from '@/components/ui/SectionDivider';
@@ -98,7 +98,7 @@ function StatCounter({ value, suffix, label, color }) {
   const { ref, display } = useAnimatedCounter(value, 0, 1600);
   return (
     <div ref={ref} style={{ textAlign: 'center', padding: '0.5rem' }}>
-      <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.2rem,4.5vw,3rem)', fontWeight: 600, color: color || C.greenDeep, lineHeight: 1 }}>
+      <div style={{ fontFamily: FONT.alt, fontSize: 'clamp(2.2rem,4.5vw,3rem)', fontWeight: 600, color: color || C.greenDeep, lineHeight: 1 }}>
         <span>{display}</span>{suffix}
       </div>
       <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: C.ochre, marginTop: '0.5rem', fontWeight: 500, lineHeight: 1.4 }}>{label}</div>
@@ -139,7 +139,7 @@ function MissionCard({ m, index }) {
       </div>
 
       <h3 style={{
-        fontFamily: 'Cormorant Garamond, serif',
+        fontFamily: FONT.alt,
         fontSize: '1.2rem', fontWeight: 600,
         color: C.greenDeep, marginBottom: '0.75rem',
         lineHeight: 1.3,
@@ -197,7 +197,7 @@ export default function MissionContent() {
             <span style={{ width: 28, height: 1.5, background: 'rgba(232,163,80,0.6)', display: 'block' }} />
           </div>
 
-          <h1 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.5rem, 6.5vw, 4.5rem)', fontWeight: 300, lineHeight: 1.08, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+          <h1 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2.5rem, 6.5vw, 4.5rem)', fontWeight: 300, lineHeight: 1.08, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
             Notre <em style={{ fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,245,210,1)' }}>mission</em> :
             <br />préserver un héritage vivant
           </h1>
@@ -212,7 +212,7 @@ export default function MissionContent() {
           <div className="reveal reveal-delay-3" style={{ display: 'inline-flex', flexWrap: 'wrap', gap: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', borderRadius: '2rem', padding: '1.1rem 2rem', border: '1px solid rgba(255,255,255,0.14)', justifyContent: 'center' }}>
             {[{ n: '2010', l: 'Fondée en' }, { n: '6', l: 'Projets réalisés' }, { n: '14', l: 'Ans d\'action' }, { n: '100%', l: 'Bénévoles' }].map(({ n, l }) => (
               <div key={l} style={{ textAlign: 'center', padding: '0 0.5rem' }}>
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.9rem', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
+                <div style={{ fontFamily: FONT.alt, fontSize: '1.9rem', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
                 <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '0.25rem' }}>{l}</div>
               </div>
             ))}
@@ -231,7 +231,7 @@ export default function MissionContent() {
               Origine & Contexte
             </div>
 
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 400, lineHeight: 1.12, color: C.greenDeep, marginBottom: '1.5rem' }}>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 400, lineHeight: 1.12, color: C.greenDeep, marginBottom: '1.5rem' }}>
               Une mission née<br />de <em>l&apos;amour de la terre</em>
             </h2>
 
@@ -248,7 +248,7 @@ export default function MissionContent() {
             </p>
 
             <div className="reveal reveal-delay-4" style={{ marginTop: '2rem', padding: '1.5rem 1.75rem', background: C.sandMid, borderLeft: `4px solid ${C.ochre}`, borderRadius: '0 1rem 1rem 0' }}>
-              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.12rem', fontStyle: 'italic', color: C.green, lineHeight: 1.6 }}>
+              <div style={{ fontFamily: FONT.alt, fontSize: '1.12rem', fontStyle: 'italic', color: C.green, lineHeight: 1.6 }}>
                 &quot;La ville de Tata reste majestueuse et accueillante — ses habitants se contentent du peu que leur procure la nature, sachant que tout reste à faire pour s&apos;atteler au train du développement.&quot;
               </div>
               <div style={{ fontSize: '0.75rem', color: C.ochre, fontWeight: 600, letterSpacing: '0.08em', marginTop: '0.75rem', textTransform: 'uppercase' }}>
@@ -281,7 +281,7 @@ export default function MissionContent() {
 
             {/* Floating badge */}
             <div style={{ position: 'absolute', bottom: '-1.5rem', left: '-1.5rem', background: C.ochre, color: '#fff', borderRadius: '1.25rem', padding: '1.25rem 1.5rem', boxShadow: '0 12px 32px rgba(164,84,40,0.35)' }}>
-              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.25rem', fontWeight: 600, lineHeight: 1 }}>2010</div>
+              <div style={{ fontFamily: FONT.alt, fontSize: '2.25rem', fontWeight: 600, lineHeight: 1 }}>2010</div>
               <div style={{ fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.85, marginTop: '0.3rem' }}>Fondée en</div>
             </div>
 
@@ -304,7 +304,7 @@ export default function MissionContent() {
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem,5vw,4rem)' }}>
             <div className="reveal" style={{ fontSize: '0.65rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 600, marginBottom: '0.75rem' }}>Nos axes d&apos;action</div>
-            <h2 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.9rem,4vw,3rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.15 }}>
+            <h2 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.9rem,4vw,3rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.15 }}>
               Six missions pour <em>un village</em>
             </h2>
             <p className="reveal reveal-delay-2" style={{ color: C.inkMuted, fontSize: '0.95rem', maxWidth: 520, margin: '1rem auto 0', lineHeight: 1.75, fontWeight: 300 }}>
@@ -324,7 +324,7 @@ export default function MissionContent() {
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem,5vw,4rem)' }}>
             <div className="reveal" style={{ fontSize: '0.65rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 600, marginBottom: '0.75rem' }}>Depuis 2010</div>
-            <h2 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.9rem,4vw,3rem)', fontWeight: 400, color: C.greenDeep }}>
+            <h2 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.9rem,4vw,3rem)', fontWeight: 400, color: C.greenDeep }}>
               Notre <em>parcours</em>
             </h2>
           </div>
@@ -343,7 +343,7 @@ export default function MissionContent() {
                   {/* Content */}
                   <div style={{ paddingTop: '0.35rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
-                      <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.6rem', fontWeight: 700, color: i % 2 === 0 ? C.green : C.ochre, lineHeight: 1 }}>{item.year}</span>
+                      <span style={{ fontFamily: FONT.alt, fontSize: '1.6rem', fontWeight: 700, color: i % 2 === 0 ? C.green : C.ochre, lineHeight: 1 }}>{item.year}</span>
                       <span style={{ fontWeight: 700, fontSize: '0.95rem', color: C.greenDeep }}>{item.title}</span>
                     </div>
                     <p style={{ fontSize: '0.88rem', color: C.inkMuted, lineHeight: 1.7, fontWeight: 300 }}>{item.desc}</p>
@@ -361,7 +361,7 @@ export default function MissionContent() {
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem,5vw,4rem)' }}>
             <div className="reveal" style={{ fontSize: '0.65rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 600, marginBottom: '0.75rem' }}>Ce qui nous unit</div>
-            <h2 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.9rem,4vw,3rem)', fontWeight: 400, color: C.greenDeep }}>
+            <h2 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.9rem,4vw,3rem)', fontWeight: 400, color: C.greenDeep }}>
               Nos <em>valeurs</em> fondatrices
             </h2>
           </div>
@@ -402,10 +402,10 @@ export default function MissionContent() {
       <section style={{ background: C.greenDeep, padding: 'clamp(4rem,8vw,6rem) 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div className="dot-grid" style={{ position: 'absolute', inset: 0, opacity: 0.1, pointerEvents: 'none' }} />
         <div className="reveal" style={{ maxWidth: 640, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 'clamp(1.05rem,2vw,1.35rem)', color: 'rgba(255,255,255,0.6)', marginBottom: '0.75rem', fontWeight: 300 }}>
+          <p style={{ fontFamily: FONT.alt, fontStyle: 'italic', fontSize: 'clamp(1.05rem,2vw,1.35rem)', color: 'rgba(255,255,255,0.6)', marginBottom: '0.75rem', fontWeight: 300 }}>
             Agir ensemble pour un territoire vivant
           </p>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.8rem,5vw,3rem)', fontWeight: 400, color: '#fff', lineHeight: 1.15, marginBottom: '2rem' }}>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.8rem,5vw,3rem)', fontWeight: 400, color: '#fff', lineHeight: 1.15, marginBottom: '2rem' }}>
             Rejoignez notre mission ou<br />
             <em style={{ color: C.ochre }}>soutenez nos projets</em>
           </h2>

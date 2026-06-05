@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import actualites from '@/data/actualites.json';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
 import TextParallaxContent from '@/components/ui/TextParallaxContent';
@@ -28,7 +28,7 @@ function ParallaxArticleBody({ article, index, total }) {
         {/* Colonne méta */}
         <div className="actu-parallax-meta">
           <div style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: FONT.alt,
             fontSize: 'clamp(2.2rem,4vw,3rem)',
             fontWeight: 600,
             color: C.sandDark,
@@ -60,7 +60,7 @@ function ParallaxArticleBody({ article, index, total }) {
         {/* Colonne contenu */}
         <div>
           <p style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: FONT.alt,
             fontSize: 'clamp(1.3rem,2.4vw,1.7rem)',
             fontWeight: 400,
             fontStyle: 'italic',
@@ -182,7 +182,7 @@ export default function ActualitesContent() {
             <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
           </p>
           <h1 style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: FONT.alt,
             fontSize: 'clamp(2rem,5vw,3.5rem)',
             fontWeight: 300, lineHeight: 1.1,
           }}>
@@ -265,7 +265,7 @@ export default function ActualitesContent() {
                     {fmtDate(article.date, { month: 'long', year: 'numeric' })}
                   </p>
                   <h2 style={{
-                    fontFamily: 'Cormorant Garamond, serif',
+                    fontFamily: FONT.alt,
                     fontSize: '1.25rem', fontWeight: 500, lineHeight: 1.3,
                     marginBottom: '0.65rem', color: C.ink,
                   }}>
@@ -296,7 +296,7 @@ export default function ActualitesContent() {
         <section style={{ maxWidth: 1200, margin: '0 auto', padding: '2.5rem 1.5rem 5rem' }}>
           <p style={{
             textAlign: 'center', color: C.inkMuted,
-            padding: '4rem 0', fontFamily: 'Cormorant Garamond, serif',
+            padding: '4rem 0', fontFamily: FONT.alt,
             fontSize: '1.2rem', fontStyle: 'italic',
           }}>
             Aucun article dans cette catégorie.

@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useInView } from 'framer-motion';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
 import SectionDivider from '@/components/ui/SectionDivider';
@@ -560,7 +560,7 @@ function ProjectBlock({ project, index }) {
 
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.75rem 1.5rem' }}>
             <h2 style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: FONT.alt,
               fontSize: 'clamp(1.7rem, 3.5vw, 2.75rem)',
               fontWeight: 400,
               lineHeight: 1.15,
@@ -615,7 +615,7 @@ function ProjectBlock({ project, index }) {
               {project.stats.map(({ value, label }) => (
                 <div key={label}>
                   <div style={{
-                    fontFamily: 'Cormorant Garamond, serif',
+                    fontFamily: FONT.alt,
                     fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
                     fontWeight: 600,
                     color: project.categoryColor,
@@ -760,7 +760,7 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
       >
         {/* ── Number ── */}
         <span style={{
-          fontFamily: 'Cormorant Garamond, serif',
+          fontFamily: FONT.alt,
           fontSize: 'clamp(1.4rem,2.5vw,1.9rem)',
           fontWeight: 700,
           color: isActive ? project.categoryColor : C.sandDark,
@@ -774,7 +774,7 @@ function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
         {/* ── Title + meta ── */}
         <div>
           <div style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: FONT.alt,
             fontSize: 'clamp(1.1rem,2.2vw,1.55rem)',
             fontWeight: isActive ? 600 : 400,
             color: isActive ? C.greenDeep : C.ink,
@@ -871,7 +871,7 @@ function ProjectsIndex() {
         right: '-2rem',
         top: '50%',
         transform: 'translateY(-50%)',
-        fontFamily: 'Cormorant Garamond, serif',
+        fontFamily: FONT.alt,
         fontSize: 'clamp(6rem,14vw,12rem)',
         fontWeight: 700,
         color: C.sandDark,
@@ -910,7 +910,7 @@ function ProjectsIndex() {
             delay={0.15}
             className=""
             style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: FONT.alt,
               fontSize: 'clamp(1.8rem,3.5vw,2.8rem)',
               fontWeight: 400, lineHeight: 1.12,
               color: C.greenDeep, margin: 0,
@@ -995,7 +995,7 @@ function BentoCard({ project, fill = false }) {
           {project.category}
         </span>
         <div style={{
-          fontFamily: 'Cormorant Garamond, serif',
+          fontFamily: FONT.alt,
           fontSize: fill ? 'clamp(1.1rem,2vw,1.45rem)' : '0.92rem',
           fontWeight: 500, color: '#fff', lineHeight: 1.2,
         }}>
@@ -1027,7 +1027,7 @@ function ScrollBentoHero() {
               <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
             </p>
             <h1 style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: FONT.alt,
               fontSize: 'clamp(2.4rem,6vw,4.5rem)',
               fontWeight: 300, lineHeight: 1.05, color: '#fff',
               margin: '0 0 1rem',
@@ -1117,7 +1117,7 @@ export default function ProjetsContent() {
       }}>
         <div className="reveal" style={{ maxWidth: 560, margin: '0 auto' }}>
           <h2 style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: FONT.alt,
             fontSize: 'clamp(1.8rem,3.5vw,2.6rem)',
             fontWeight: 400,
             color: '#fff',
