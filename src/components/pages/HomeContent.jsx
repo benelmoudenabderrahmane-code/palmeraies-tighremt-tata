@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, ChevronDown, ArrowRight, TreePine, Droplets, HeartHandshake } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
@@ -352,13 +353,14 @@ function SectionActualites() {
               className="reveal"
               style={{ textDecoration: 'none', display: 'block', position: 'relative', borderRadius: 12, overflow: 'hidden', minHeight: 360 }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={featured.image}
                 alt={featured.titre}
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.6s cubic-bezier(0.16,1,0.3,1)' }}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="actu-featured-img"
-                loading="eager"
+                style={{ objectFit: 'cover', transition: 'transform 0.6s cubic-bezier(0.16,1,0.3,1)' }}
               />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(19,61,32,0.92) 0%, rgba(19,61,32,0.3) 55%, transparent 100%)' }} />
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.75rem' }}>
@@ -381,15 +383,14 @@ function SectionActualites() {
               className="reveal reveal-delay-1"
               style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', borderRadius: 12, overflow: 'hidden', border: '1px solid #e0d8c8', background: C.sand }}
             >
-              <div className="actu-card-img-wrap" style={{ height: 200, flexShrink: 0 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="actu-card-img-wrap" style={{ height: 200, flexShrink: 0, position: 'relative' }}>
+                <Image
                   src={second.image}
                   alt={second.titre}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 300px"
                   className="actu-card-img"
-                  width={600}
-                  height={400}
-                  loading="lazy"
+                  style={{ objectFit: 'cover' }}
                 />
               </div>
               <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>

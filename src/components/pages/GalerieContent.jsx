@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
@@ -237,13 +238,14 @@ export default function GalerieContent() {
                 className={`gal-cell gal-masonry-item reveal reveal-delay-${(i % 4) + 1}`}
                 onClick={() => setLightbox(i)}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={img.src}
                   alt={img.alt}
                   width={img.w}
                   height={img.h}
-                  loading={i < 6 ? 'eager' : 'lazy'}
+                  sizes="(max-width: 520px) 100vw, (max-width: 900px) 50vw, 33vw"
+                  priority={i < 6}
+                  style={{ width: '100%', height: 'auto', display: 'block' }}
                 />
                 <div className="gal-overlay">
                   <span className="gal-caption">{img.alt}</span>
