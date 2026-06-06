@@ -1,6 +1,7 @@
 'use client';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { FONT } from '@/lib/tokens';
 
 const IMG_PADDING = 12;
 const EASE = [0.16, 1, 0.3, 1];
@@ -133,7 +134,7 @@ function OverlayCopy({ subheading, heading }) {
       {/* Titre */}
       <p
         style={{
-          fontFamily: 'Cormorant Garamond, serif',
+          fontFamily: FONT.alt,
           fontSize: 'clamp(2rem, 6vw, 4.5rem)',
           fontWeight: 400,
           lineHeight: 1.08,

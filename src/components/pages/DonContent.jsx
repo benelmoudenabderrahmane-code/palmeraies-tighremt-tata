@@ -7,7 +7,7 @@ import {
   Zap, TreePine, GraduationCap, Home, ArrowRight,
   TrendingUp, Star, Settings, Megaphone, User, Hammer,
 } from 'lucide-react';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import SectionDivider from '@/components/ui/SectionDivider';
 
@@ -109,7 +109,7 @@ function CounterItem({ stat }) {
           <stat.Icon size={22} color={C.green} strokeWidth={1.6} />
         </div>
       </div>
-      <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.2rem,4.5vw,3.2rem)', fontWeight: 600, color: C.greenDeep, lineHeight: 1 }}>
+      <div style={{ fontFamily: FONT.alt, fontSize: 'clamp(2.2rem,4.5vw,3.2rem)', fontWeight: 600, color: C.greenDeep, lineHeight: 1 }}>
         <span className="stat-counter">{display}</span>{stat.suffix}
       </div>
       <div style={{ fontSize: '0.7rem', fontWeight: 600, color: C.inkMuted, marginTop: '0.4rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{stat.label}</div>
@@ -124,7 +124,7 @@ function ProgressBar({ item, inView, delay = 0, index }) {
         <span style={{ fontSize: '0.88rem', fontWeight: 500, color: C.ink, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <item.Icon size={15} color={item.color} strokeWidth={1.8} /> {item.label}
         </span>
-        <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem', fontWeight: 700, color: item.color }}>{item.pct}%</span>
+        <span style={{ fontFamily: FONT.alt, fontSize: '1.1rem', fontWeight: 700, color: item.color }}>{item.pct}%</span>
       </div>
       <div style={{ height: 10, background: C.sandDark, borderRadius: 999, overflow: 'hidden', position: 'relative' }}>
         <div style={{
@@ -331,7 +331,7 @@ export default function DonContent() {
         {/* Filigrane éditorial : cœur */}
         <div aria-hidden="true" style={{
           position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-          fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(14rem,34vw,28rem)',
+          fontFamily: FONT.alt, fontSize: 'clamp(14rem,34vw,28rem)',
           fontWeight: 500, color: 'rgba(255,235,160,0.07)', lineHeight: 1, pointerEvents: 'none',
           userSelect: 'none',
         }}>
@@ -347,7 +347,7 @@ export default function DonContent() {
             <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(255,210,120,0.6)' }} />
           </div>
 
-          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(3rem, 8vw, 5.5rem)', fontWeight: 300, lineHeight: 1.05, color: '#fff', letterSpacing: '-0.02em', marginBottom: '1.25rem', textShadow: '0 2px 40px rgba(0,0,0,0.4)' }}>
+          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(3rem, 8vw, 5.5rem)', fontWeight: 300, lineHeight: 1.05, color: '#fff', letterSpacing: '-0.02em', marginBottom: '1.25rem', textShadow: '0 2px 40px rgba(0,0,0,0.4)' }}>
             Votre geste<br />
             <em style={{ fontWeight: 400, color: 'rgba(255,235,160,1)' }}>change une vie</em>
           </h1>
@@ -356,7 +356,7 @@ export default function DonContent() {
 
           {/* Testimonial auto-rotate */}
           <div key={activeTestimonial} style={{ animation: 'testimonialFade 0.6s ease both', marginBottom: '2.5rem' }}>
-            <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1rem,2vw,1.25rem)', color: 'rgba(255,255,255,0.78)', lineHeight: 1.8, fontWeight: 300, fontStyle: 'italic', maxWidth: 540, margin: '0 auto' }}>
+            <p style={{ fontFamily: FONT.alt, fontSize: 'clamp(1rem,2vw,1.25rem)', color: 'rgba(255,255,255,0.78)', lineHeight: 1.8, fontWeight: 300, fontStyle: 'italic', maxWidth: 540, margin: '0 auto' }}>
               &ldquo;{TEMOIGNAGES[activeTestimonial].text}&rdquo;
             </p>
             <div style={{ marginTop: '0.75rem', fontSize: '0.72rem', color: 'rgba(255,210,120,0.7)', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
@@ -400,7 +400,7 @@ export default function DonContent() {
               Votre contribution
               <span style={{ width: 22, height: 1.5, background: C.ochre, display: 'block' }} />
             </div>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.9rem,5vw,3rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.1, marginBottom: '1.75rem' }}>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.9rem,5vw,3rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.1, marginBottom: '1.75rem' }}>
               Choisissez votre contribution
             </h2>
 
@@ -464,7 +464,7 @@ export default function DonContent() {
 
                   {a.free ? (
                     <>
-                      <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', fontWeight: 600, color: active ? '#fff' : C.greenDeep, marginBottom: '0.4rem' }}>Libre</div>
+                      <div style={{ fontFamily: FONT.alt, fontSize: '1.3rem', fontWeight: 600, color: active ? '#fff' : C.greenDeep, marginBottom: '0.4rem' }}>Libre</div>
                       {active ? (
                         <input type="number" min="1" placeholder="Montant €" value={freeAmount} onChange={e => setFreeAmount(e.target.value)} onClick={e => e.stopPropagation()} autoComplete="off" inputMode="numeric"
                           aria-label="Montant du don en euros"
@@ -476,7 +476,7 @@ export default function DonContent() {
                     </>
                   ) : (
                     <>
-                      <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.25rem,2.5vw,1.6rem)', fontWeight: 600, color: active ? '#fff' : C.greenDeep, marginBottom: '0.3rem', lineHeight: 1 }}>
+                      <div style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.25rem,2.5vw,1.6rem)', fontWeight: 600, color: active ? '#fff' : C.greenDeep, marginBottom: '0.3rem', lineHeight: 1 }}>
                         {a.label}{monthly ? '/mois' : ''}
                       </div>
                       <div style={{ fontSize: '0.68rem', lineHeight: 1.45, color: active ? 'rgba(255,255,255,0.82)' : C.inkMuted }}>
@@ -532,7 +532,7 @@ export default function DonContent() {
       <section style={{ background: C.sandMid, padding: 'clamp(3.5rem,7vw,5rem) 1.5rem' }}>
         <div style={{ maxWidth: 760, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.7rem,4vw,2.6rem)', fontWeight: 400, color: C.greenDeep }}>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.7rem,4vw,2.6rem)', fontWeight: 400, color: C.greenDeep }}>
               Autres façons de contribuer
             </h2>
           </div>
@@ -575,7 +575,7 @@ export default function DonContent() {
         <div style={{ maxWidth: 680, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <div style={{ fontSize: '0.63rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 600, marginBottom: '0.85rem' }}>Transparence financière</div>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.7rem,4vw,2.8rem)', fontWeight: 400, color: C.greenDeep, marginBottom: '0.75rem' }}>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.7rem,4vw,2.8rem)', fontWeight: 400, color: C.greenDeep, marginBottom: '0.75rem' }}>
               Où va votre don ?
             </h2>
             <p style={{ color: C.inkMuted, fontSize: '0.88rem', maxWidth: 420, margin: '0 auto', lineHeight: 1.7 }}>
@@ -603,10 +603,10 @@ export default function DonContent() {
       <section style={{ background: C.greenDeep, padding: 'clamp(3.5rem,7vw,5rem) 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div className="dot-grid" style={{ position: 'absolute', inset: 0, opacity: 0.12, pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 600, margin: '0 auto' }}>
-          <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 'clamp(1.1rem,2.5vw,1.5rem)', color: 'rgba(255,255,255,0.65)', marginBottom: '1rem', fontWeight: 300 }}>
+          <p style={{ fontFamily: FONT.alt, fontStyle: 'italic', fontSize: 'clamp(1.1rem,2.5vw,1.5rem)', color: 'rgba(255,255,255,0.65)', marginBottom: '1rem', fontWeight: 300 }}>
             La palmeraie de Tighremt a besoin de vous aujourd&apos;hui.
           </p>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.8rem,5vw,3rem)', fontWeight: 400, color: '#fff', lineHeight: 1.15, marginBottom: '2.25rem' }}>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.8rem,5vw,3rem)', fontWeight: 400, color: '#fff', lineHeight: 1.15, marginBottom: '2.25rem' }}>
             Ensemble, préservons<br />
             <em style={{ fontWeight: 400, color: C.ochre }}>un héritage vivant</em>
           </h2>

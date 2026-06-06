@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import partenaires from '@/data/partenaires.json';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
 
@@ -12,7 +12,7 @@ export default function PartenairesContent() {
       <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.accent, marginBottom: '0.75rem' }}>Réseau</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 600 }}>Nos partenaires</h1>
+          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 600 }}>Nos partenaires</h1>
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Ensemble pour Tighremt.</p>
         </div>
       </section>
@@ -26,7 +26,7 @@ export default function PartenairesContent() {
               <div style={{ width: 80, height: 80, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 1rem', background: C.sandMid }}>
                 <Image src={p.logo} alt={p.nom} width={80} height={80} priority={i < 3} style={{ objectFit: 'cover', width: '80px', height: '80px', display: 'block' }} onError={() => {}} />
               </div>
-              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.15rem', fontWeight: 600, color: C.ink, marginBottom: '0.4rem' }}>{p.nom}</h2>
+              <h2 style={{ fontFamily: FONT.alt, fontSize: '1.15rem', fontWeight: 600, color: C.ink, marginBottom: '0.4rem' }}>{p.nom}</h2>
               <p style={{ fontSize: '0.84rem', color: C.inkMuted }}>{p.description}</p>
             </a>
           ))}

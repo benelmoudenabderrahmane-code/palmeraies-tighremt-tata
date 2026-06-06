@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Share2, Globe, Send, Mail, Phone, MapPin, ArrowRight, Heart } from 'lucide-react';
 import Logo from './ui/Logo';
 import Turnstile from './ui/Turnstile';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { toast } from '@/hooks/useToast';
 
 function NewsletterForm() {
@@ -82,7 +82,7 @@ export default function Footer() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
               <Logo size={100} lazy={true} />
               <div>
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 600, fontSize: '1rem', color: '#fff', lineHeight: 1.1 }}>Association Palmeraies Tighremt</div>
+                <div style={{ fontFamily: FONT.alt, fontWeight: 600, fontSize: '1rem', color: '#fff', lineHeight: 1.1 }}>Association Palmeraies Tighremt</div>
                 <div style={{ fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: C.accent }}>TATA · Maroc</div>
               </div>
             </div>

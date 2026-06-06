@@ -1,10 +1,10 @@
 'use client';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: '2.5rem' }}>
-    <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.5rem', fontWeight: 600, color: C.greenDeep, marginBottom: '1rem', paddingBottom: '0.4rem', borderBottom: `2px solid ${C.accent}` }}>{title}</h2>
+    <h2 style={{ fontFamily: FONT.alt, fontSize: '1.5rem', fontWeight: 600, color: C.greenDeep, marginBottom: '1rem', paddingBottom: '0.4rem', borderBottom: `2px solid ${C.accent}` }}>{title}</h2>
     <div style={{ fontSize: '0.93rem', color: C.inkMuted, lineHeight: 1.8 }}>{children}</div>
   </div>
 );
@@ -16,7 +16,7 @@ export default function MentionsLegalesContent() {
       <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.accent, marginBottom: '0.75rem' }}>Légal</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 600 }}>Mentions légales</h1>
+          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 600 }}>Mentions légales</h1>
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Politique de confidentialité &amp; conditions d&apos;utilisation</p>
         </div>
       </section>

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, ArrowLeft, Share2 } from 'lucide-react';
 import actualites from '@/data/actualites.json';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { toast } from '@/hooks/useToast';
 
 export default function ArticleContent({ id }) {
@@ -37,12 +37,12 @@ export default function ArticleContent({ id }) {
           <Share2 size={13} /> Partager
         </button>
       </div>
-      <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 600, lineHeight: 1.2, color: C.ink, marginBottom: '1.5rem' }}>{article.titre}</h1>
+      <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 600, lineHeight: 1.2, color: C.ink, marginBottom: '1.5rem' }}>{article.titre}</h1>
       <div style={{ fontSize: '1rem', lineHeight: 1.85, color: C.inkMuted }}>{article.contenu}</div>
 
       {actualites.filter(a => a.id !== id).length > 0 && (
         <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: `1px solid ${C.sandDark}` }}>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.4rem', fontWeight: 600, color: C.ink, marginBottom: '1.25rem' }}>Autres actualités</h2>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: '1.4rem', fontWeight: 600, color: C.ink, marginBottom: '1.25rem' }}>Autres actualités</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {actualites.filter(a => a.id !== id).slice(0, 3).map(a => (
               <Link key={a.id} href={`/actualites/${a.id}`}

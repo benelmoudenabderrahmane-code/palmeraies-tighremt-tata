@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import dynamic from 'next/dynamic';
 import Turnstile from '@/components/ui/Turnstile';
@@ -44,7 +44,7 @@ export default function ContactContent() {
           <div className="reveal" style={{ fontSize: '0.68rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 500, marginBottom: '1rem' }}>
             Nous contacter
           </div>
-          <h1 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.15 }}>
+          <h1 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.15 }}>
             Écrivez-nous
           </h1>
           <p className="reveal reveal-delay-2" style={{ color: C.inkMuted, fontSize: '0.95rem', marginTop: '1rem', maxWidth: 520, margin: '1rem auto 0', lineHeight: 1.7, fontWeight: 300 }}>
@@ -78,7 +78,7 @@ export default function ContactContent() {
             </div>
 
             <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: C.sandMid, borderRadius: '1.25rem', border: `1px solid ${C.sandDark}` }}>
-              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem', fontStyle: 'italic', color: C.green, lineHeight: 1.6 }}>
+              <div style={{ fontFamily: FONT.alt, fontSize: '1.1rem', fontStyle: 'italic', color: C.green, lineHeight: 1.6 }}>
                 &quot;Chaque compétence compte. Rejoignez notre réseau de bénévoles engagés pour Tighremt.&quot;
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function ContactContent() {
                   <CheckCircle size={32} color={C.green} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.5rem', fontWeight: 500, color: C.greenDeep, marginBottom: '0.5rem' }}>
+                  <div style={{ fontFamily: FONT.alt, fontSize: '1.5rem', fontWeight: 500, color: C.greenDeep, marginBottom: '0.5rem' }}>
                     Message envoyé !
                   </div>
                   <p style={{ color: C.inkMuted, fontSize: '0.9rem', lineHeight: 1.7, fontWeight: 300 }}>
@@ -220,7 +220,7 @@ export default function ContactContent() {
               { titre: 'Renseignements', desc: 'Poser vos questions sur l\'association, nos actions sur le terrain, ou la situation de la commune de Tighremt.' },
             ].map(({ titre, desc }) => (
               <div key={titre} style={{ background: '#fff', borderRadius: '1rem', padding: '1.4rem', border: '1px solid #e0d8c8' }}>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem', fontWeight: 600, color: '#133d20', marginBottom: '0.5rem' }}>{titre}</h3>
+                <h3 style={{ fontFamily: FONT.alt, fontSize: '1.1rem', fontWeight: 600, color: '#133d20', marginBottom: '0.5rem' }}>{titre}</h3>
                 <p style={{ fontSize: '0.86rem', color: '#6b6b6b', lineHeight: 1.7, fontWeight: 300 }}>{desc}</p>
               </div>
             ))}
@@ -228,7 +228,7 @@ export default function ContactContent() {
         </div>
 
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '3rem 1.5rem 0' }}>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', fontWeight: 600, color: '#133d20', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: '1.8rem', fontWeight: 600, color: '#133d20', marginBottom: '1.5rem' }}>
             Tighremt sur la carte
           </h2>
           <MapLeaflet />

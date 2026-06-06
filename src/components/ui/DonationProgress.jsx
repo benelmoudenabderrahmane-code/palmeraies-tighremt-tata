@@ -1,6 +1,6 @@
 'use client';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 
 export default function DonationProgress() {
   const goal    = Number(process.env.NEXT_PUBLIC_DONATION_GOAL    || 20000);
@@ -20,7 +20,7 @@ export default function DonationProgress() {
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
         <div>
-          <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.2rem', fontWeight: 600, color: C.greenDeep }}>{display.toLocaleString('fr-FR')} €</span>
+          <span style={{ fontFamily: FONT.alt, fontSize: '2.2rem', fontWeight: 600, color: C.greenDeep }}>{display.toLocaleString('fr-FR')} €</span>
           <span style={{ fontSize: '0.85rem', color: C.inkMuted, marginLeft: '0.4rem' }}>collectés</span>
         </div>
         <div style={{ textAlign: 'right' }}>

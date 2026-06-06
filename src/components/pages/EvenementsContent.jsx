@@ -1,7 +1,7 @@
 'use client';
 import { Calendar, MapPin, Clock, ExternalLink } from 'lucide-react';
 import evenements from '@/data/evenements.json';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
 
@@ -18,7 +18,7 @@ export default function EvenementsContent() {
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '0.72rem', background: C.sandMid, color: TYPE_COLORS[e.type] || C.accent, padding: '0.2rem 0.7rem', borderRadius: 999, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{e.type}</span>
       </div>
-      <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', fontWeight: 600, color: C.ink, marginBottom: '0.75rem' }}>{e.titre}</h3>
+      <h3 style={{ fontFamily: FONT.alt, fontSize: '1.3rem', fontWeight: 600, color: C.ink, marginBottom: '0.75rem' }}>{e.titre}</h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
         {[
           [Calendar, new Date(e.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })],
@@ -45,7 +45,7 @@ export default function EvenementsContent() {
       <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.accent, marginBottom: '0.75rem' }}>Agenda</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 600 }}>Événements</h1>
+          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 600 }}>Événements</h1>
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Retrouvez tous nos prochains rendez-vous.</p>
         </div>
       </section>
@@ -53,7 +53,7 @@ export default function EvenementsContent() {
 
       {/* ── Intro contextuelle ── */}
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 0', textAlign: 'center' }}>
-        <p className="reveal" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.1rem,2vw,1.3rem)', fontWeight: 400, color: '#3a3a3a', lineHeight: 1.9, marginBottom: '1rem' }}>
+        <p className="reveal" style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.1rem,2vw,1.3rem)', fontWeight: 400, color: '#3a3a3a', lineHeight: 1.9, marginBottom: '1rem' }}>
           L&apos;Association Palmeraies Tighremt organise tout au long de l&apos;année des événements ouverts à ses membres, bénévoles et sympathisants. Collectes solidaires, assemblées générales, missions terrain, rencontres communautaires — chaque rendez-vous est une occasion de se retrouver, de partager et d&apos;avancer ensemble pour Tighremt.
         </p>
         <p className="reveal reveal-delay-1" style={{ fontSize: '0.92rem', color: '#6b6b6b', lineHeight: 1.75, maxWidth: 600, margin: '0 auto' }}>
@@ -64,7 +64,7 @@ export default function EvenementsContent() {
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '3rem 1.5rem' }}>
         {upcoming.length > 0 && (
           <>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: C.greenDeep, marginBottom: '1.5rem' }}>À venir</h2>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: '1.8rem', color: C.greenDeep, marginBottom: '1.5rem' }}>À venir</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
               {upcoming.map((e, i) => <Card key={e.id} e={e} i={i} />)}
             </div>
@@ -72,7 +72,7 @@ export default function EvenementsContent() {
         )}
         {past.length > 0 && (
           <>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: C.inkMuted, marginBottom: '1.5rem' }}>Passés</h2>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: '1.8rem', color: C.inkMuted, marginBottom: '1.5rem' }}>Passés</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem', opacity: 0.65 }}>
               {past.map((e, i) => <Card key={e.id} e={e} i={i} />)}
             </div>

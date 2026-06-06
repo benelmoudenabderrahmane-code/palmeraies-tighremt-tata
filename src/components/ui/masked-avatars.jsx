@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { FONT } from '@/lib/tokens';
 
 function getInitials(name = '') {
   return name
@@ -55,7 +56,7 @@ export function MaskedAvatars({
             />
           ) : (
             <span style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: FONT.alt,
               fontSize: size * 0.36,
               fontWeight: 700,
               color: 'rgba(255,255,255,0.95)',

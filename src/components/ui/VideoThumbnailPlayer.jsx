@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Play, X } from 'lucide-react';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 
 /**
  * VideoThumbnailPlayer — lecteur vidéo avec miniature cliquable.
@@ -130,7 +130,7 @@ export default function VideoThumbnailPlayer({
         }}>
           {title && (
             <p style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: FONT.alt,
               fontSize: 'clamp(1.1rem,2.5vw,1.5rem)',
               fontWeight: 600, color: '#fff', lineHeight: 1.2,
               marginBottom: description ? '0.3rem' : 0,
@@ -223,7 +223,7 @@ export default function VideoThumbnailPlayer({
               <div style={{ marginTop: '0.875rem', textAlign: 'center' }}>
                 {title && (
                   <p style={{
-                    fontFamily: 'Cormorant Garamond, serif',
+                    fontFamily: FONT.alt,
                     fontSize: '1.15rem', fontWeight: 600,
                     color: 'rgba(255,255,255,0.9)',
                   }}>

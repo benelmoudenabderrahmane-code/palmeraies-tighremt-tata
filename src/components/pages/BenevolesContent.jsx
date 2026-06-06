@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { MapPin, Send } from 'lucide-react';
 import missions from '@/data/missions-benevoles.json';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { toast } from '@/hooks/useToast';
 import SectionDivider from '@/components/ui/SectionDivider';
@@ -41,13 +41,13 @@ export default function BenevolesContent() {
       <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.accent, marginBottom: '0.75rem' }}>Rejoignez-nous</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 600 }}>Devenir bénévole</h1>
+          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 600 }}>Devenir bénévole</h1>
           <p style={{ marginTop: '1rem', opacity: 0.75 }}>Vos compétences peuvent changer des vies à Tighremt.</p>
         </div>
       </section>
       <SectionDivider />
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '3rem 1.5rem' }}>
-        <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: C.greenDeep, marginBottom: '1.5rem' }}>Missions disponibles</h2>
+        <h2 style={{ fontFamily: FONT.alt, fontSize: '1.8rem', color: C.greenDeep, marginBottom: '1.5rem' }}>Missions disponibles</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
           {missions.map((m, i) => (
             <div key={m.id} className={`reveal reveal-delay-${(i % 3) + 1}`}
@@ -55,7 +55,7 @@ export default function BenevolesContent() {
               <span style={{ fontSize: '0.7rem', background: C.sandMid, color: TYPE_COLORS[m.type], padding: '0.15rem 0.6rem', borderRadius: 999, fontWeight: 700, textTransform: 'uppercase', display: 'inline-block', marginBottom: '0.75rem' }}>
                 {TYPE_LABELS[m.type]}
               </span>
-              <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', fontWeight: 600, color: C.ink, marginBottom: '0.5rem' }}>{m.titre}</h3>
+              <h3 style={{ fontFamily: FONT.alt, fontSize: '1.2rem', fontWeight: 600, color: C.ink, marginBottom: '0.5rem' }}>{m.titre}</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', color: C.inkMuted, marginBottom: '0.4rem' }}>
                 <MapPin size={12} color={C.ochre} />{m.lieu}
               </div>
@@ -69,7 +69,7 @@ export default function BenevolesContent() {
           ))}
         </div>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: C.greenDeep, marginBottom: '1.5rem', textAlign: 'center' }}>Postuler</h2>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: '1.8rem', color: C.greenDeep, marginBottom: '1.5rem', textAlign: 'center' }}>Postuler</h2>
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {[
               { name: 'nom', label: 'Nom complet', type: 'text', placeholder: 'Votre nom' },

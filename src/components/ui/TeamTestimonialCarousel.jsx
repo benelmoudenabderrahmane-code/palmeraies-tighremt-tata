@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Quote, X } from 'lucide-react';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 
 /**
  * TeamTestimonialCarousel — carousel à défilement horizontal de cartes
@@ -49,7 +49,7 @@ function ProfileImage({ src, alt, initials, gradient }) {
       {/* Initiales sur dégradé de marque */}
       <span style={{
         position: 'absolute',
-        fontFamily: 'Cormorant Garamond, serif',
+        fontFamily: FONT.alt,
         fontSize: '2rem',
         fontWeight: 700,
         color: 'rgba(255,255,255,0.92)',
@@ -183,7 +183,7 @@ function TestimonialCard({ member, index, bgImage }) {
               </p>
               <p style={{
                 marginTop: '0.5rem',
-                fontFamily: 'Cormorant Garamond, serif',
+                fontFamily: FONT.alt,
                 fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
                 fontWeight: 500, color: C.greenDeep, lineHeight: 1.1,
               }}>
@@ -194,7 +194,7 @@ function TestimonialCard({ member, index, bgImage }) {
                 <Quote size={28} color={C.ochre} style={{ opacity: 0.5 }} />
                 <p style={{
                   marginTop: '0.5rem',
-                  fontFamily: 'Cormorant Garamond, serif',
+                  fontFamily: FONT.alt,
                   fontSize: 'clamp(1.2rem, 2.4vw, 1.7rem)',
                   fontStyle: 'italic', fontWeight: 400,
                   color: C.inkMuted, lineHeight: 1.5,
@@ -272,7 +272,7 @@ function TestimonialCard({ member, index, bgImage }) {
 
         <p style={{
           position: 'relative', zIndex: 1,
-          fontFamily: 'Cormorant Garamond, serif',
+          fontFamily: FONT.alt,
           fontSize: '1.15rem', fontWeight: 400, fontStyle: 'italic',
           color: C.inkMuted, lineHeight: 1.5, maxWidth: 280,
         }}>
@@ -281,7 +281,7 @@ function TestimonialCard({ member, index, bgImage }) {
 
         <div style={{ position: 'relative', zIndex: 1, marginTop: '0.25rem' }}>
           <p style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: FONT.alt,
             fontSize: '1.35rem', fontWeight: 600, color: C.greenDeep, lineHeight: 1.15,
           }}>
             {member.name}

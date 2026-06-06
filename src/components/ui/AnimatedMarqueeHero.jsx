@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 
 /**
  * Hero plein écran avec marquee d'images défilant en bas.
@@ -121,7 +121,7 @@ export default function AnimatedMarqueeHero({
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
           style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: FONT.alt,
             fontSize: 'clamp(2.6rem, 7vw, 5rem)',
             fontWeight: 300,
             fontStyle: 'italic',

@@ -1,5 +1,5 @@
 'use client';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 const HISTOIRE_ITEMS = [
@@ -33,7 +33,7 @@ export default function HistoireContent() {
           <div className="reveal" style={{ fontSize: '0.68rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 500, marginBottom: '1rem' }}>
             Notre Rapport
           </div>
-          <h1 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.15 }}>
+          <h1 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 400, color: C.greenDeep, lineHeight: 1.15 }}>
             Le livre de notre <em>association</em>
           </h1>
         </div>
@@ -48,7 +48,7 @@ export default function HistoireContent() {
               <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: C.greenDeep, color: '#fff', borderRadius: 999, padding: '0.3rem 1rem', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', alignSelf: 'flex-start' }}>
                 {item.year}
               </div>
-              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.5rem', fontWeight: 500, color: C.greenDeep, lineHeight: 1.2 }}>{item.title}</h2>
+              <h2 style={{ fontFamily: FONT.alt, fontSize: '1.5rem', fontWeight: 500, color: C.greenDeep, lineHeight: 1.2 }}>{item.title}</h2>
               <p style={{ fontSize: '0.9rem', color: C.inkMuted, lineHeight: 1.8, fontWeight: 300 }}>{item.text}</p>
               {item.quote && (
                 <div style={{ fontStyle: 'italic', fontSize: '0.92rem', color: C.green, borderLeft: `3px solid ${C.ochre}`, paddingLeft: '1rem', lineHeight: 1.6 }}>

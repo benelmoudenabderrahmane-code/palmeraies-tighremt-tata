@@ -1,6 +1,6 @@
 'use client';
 import { Mail, Users, Crown, Wallet, FileText, ArrowRight, TreePine, Handshake, Lightbulb, Sprout, Star } from 'lucide-react';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import TeamTestimonialCarousel from '@/components/ui/TeamTestimonialCarousel';
 import { TextEffect } from '@/components/ui/TextEffect';
@@ -113,7 +113,7 @@ export default function EquipeContent() {
         {/* Filigrane éditorial : 06 (nombre de membres) */}
         <div aria-hidden="true" style={{
           position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-          fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(16rem,38vw,32rem)',
+          fontFamily: FONT.alt, fontSize: 'clamp(16rem,38vw,32rem)',
           fontWeight: 500, color: 'rgba(196,169,107,0.06)', lineHeight: 1, pointerEvents: 'none',
           userSelect: 'none', whiteSpace: 'nowrap',
         }}>
@@ -127,7 +127,7 @@ export default function EquipeContent() {
             <span style={{ width: 28, height: 1.5, background: `${C.gold}99`, display: 'block' }} />
           </div>
 
-          <h1 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.6rem, 6.5vw, 4.4rem)', fontWeight: 300, lineHeight: 1.06, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+          <h1 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2.6rem, 6.5vw, 4.4rem)', fontWeight: 300, lineHeight: 1.06, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
             Notre <em style={{ fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,245,210,1)' }}>équipe</em> bénévole
           </h1>
 
@@ -141,7 +141,7 @@ export default function EquipeContent() {
               <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 'clamp(1.5rem,4vw,3rem)' }}>
                 {i > 0 && <span style={{ width: 1, height: 38, background: `${C.gold}44`, display: 'block' }} />}
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.9rem,3vw,2.4rem)', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
+                  <div style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.9rem,3vw,2.4rem)', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
                   <div style={{ fontSize: '0.62rem', color: C.gold, letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: '0.35rem', fontWeight: 500 }}>{l}</div>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function EquipeContent() {
             delay={0.1}
             className=""
             style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: FONT.alt,
               fontSize: 'clamp(1.8rem,4vw,2.8rem)',
               fontWeight: 400, color: C.greenDeep,
               marginBottom: '1rem',
@@ -185,7 +185,7 @@ export default function EquipeContent() {
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem,5vw,4rem)' }}>
             <div className="reveal" style={{ fontSize: '0.65rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: C.ochre, fontWeight: 600, marginBottom: '0.75rem' }}>Ce qui nous unit</div>
-            <h2 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 400, color: C.greenDeep }}>
+            <h2 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 400, color: C.greenDeep }}>
               Nos <em>valeurs</em> communes
             </h2>
           </div>
@@ -215,7 +215,7 @@ export default function EquipeContent() {
           <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: '1.5px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
             <Users size={28} color="rgba(255,255,255,0.85)" strokeWidth={1.5} />
           </div>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 400, color: '#fff', marginBottom: '1rem', lineHeight: 1.2 }}>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 400, color: '#fff', marginBottom: '1rem', lineHeight: 1.2 }}>
             Rejoignez notre équipe
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.62)', fontSize: '0.95rem', lineHeight: 1.75, fontWeight: 300, marginBottom: '2rem', maxWidth: 480, margin: '0 auto 2rem' }}>

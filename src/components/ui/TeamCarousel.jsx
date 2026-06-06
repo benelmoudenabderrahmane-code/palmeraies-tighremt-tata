@@ -9,7 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 
 const SQRT_5000 = Math.sqrt(5000);
 
@@ -77,7 +77,7 @@ function MemberCard({ member, position, handleMove, cardSize }) {
         flexShrink: 0,
       }}>
         <span style={{
-          fontFamily: 'Cormorant Garamond, serif',
+          fontFamily: FONT.alt,
           fontSize: '1.2rem',
           fontWeight: 700,
           color: '#fff',
@@ -89,7 +89,7 @@ function MemberCard({ member, position, handleMove, cardSize }) {
 
       {/* Quote / bio */}
       <div style={{
-        fontFamily: 'Cormorant Garamond, serif',
+        fontFamily: FONT.alt,
         fontSize: cardSize > 320 ? '1.1rem' : '0.95rem',
         fontWeight: 500,
         color: isCenter ? '#fff' : C.ink,
