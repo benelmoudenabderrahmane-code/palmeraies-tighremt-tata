@@ -11,7 +11,6 @@ const MEMBRES = [
   {
     name: 'Mohamed TAHAR',
     role: 'Président',
-    avatar: 'https://i.pravatar.cc/150?u=tahar',
     roleColor: C.greenDeep,
     RoleIcon: Crown,
     bio: "Pilote la vision stratégique et coordonne l'ensemble des actions de l'association.",
@@ -21,7 +20,6 @@ const MEMBRES = [
   {
     name: 'Lahoucine AÏT EL JAMAR',
     role: 'Vice-Président',
-    avatar: 'https://i.pravatar.cc/150?u=aitjamar',
     roleColor: C.green,
     RoleIcon: Star,
     bio: "Assiste le président et supervise les opérations sur le terrain à Tighremt.",
@@ -31,7 +29,6 @@ const MEMBRES = [
   {
     name: 'Abderrahmane BEN MANSOUR',
     role: 'Trésorier',
-    avatar: 'https://i.pravatar.cc/150?u=benmansour1',
     roleColor: C.ochre,
     RoleIcon: Wallet,
     bio: "Gère les finances de l'association avec rigueur et transparence totale.",
@@ -41,7 +38,6 @@ const MEMBRES = [
   {
     name: 'Lahoucine BEN MANSOUR',
     role: 'Vice-Trésorier',
-    avatar: 'https://i.pravatar.cc/150?u=benmansour2',
     roleColor: C.accentDark,
     RoleIcon: Wallet,
     bio: "Seconde le trésorier et assure le suivi des dépenses et recettes.",
@@ -51,7 +47,6 @@ const MEMBRES = [
   {
     name: 'Omar BOUBKER',
     role: 'Secrétaire',
-    avatar: 'https://i.pravatar.cc/150?u=boubker',
     roleColor: C.greenMid,
     RoleIcon: FileText,
     bio: "Rédige les comptes rendus et assure la communication officielle de l'association.",
@@ -61,7 +56,6 @@ const MEMBRES = [
   {
     name: 'Lahoucine BEN LMOUDEN',
     role: 'Vice-Secrétaire',
-    avatar: 'https://i.pravatar.cc/150?u=benlmouden',
     roleColor: C.inkMuted,
     RoleIcon: FileText,
     bio: "Appuie le secrétaire dans la gestion administrative et la mémoire associative.",

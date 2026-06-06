@@ -46,7 +46,7 @@ function ProfileImage({ src, alt, initials, gradient }) {
       alignItems: 'center',
       justifyContent: 'center',
     }}>
-      {/* Initiales en fond (fallback) */}
+      {/* Initiales sur dégradé de marque */}
       <span style={{
         position: 'absolute',
         fontFamily: 'Cormorant Garamond, serif',
@@ -57,26 +57,28 @@ function ProfileImage({ src, alt, initials, gradient }) {
       }}>
         {initials}
       </span>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt={alt}
-        width={140}
-        height={140}
-        loading="lazy"
-        decoding="async"
-        onLoad={() => setLoading(false)}
-        onError={(e) => { e.currentTarget.style.opacity = '0'; }}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          filter: loading ? 'blur(8px)' : 'none',
-          transition: 'filter 0.4s ease',
-        }}
-      />
+      {src && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={alt}
+          width={140}
+          height={140}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoading(false)}
+          onError={(e) => { e.currentTarget.style.opacity = '0'; }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            filter: loading ? 'blur(8px)' : 'none',
+            transition: 'filter 0.4s ease',
+          }}
+        />
+      )}
     </div>
   );
 }

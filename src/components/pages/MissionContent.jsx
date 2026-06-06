@@ -12,11 +12,12 @@ import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import SectionDivider from '@/components/ui/SectionDivider';
 
 const TEAM_AVATARS = [
-  { avatar: 'https://i.pravatar.cc/150?u=palmeraies1', name: 'Bénévole' },
-  { avatar: 'https://i.pravatar.cc/150?u=palmeraies2', name: 'Membre' },
-  { avatar: 'https://i.pravatar.cc/150?u=palmeraies3', name: 'Fondateur' },
-  { avatar: 'https://i.pravatar.cc/150?u=palmeraies4', name: 'Volontaire' },
-  { avatar: 'https://i.pravatar.cc/150?u=palmeraies5', name: 'Partenaire' },
+  { name: 'Mohamed TAHAR',            gradient: `linear-gradient(135deg, ${C.greenDeep}, ${C.green})` },
+  { name: 'Lahoucine AÏT EL JAMAR',   gradient: `linear-gradient(135deg, ${C.green}, ${C.greenMid})` },
+  { name: 'Abderrahmane BEN MANSOUR', gradient: `linear-gradient(135deg, ${C.ochre}, ${C.accent})` },
+  { name: 'Lahoucine BEN MANSOUR',    gradient: `linear-gradient(135deg, ${C.accentDark}, ${C.ochre})` },
+  { name: 'Omar BOUBKER',             gradient: `linear-gradient(135deg, ${C.greenMid}, ${C.green})` },
+  { name: 'Lahoucine BEN LMOUDEN',    gradient: `linear-gradient(135deg, #5c5848, #8a8270)` },
 ];
 
 const MISSIONS = [
@@ -260,7 +261,7 @@ export default function MissionContent() {
               <div style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: C.inkLight, fontWeight: 500, marginBottom: '1rem' }}>
                 Notre équipe de bénévoles
               </div>
-              <MaskedAvatars avatars={TEAM_AVATARS} size={56} border={6} column={32} />
+              <MaskedAvatars avatars={TEAM_AVATARS} size={56} border={6} column={32} label="membres du bureau" />
             </div>
           </div>
 
