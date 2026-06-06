@@ -1,5 +1,5 @@
 'use client';
-import { Mail, Users, Leaf, Crown, Wallet, FileText, ArrowRight, TreePine, Handshake, Lightbulb, Sprout, Star } from 'lucide-react';
+import { Mail, Users, Crown, Wallet, FileText, ArrowRight, TreePine, Handshake, Lightbulb, Sprout, Star } from 'lucide-react';
 import { C } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import TeamTestimonialCarousel from '@/components/ui/TeamTestimonialCarousel';
@@ -78,58 +78,72 @@ export default function EquipeContent() {
   return (
     <>
       <style>{`
-        @keyframes equipeFloat {
-          0%, 100% { transform: translateY(0px) rotate(-2deg); }
-          50%       { transform: translateY(-14px) rotate(2deg); }
-        }
-        @keyframes equipeOrb {
-          0%, 100% { transform: scale(1) translate(0,0); opacity: 0.35; }
-          33%       { transform: scale(1.18) translate(20px,-15px); opacity: 0.5; }
-          66%       { transform: scale(0.92) translate(-15px,10px); opacity: 0.28; }
-        }
-        .equipe-hero-leaf { animation: equipeFloat 6s ease-in-out infinite; }
-        .equipe-orb-1     { animation: equipeOrb  9s ease-in-out infinite; }
-        .equipe-orb-2     { animation: equipeOrb 12s ease-in-out infinite reverse; }
+        @keyframes duneDriftA { from { transform: translateX(0); }      to { transform: translateX(-80px); } }
+        @keyframes duneDriftB { from { transform: translateX(-40px); }  to { transform: translateX(40px); } }
+        @keyframes duneDriftC { from { transform: translateX(30px); }   to { transform: translateX(-50px); } }
+        .dune-a { animation: duneDriftA 22s ease-in-out infinite alternate; }
+        .dune-b { animation: duneDriftB 28s ease-in-out infinite alternate; }
+        .dune-c { animation: duneDriftC 34s ease-in-out infinite alternate; }
         .team-carousel-track::-webkit-scrollbar { display: none; }
       `}</style>
 
       {/* ══ HERO ══════════════════════════════════════════════════ */}
       <section style={{
         position: 'relative', overflow: 'hidden',
-        background: `linear-gradient(155deg, ${C.greenDeep} 0%, ${C.green} 50%, #0a2814 100%)`,
+        background: `linear-gradient(168deg, #0a2814 0%, ${C.greenDeep} 52%, ${C.green} 100%)`,
         padding: 'clamp(8rem,14vw,11rem) 1.5rem clamp(5rem,9vw,7rem)',
         textAlign: 'center',
       }}>
-        {/* Orbs */}
-        <div className="equipe-orb-1" style={{ position: 'absolute', top: '10%', left: '8%', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, ${C.greenMid}60 0%, transparent 70%)`, pointerEvents: 'none' }} />
-        <div className="equipe-orb-2" style={{ position: 'absolute', bottom: '5%', right: '5%', width: 360, height: 360, borderRadius: '50%', background: `radial-gradient(circle, ${C.ochre}30 0%, transparent 70%)`, pointerEvents: 'none' }} />
+        {/* Lignes de dunes ondulantes (motif désert / oasis) */}
+        <svg aria-hidden="true" viewBox="0 0 1440 600" preserveAspectRatio="none"
+          style={{ position: 'absolute', inset: 0, width: '120%', height: '100%', left: '-10%', pointerEvents: 'none', opacity: 0.5 }}>
+          <g className="dune-a" fill="none" stroke={C.gold} strokeWidth="1.1" opacity="0.55">
+            <path d="M-100,180 C260,90 540,250 820,170 C1080,100 1320,210 1640,140" />
+            <path d="M-100,230 C260,140 540,300 820,220 C1080,150 1320,260 1640,190" />
+          </g>
+          <g className="dune-b" fill="none" stroke={C.gold} strokeWidth="1" opacity="0.4">
+            <path d="M-100,340 C300,260 560,420 860,330 C1120,255 1340,380 1640,300" />
+            <path d="M-100,390 C300,310 560,470 860,380 C1120,305 1340,430 1640,350" />
+          </g>
+          <g className="dune-c" fill="none" stroke={C.greenMid} strokeWidth="1.4" opacity="0.5">
+            <path d="M-100,490 C320,420 600,560 900,470 C1160,395 1380,510 1640,440" />
+          </g>
+        </svg>
 
-        {/* Floating leaf */}
-        <div className="equipe-hero-leaf" style={{ position: 'absolute', top: '20%', right: '12%', opacity: 0.15, pointerEvents: 'none' }}>
-          <Leaf size={80} color="#fff" strokeWidth={1} />
+        {/* Filigrane éditorial : 06 (nombre de membres) */}
+        <div aria-hidden="true" style={{
+          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+          fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(16rem,38vw,32rem)',
+          fontWeight: 500, color: 'rgba(196,169,107,0.06)', lineHeight: 1, pointerEvents: 'none',
+          userSelect: 'none', whiteSpace: 'nowrap',
+        }}>
+          06
         </div>
 
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 700, margin: '0 auto' }}>
-          <div className="reveal" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.65rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(232,163,80,0.9)', fontWeight: 600, marginBottom: '1.25rem' }}>
-            <span style={{ width: 28, height: 1.5, background: 'rgba(232,163,80,0.6)', display: 'block' }} />
+          <div className="reveal" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.65rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: C.gold, fontWeight: 600, marginBottom: '1.25rem' }}>
+            <span style={{ width: 28, height: 1.5, background: `${C.gold}99`, display: 'block' }} />
             Les personnes derrière l&apos;association
-            <span style={{ width: 28, height: 1.5, background: 'rgba(232,163,80,0.6)', display: 'block' }} />
+            <span style={{ width: 28, height: 1.5, background: `${C.gold}99`, display: 'block' }} />
           </div>
 
-          <h1 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 300, lineHeight: 1.08, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+          <h1 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.6rem, 6.5vw, 4.4rem)', fontWeight: 300, lineHeight: 1.06, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
             Notre <em style={{ fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,245,210,1)' }}>équipe</em> bénévole
           </h1>
 
-          <p className="reveal reveal-delay-2" style={{ color: 'rgba(255,255,255,0.62)', fontSize: 'clamp(0.9rem,1.5vw,1.05rem)', lineHeight: 1.8, fontWeight: 300, maxWidth: 520, margin: '0 auto 2.5rem' }}>
+          <p className="reveal reveal-delay-2" style={{ color: 'rgba(255,255,255,0.65)', fontSize: 'clamp(0.9rem,1.5vw,1.05rem)', lineHeight: 1.8, fontWeight: 300, maxWidth: 520, margin: '0 auto 2.5rem' }}>
             Six bénévoles passionnés, unis par l&apos;amour de Tighremt et la volonté d&apos;agir pour préserver un patrimoine vivant.
           </p>
 
-          {/* Stats mini-bar */}
-          <div className="reveal reveal-delay-3" style={{ display: 'inline-flex', gap: '2rem', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', borderRadius: '2rem', padding: '1rem 2rem', border: '1px solid rgba(255,255,255,0.12)' }}>
-            {[{ n: '6', l: 'Membres' }, { n: '14', l: 'Années' }, { n: '100%', l: 'Bénévoles' }].map(({ n, l }) => (
-              <div key={l} style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
-                <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '0.25rem' }}>{l}</div>
+          {/* Stats — rangée éditoriale, filets dorés (sans glassmorphism) */}
+          <div className="reveal reveal-delay-3" style={{ display: 'inline-flex', alignItems: 'center', gap: 'clamp(1.5rem,4vw,3rem)' }}>
+            {[{ n: '6', l: 'Membres' }, { n: '14', l: 'Années' }, { n: '100%', l: 'Bénévoles' }].map(({ n, l }, i) => (
+              <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 'clamp(1.5rem,4vw,3rem)' }}>
+                {i > 0 && <span style={{ width: 1, height: 38, background: `${C.gold}44`, display: 'block' }} />}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.9rem,3vw,2.4rem)', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
+                  <div style={{ fontSize: '0.62rem', color: C.gold, letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: '0.35rem', fontWeight: 500 }}>{l}</div>
+                </div>
               </div>
             ))}
           </div>

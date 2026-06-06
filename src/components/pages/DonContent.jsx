@@ -11,7 +11,6 @@ import { C } from '@/lib/tokens';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import SectionDivider from '@/components/ui/SectionDivider';
 
-const Grainient = dynamic(() => import('@/components/ui/Grainient'), { ssr: false });
 const DonationProgress = dynamic(() => import('@/components/ui/DonationProgress'), { ssr: false });
 const QRCodeSVG = dynamic(() => import('qrcode.react').then(m => ({ default: m.QRCodeSVG })), { ssr: false });
 
@@ -203,6 +202,12 @@ export default function DonContent() {
           from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes duneDriftA { from { transform: translateX(0); }     to { transform: translateX(-80px); } }
+        @keyframes duneDriftB { from { transform: translateX(-40px); } to { transform: translateX(40px); } }
+        @keyframes duneDriftC { from { transform: translateX(30px); }  to { transform: translateX(-50px); } }
+        .don-dune-a { animation: duneDriftA 24s ease-in-out infinite alternate; }
+        .don-dune-b { animation: duneDriftB 30s ease-in-out infinite alternate; }
+        .don-dune-c { animation: duneDriftC 36s ease-in-out infinite alternate; }
         @keyframes toggleSlide {
           from { transform: translateX(0); }
           to   { transform: translateX(100%); }
@@ -305,9 +310,35 @@ export default function DonContent() {
         justifyContent: 'center', alignItems: 'center',
         padding: 'clamp(8rem,14vw,11rem) 1.5rem clamp(4rem,8vw,6rem)',
         overflow: 'hidden', textAlign: 'center',
+        background: `linear-gradient(168deg, #2a1206 0%, ${C.ochreDark} 50%, ${C.ochre} 100%)`,
       }}>
-        <Grainient color1="#FFE8A0" color2="#D4500A" color3="#1A0800" timeSpeed={0.14} warpStrength={1.1} warpFrequency={3.5} warpAmplitude={70} grainAmount={0.08} contrast={1.55} saturation={1.2} zoom={0.80} blendAngle={35} blendSoftness={0.12} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,5,0,0.32)', pointerEvents: 'none' }} />
+        {/* Lignes de dunes ondulantes (motif désert chaud) */}
+        <svg aria-hidden="true" viewBox="0 0 1440 600" preserveAspectRatio="none"
+          style={{ position: 'absolute', inset: 0, width: '120%', height: '100%', left: '-10%', pointerEvents: 'none', opacity: 0.5 }}>
+          <g className="don-dune-a" fill="none" stroke="#FFD27A" strokeWidth="1.1" opacity="0.5">
+            <path d="M-100,160 C260,80 540,240 820,160 C1080,90 1320,200 1640,130" />
+            <path d="M-100,215 C260,135 540,295 820,215 C1080,145 1320,255 1640,185" />
+          </g>
+          <g className="don-dune-b" fill="none" stroke="#FFE8A0" strokeWidth="1" opacity="0.38">
+            <path d="M-100,330 C300,250 560,410 860,320 C1120,245 1340,370 1640,290" />
+            <path d="M-100,385 C300,305 560,465 860,375 C1120,300 1340,425 1640,345" />
+          </g>
+          <g className="don-dune-c" fill="none" stroke="#fff" strokeWidth="1.3" opacity="0.28">
+            <path d="M-100,485 C320,415 600,555 900,465 C1160,390 1380,505 1640,435" />
+          </g>
+        </svg>
+
+        {/* Filigrane éditorial : cœur */}
+        <div aria-hidden="true" style={{
+          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+          fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(14rem,34vw,28rem)',
+          fontWeight: 500, color: 'rgba(255,235,160,0.07)', lineHeight: 1, pointerEvents: 'none',
+          userSelect: 'none',
+        }}>
+          ♥
+        </div>
+
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(20,8,0,0.22)', pointerEvents: 'none' }} />
 
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 720 }}>
           <div style={{ fontSize: '0.63rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,210,120,0.9)', fontWeight: 500, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
