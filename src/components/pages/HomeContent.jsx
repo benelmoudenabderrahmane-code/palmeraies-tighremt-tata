@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, ChevronDown, ArrowRight, TreePine, Droplets, HeartHandshake } from 'lucide-react';
-import { C } from '@/lib/tokens';
+import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
 import actualites from '@/data/actualites.json';
@@ -177,7 +177,7 @@ function Hero() {
             <span style={{ display: 'block', width: 32, height: 1, background: 'rgba(232,163,80,0.7)' }} />
           </div>
 
-          <h1 className="hero-h1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(3.2rem, 9.5vw, 7.5rem)', fontWeight: 300, lineHeight: 0.97, color: '#fff', letterSpacing: '-0.025em', marginBottom: '2rem', textShadow: '0 2px 60px rgba(0,0,0,0.5)' }}>
+          <h1 className="hero-h1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(3.2rem, 9.5vw, 7.5rem)', fontWeight: 300, lineHeight: 0.97, color: '#fff', letterSpacing: '-0.025em', marginBottom: '2rem', textShadow: '0 2px 60px rgba(0,0,0,0.5)' }}>
             Agir pour nous aider<br />
             <em style={{ fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,245,220,1)' }}>à grandir</em>
           </h1>
@@ -215,7 +215,7 @@ function Hero() {
               { val: 'Tata',     label: 'Province, Maroc' },
             ].map(s => (
               <div key={s.val} className="stat-item">
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.75rem', fontWeight: 600, color: '#fff', lineHeight: 1, textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}>{s.val}</div>
+                <div style={{ fontFamily: FONT.alt, fontSize: '1.75rem', fontWeight: 600, color: '#fff', lineHeight: 1, textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}>{s.val}</div>
                 <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.48)', marginTop: '0.3rem', fontWeight: 300, letterSpacing: '0.07em' }}>{s.label}</div>
               </div>
             ))}
@@ -245,7 +245,7 @@ function SectionMission() {
             Notre mission
             <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.5)' }} />
           </p>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,5vw,3.2rem)', fontWeight: 300, color: '#fff', lineHeight: 1.1, maxWidth: 640, margin: '0 auto' }}>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3.2rem)', fontWeight: 300, color: '#fff', lineHeight: 1.1, maxWidth: 640, margin: '0 auto' }}>
             Sauvegarder la palmeraie,<br />
             <em style={{ fontStyle: 'italic', fontWeight: 400 }}>développer le village</em>
           </h2>
@@ -265,7 +265,7 @@ function SectionMission() {
               }}>
                 <p.Icon size={24} color={p.color} strokeWidth={1.6} />
               </div>
-              <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.4rem', fontWeight: 500, color: '#fff', marginBottom: '0.6rem' }}>{p.titre}</h3>
+              <h3 style={{ fontFamily: FONT.alt, fontSize: '1.4rem', fontWeight: 500, color: '#fff', marginBottom: '0.6rem' }}>{p.titre}</h3>
               <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, fontWeight: 300 }}>{p.description}</p>
             </div>
           ))}
@@ -292,7 +292,7 @@ function SectionProjets() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem', marginBottom: 'clamp(3rem,6vw,4rem)' }}>
           <div className="reveal">
             <p style={eyebrow(C.ochre)}>Nos projets</p>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,4.5vw,3rem)', fontWeight: 300, color: C.ink, lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,4.5vw,3rem)', fontWeight: 300, color: C.ink, lineHeight: 1.1 }}>
               14 ans d&apos;action<br /><em style={{ fontStyle: 'italic' }}>sur le terrain</em>
             </h2>
           </div>
@@ -310,7 +310,7 @@ function SectionProjets() {
               className={`reveal reveal-delay-${i + 1}`}
               style={{ padding: '2rem 1.5rem', background: '#fff', borderRadius: 12, border: '1px solid #e0d8c8', textAlign: 'center' }}
             >
-              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.5rem,5vw,3.5rem)', fontWeight: 600, color: C.greenDeep, lineHeight: 1 }}>{s.val}</div>
+              <div style={{ fontFamily: FONT.alt, fontSize: 'clamp(2.5rem,5vw,3.5rem)', fontWeight: 600, color: C.greenDeep, lineHeight: 1 }}>{s.val}</div>
               <div style={{ fontSize: '0.75rem', color: C.inkMuted, marginTop: '0.5rem', fontWeight: 300, letterSpacing: '0.05em' }}>{s.label}</div>
             </div>
           ))}
@@ -334,7 +334,7 @@ function SectionActualites() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem', marginBottom: 'clamp(2.5rem,5vw,3.5rem)' }}>
           <div className="reveal">
             <p style={eyebrow(C.ochre)}>Actualités</p>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,4.5vw,3rem)', fontWeight: 300, color: C.ink, lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,4.5vw,3rem)', fontWeight: 300, color: C.ink, lineHeight: 1.1 }}>
               Les dernières<br /><em style={{ fontStyle: 'italic' }}>nouvelles</em>
             </h2>
           </div>
@@ -367,7 +367,7 @@ function SectionActualites() {
                 <p style={{ fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(196,169,107,0.9)', marginBottom: '0.5rem', fontWeight: 500 }}>
                   {new Date(featured.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.2rem,2.5vw,1.5rem)', fontWeight: 400, color: '#fff', lineHeight: 1.25, marginBottom: '0.75rem' }}>
+                <h3 style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.2rem,2.5vw,1.5rem)', fontWeight: 400, color: '#fff', lineHeight: 1.25, marginBottom: '0.75rem' }}>
                   {featured.titre}
                 </h3>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.62rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)', borderBottom: '1px solid rgba(255,255,255,0.25)', paddingBottom: '0.1rem' }}>
@@ -397,7 +397,7 @@ function SectionActualites() {
                 <p style={{ fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: C.ochre, fontWeight: 500 }}>
                   {new Date(second.date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
                 </p>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.15rem', fontWeight: 500, color: C.ink, lineHeight: 1.3 }}>
+                <h3 style={{ fontFamily: FONT.alt, fontSize: '1.15rem', fontWeight: 500, color: C.ink, lineHeight: 1.3 }}>
                   {second.titre}
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: C.inkMuted, lineHeight: 1.65, flex: 1 }}>{second.extrait}</p>
@@ -423,7 +423,7 @@ function SectionGalerie() {
         <div className="reveal" style={{ fontSize: '0.68rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(232,163,80,0.9)', fontWeight: 500, marginBottom: '1rem' }}>
           Notre Galerie
         </div>
-        <h2 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 400, color: '#fff', lineHeight: 1.15 }}>
+        <h2 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 400, color: '#fff', lineHeight: 1.15 }}>
           <em>Tighremt</em> en images
         </h2>
         <p className="reveal reveal-delay-2" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.88rem', marginTop: '0.75rem', fontWeight: 300 }}>
@@ -459,7 +459,7 @@ function SectionDon() {
           Agir concrètement
           <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.5)' }} />
         </p>
-        <h2 className="reveal reveal-delay-1" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2.2rem,6vw,4rem)', fontWeight: 300, color: '#fff', lineHeight: 1.1, margin: '0.5rem 0 1.1rem' }}>
+        <h2 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2.2rem,6vw,4rem)', fontWeight: 300, color: '#fff', lineHeight: 1.1, margin: '0.5rem 0 1.1rem' }}>
           Chaque euro va<br />
           <em style={{ fontStyle: 'italic', fontWeight: 400 }}>directement au terrain</em>
         </h2>
@@ -474,7 +474,7 @@ function SectionDon() {
             { pct: '10%', label: 'Communication' },
           ].map(r => (
             <div key={r.label}>
-              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.4rem', fontWeight: 600, color: 'rgba(196,169,107,0.95)', lineHeight: 1 }}>{r.pct}</div>
+              <div style={{ fontFamily: FONT.alt, fontSize: '2.4rem', fontWeight: 600, color: 'rgba(196,169,107,0.95)', lineHeight: 1 }}>{r.pct}</div>
               <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.3rem', letterSpacing: '0.07em' }}>{r.label}</div>
             </div>
           ))}
@@ -504,7 +504,7 @@ function SectionEquipe() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem', marginBottom: 'clamp(3rem,6vw,4rem)' }}>
           <div className="reveal">
             <p style={eyebrow(C.ochre)}>L&apos;équipe</p>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem,4.5vw,3rem)', fontWeight: 300, color: C.ink, lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,4.5vw,3rem)', fontWeight: 300, color: C.ink, lineHeight: 1.1 }}>
               Des bénévoles<br /><em style={{ fontStyle: 'italic' }}>engagés pour Tighremt</em>
             </h2>
           </div>
@@ -523,10 +523,10 @@ function SectionEquipe() {
               style={{ background: '#fff', borderRadius: 12, padding: '1.5rem', border: '1px solid #e0d8c8', display: 'flex', alignItems: 'center', gap: '1.1rem' }}
             >
               <div style={{ width: 48, height: 48, borderRadius: '50%', background: C.greenDeep, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '0.9rem', fontWeight: 600, color: 'rgba(196,169,107,0.95)', letterSpacing: '0.04em' }}>{m.initiales}</span>
+                <span style={{ fontFamily: FONT.alt, fontSize: '0.9rem', fontWeight: 600, color: 'rgba(196,169,107,0.95)', letterSpacing: '0.04em' }}>{m.initiales}</span>
               </div>
               <div>
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1rem', fontWeight: 600, color: C.ink, lineHeight: 1.25 }}>{m.nom}</div>
+                <div style={{ fontFamily: FONT.alt, fontSize: '1rem', fontWeight: 600, color: C.ink, lineHeight: 1.25 }}>{m.nom}</div>
                 <div style={{ fontSize: '0.7rem', color: C.inkMuted, marginTop: '0.2rem', fontWeight: 300, letterSpacing: '0.05em' }}>{m.role}</div>
               </div>
             </div>
