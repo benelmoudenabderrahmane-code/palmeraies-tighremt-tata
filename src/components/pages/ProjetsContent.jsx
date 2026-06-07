@@ -503,7 +503,7 @@ function MasonryGallery({ images }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 opacity: isHovered ? 1 : 0,
                 transform: isHovered ? 'scale(1)' : 'scale(0.6)',
-                transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+                transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1)',
               }}>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <circle cx="6" cy="6" r="4" stroke="#133d20" strokeWidth="1.5"/>
@@ -990,7 +990,7 @@ function BentoCard({ project, fill = false }) {
       }}>
         <span style={{
           fontSize: '0.58rem', letterSpacing: '0.2em', textTransform: 'uppercase',
-          fontWeight: 700, color: '#c4a96b', display: 'block', marginBottom: '0.25rem',
+          fontWeight: 700, color: C.gold, display: 'block', marginBottom: '0.25rem',
         }}>
           {project.category}
         </span>
@@ -1033,7 +1033,7 @@ function ScrollBentoHero() {
               margin: '0 0 1rem',
             }}>
               {PROJECTS.length} projets pour<br />
-              <em style={{ fontStyle: 'italic', fontWeight: 400, color: '#c4a96b' }}>Tighremt &amp; la région</em>
+              <em style={{ fontStyle: 'italic', fontWeight: 400, color: C.gold }}>Tighremt &amp; la région</em>
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.93rem', lineHeight: 1.7, fontWeight: 300 }}>
               Environnement · Infrastructure · Éducation · Solidarité · Mémoire

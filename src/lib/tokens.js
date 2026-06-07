@@ -23,6 +23,10 @@ export const C = {
   sandMid:    '#f0ead8',
   sandDark:   '#e6ddc8',
 
+  /* Water — bleu oasis/foggara, ciel désertique, jamais bleu tech */
+  water:      '#3d7a96',
+  waterLight: '#6ba3bc',
+
   /* Ink */
   ink:        '#1c1c18',
   inkMuted:   '#5c5848',

@@ -42,7 +42,7 @@ const PILLIERS = [
   },
   {
     Icon: Droplets,
-    color: '#3b82f6',
+    color: C.water,
     titre: 'Foggaras & Irrigation',
     description: 'Réhabilitation des canaux d\'irrigation souterrains ancestraux pour garantir l\'eau aux cultivateurs du village.',
   },

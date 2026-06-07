@@ -68,9 +68,9 @@ const MISSIONS = [
   },
   {
     Icon: Droplets,
-    color: '#2b7cbf',
-    bg: 'rgba(43,124,191,0.09)',
-    border: 'rgba(43,124,191,0.22)',
+    color: C.water,
+    bg: `${C.water}16`,
+    border: `${C.water}30`,
     titre: 'Eau & Irrigation',
     desc: 'Remise en état des canaux foggara traditionnels et suivi scientifique des ressources en eau pour garantir l\'irrigation des cultures et la survie de l\'oasis.',
     points: ['12 hectares irrigués', 'Canaux foggara restaurés', 'Suivi hydrologique continu'],

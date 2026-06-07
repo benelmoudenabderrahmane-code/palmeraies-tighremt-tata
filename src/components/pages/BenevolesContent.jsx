@@ -80,13 +80,13 @@ export default function BenevolesContent() {
                 <input id={`benevole-${name}`} type={type} placeholder={placeholder} value={form[name]}
                   onChange={e => setForm(p => ({ ...p, [name]: e.target.value }))}
                   required
-                  style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, border: `1px solid ${C.sandDark}`, fontSize: '0.93rem', outline: 'none', background: '#fff' }} />
+                  className="form-input" />
               </div>
             ))}
             <div>
               <label htmlFor="benevole-mission" style={{ fontSize: '0.82rem', fontWeight: 600, color: C.ink, display: 'block', marginBottom: '0.4rem' }}>Mission souhaitée</label>
               <select id="benevole-mission" value={form.mission} onChange={e => setForm(p => ({ ...p, mission: e.target.value }))} required
-                style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, border: `1px solid ${C.sandDark}`, fontSize: '0.93rem', background: '#fff', outline: 'none' }}>
+                className="form-input">
                 <option value="">Choisir une mission...</option>
                 {missions.map(m => <option key={m.id} value={m.id}>{m.titre}</option>)}
               </select>
@@ -95,7 +95,7 @@ export default function BenevolesContent() {
               <label htmlFor="benevole-message" style={{ fontSize: '0.82rem', fontWeight: 600, color: C.ink, display: 'block', marginBottom: '0.4rem' }}>Message (optionnel)</label>
               <textarea id="benevole-message" value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
                 placeholder="Présentez-vous et expliquez votre motivation..."
-                rows={4} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, border: `1px solid ${C.sandDark}`, fontSize: '0.93rem', resize: 'vertical', outline: 'none', background: '#fff' }} />
+                rows={4} className="form-input" style={{ resize: 'vertical' }} />
             </div>
             <Turnstile onVerify={setToken} onExpire={() => setToken(null)} />
             <button type="submit" disabled={sending || !token} className="btn-accent"

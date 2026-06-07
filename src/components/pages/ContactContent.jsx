@@ -220,15 +220,15 @@ export default function ContactContent() {
               { titre: 'Renseignements', desc: 'Poser vos questions sur l\'association, nos actions sur le terrain, ou la situation de la commune de Tighremt.' },
             ].map(({ titre, desc }) => (
               <div key={titre} style={{ background: '#fff', borderRadius: '1rem', padding: '1.4rem', border: '1px solid #e0d8c8' }}>
-                <h3 style={{ fontFamily: FONT.alt, fontSize: '1.1rem', fontWeight: 600, color: '#133d20', marginBottom: '0.5rem' }}>{titre}</h3>
-                <p style={{ fontSize: '0.86rem', color: '#6b6b6b', lineHeight: 1.7, fontWeight: 300 }}>{desc}</p>
+                <h3 style={{ fontFamily: FONT.alt, fontSize: '1.1rem', fontWeight: 600, color: C.greenDeep, marginBottom: '0.5rem' }}>{titre}</h3>
+                <p style={{ fontSize: '0.86rem', color: C.inkMuted, lineHeight: 1.7, fontWeight: 300 }}>{desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '3rem 1.5rem 0' }}>
-          <h2 style={{ fontFamily: FONT.alt, fontSize: '1.8rem', fontWeight: 600, color: '#133d20', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontFamily: FONT.alt, fontSize: '1.8rem', fontWeight: 600, color: C.greenDeep, marginBottom: '1.5rem' }}>
             Tighremt sur la carte
           </h2>
           <MapLeaflet />

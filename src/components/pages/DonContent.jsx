@@ -220,7 +220,7 @@ export default function DonContent() {
           border-radius: 1rem; font-size: 1.05rem; font-weight: 700;
           text-decoration: none; border: none; cursor: pointer;
           box-shadow: 0 8px 32px rgba(19,61,32,0.3);
-          transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
+          transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s;
           font-family: inherit;
         }
         .btn-don-cta::after {
@@ -241,7 +241,7 @@ export default function DonContent() {
           text-align: center;
           position: relative;
           overflow: visible;
-          transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+          transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
                       box-shadow 0.3s ease,
                       background 0.22s ease,
                       border-color 0.22s ease;
@@ -284,7 +284,7 @@ export default function DonContent() {
           border-radius: 999px;
           background: ${C.greenDeep};
           box-shadow: 0 4px 12px rgba(19,61,32,0.3);
-          transition: left 0.32s cubic-bezier(0.34,1.56,0.64,1), right 0.32s cubic-bezier(0.34,1.56,0.64,1);
+          transition: left 0.32s cubic-bezier(0.16,1,0.3,1), right 0.32s cubic-bezier(0.16,1,0.3,1);
           z-index: 1;
         }
         .impact-card {
@@ -469,6 +469,8 @@ export default function DonContent() {
                         <input type="number" min="1" placeholder="Montant €" value={freeAmount} onChange={e => setFreeAmount(e.target.value)} onClick={e => e.stopPropagation()} autoComplete="off" inputMode="numeric"
                           aria-label="Montant du don en euros"
                           style={{ width: '100%', border: '1px solid rgba(255,255,255,0.4)', borderRadius: 6, padding: '0.35rem 0.5rem', fontSize: '0.85rem', background: 'rgba(255,255,255,0.15)', color: '#fff', textAlign: 'center', outline: 'none', fontFamily: 'inherit' }}
+                          onFocus={e => { e.currentTarget.style.outline = '2px solid rgba(255,255,255,0.7)'; e.currentTarget.style.outlineOffset = '2px'; }}
+                          onBlur={e => { e.currentTarget.style.outline = 'none'; }}
                         />
                       ) : (
                         <div style={{ fontSize: '0.7rem', color: C.inkMuted, lineHeight: 1.4 }}>Votre montant</div>
@@ -539,8 +541,8 @@ export default function DonContent() {
           <div style={{ maxWidth: 520, margin: '0 auto 1.5rem', background: '#f0ead8', borderRadius: 16, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
             <QRCodeSVG value="mailto:palmeraies.tighremt.tata@gmail.com" size={100} bgColor="transparent" fgColor="#133d20" />
             <div>
-              <p style={{ fontWeight: 600, color: '#1c1c18', marginBottom: '0.25rem' }}>Virement bancaire</p>
-              <p style={{ fontSize: '0.85rem', color: '#5c5848', lineHeight: 1.6 }}>Scannez le QR code ou contactez-nous<br/>pour obtenir nos coordonnées bancaires.</p>
+              <p style={{ fontWeight: 600, color: C.ink, marginBottom: '0.25rem' }}>Virement bancaire</p>
+              <p style={{ fontSize: '0.85rem', color: C.inkMuted, lineHeight: 1.6 }}>Scannez le QR code ou contactez-nous<br/>pour obtenir nos coordonnées bancaires.</p>
             </div>
           </div>
 
