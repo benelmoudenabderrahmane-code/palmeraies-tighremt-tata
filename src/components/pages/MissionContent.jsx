@@ -173,48 +173,33 @@ export default function MissionContent() {
 
   return (
     <>
-      <style>{`
-        @keyframes mission-orb {
-          0%, 100% { transform: scale(1) translate(0,0); }
-          50%       { transform: scale(1.15) translate(12px,-10px); }
-        }
-        .mission-orb { animation: mission-orb 10s ease-in-out infinite; }
-      `}</style>
-
       {/* ══ 1. HERO ══════════════════════════════════════════════════════════ */}
-      <section style={{
-        position: 'relative', overflow: 'hidden',
-        background: `linear-gradient(155deg, ${C.greenDeep} 0%, ${C.green} 55%, #0d2e18 100%)`,
-        padding: 'clamp(8rem,14vw,11rem) 1.5rem clamp(5rem,9vw,7rem)',
-        textAlign: 'center',
-      }}>
-        <div className="mission-orb" style={{ position: 'absolute', top: '5%', right: '8%', width: 320, height: 320, borderRadius: '50%', background: `radial-gradient(circle, ${C.ochre}28 0%, transparent 70%)`, pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '5%', left: '5%', width: 260, height: 260, borderRadius: '50%', background: `radial-gradient(circle, ${C.greenMid}40 0%, transparent 70%)`, pointerEvents: 'none', animation: 'mission-orb 14s ease-in-out infinite reverse' }} />
-
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 780, margin: '0 auto' }}>
-          <div className="reveal" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.65rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(232,163,80,0.9)', fontWeight: 600, marginBottom: '1.25rem' }}>
-            <span style={{ width: 28, height: 1.5, background: 'rgba(232,163,80,0.6)', display: 'block' }} />
-            Association Palmeraies Tighremt Tata
-            <span style={{ width: 28, height: 1.5, background: 'rgba(232,163,80,0.6)', display: 'block' }} />
-          </div>
-
-          <h1 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2.5rem, 6.5vw, 4.5rem)', fontWeight: 300, lineHeight: 1.08, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-            Notre <em style={{ fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,245,210,1)' }}>mission</em> :
-            <br />préserver un héritage vivant
-          </h1>
-
-          <p className="reveal reveal-delay-2" style={{ color: 'rgba(255,255,255,0.68)', fontSize: 'clamp(0.92rem,1.5vw,1.08rem)', lineHeight: 1.85, fontWeight: 300, maxWidth: 560, margin: '0 auto 2.5rem' }}>
-            Association loi 1901 à but non lucratif fondée en mars 2010 — nous agissons
-            pour le village de Tighremt dans la province de Tata au Maroc, à travers
-            six axes complémentaires : environnement, éducation, infrastructure,
-            humanitaire, patrimoine et eau.
+      <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
+        <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
+          <p style={{
+            fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase',
+            color: 'rgba(196,169,107,0.9)', marginBottom: '0.75rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+          }}>
+            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
+            Notre mission
+            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.6)' }} />
           </p>
-
-          <div className="reveal reveal-delay-3" style={{ display: 'inline-flex', flexWrap: 'wrap', gap: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', borderRadius: '2rem', padding: '1.1rem 2rem', border: '1px solid rgba(255,255,255,0.14)', justifyContent: 'center' }}>
-            {[{ n: '2010', l: 'Fondée en' }, { n: '6', l: 'Projets réalisés' }, { n: '14', l: 'Ans d\'action' }, { n: '100%', l: 'Bénévoles' }].map(({ n, l }) => (
-              <div key={l} style={{ textAlign: 'center', padding: '0 0.5rem' }}>
-                <div style={{ fontFamily: FONT.alt, fontSize: '1.9rem', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
-                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '0.25rem' }}>{l}</div>
+          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 300, lineHeight: 1.1 }}>
+            Préserver un <em style={{ fontStyle: 'italic' }}>héritage vivant</em>
+          </h1>
+          <p style={{ marginTop: '0.75rem', opacity: 0.6, fontSize: '0.92rem', lineHeight: 1.7, maxWidth: 520, margin: '0.75rem auto 2rem' }}>
+            Association loi 1901 fondée en 2010, agissant pour Tighremt à travers six axes : environnement, éducation, infrastructure, humanitaire, patrimoine et eau.
+          </p>
+          {/* Stats — filets dorés, sans glassmorphism */}
+          <div style={{ display: 'inline-flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 'clamp(1.5rem,4vw,3rem)', marginTop: '0.5rem' }}>
+            {[{ n: '2010', l: 'Fondée en' }, { n: '6', l: 'Projets réalisés' }, { n: '14', l: 'Ans d\'action' }, { n: '100%', l: 'Bénévoles' }].map(({ n, l }, i) => (
+              <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 'clamp(1.5rem,4vw,3rem)' }}>
+                {i > 0 && <span style={{ width: 1, height: 32, background: 'rgba(196,169,107,0.35)', display: 'block' }} />}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.6rem,3vw,2rem)', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
+                  <div style={{ fontSize: '0.6rem', color: 'rgba(196,169,107,0.85)', letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: '0.3rem', fontWeight: 500 }}>{l}</div>
+                </div>
               </div>
             ))}
           </div>
