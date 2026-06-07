@@ -170,7 +170,7 @@ export default function ActualitesContent() {
       `}</style>
 
       {/* ── Hero ── */}
-      <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
+      <section style={{ background: C.greenDeep, color: '#fff', padding: 'clamp(5rem,10vw,7rem) 1.5rem clamp(3.5rem,6vw,5rem)', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
           <p style={{
             fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase',

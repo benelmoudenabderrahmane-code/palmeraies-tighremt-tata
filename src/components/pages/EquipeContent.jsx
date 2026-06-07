@@ -82,7 +82,7 @@ export default function EquipeContent() {
       `}</style>
 
       {/* ══ HERO ══════════════════════════════════════════════════ */}
-      <section style={{ background: C.greenDeep, color: '#fff', padding: '4rem 1.5rem 3rem', textAlign: 'center' }}>
+      <section style={{ background: C.greenDeep, color: '#fff', padding: 'clamp(5rem,10vw,7rem) 1.5rem clamp(3.5rem,6vw,5rem)', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
           <p style={{
             fontSize: '0.68rem', letterSpacing: '0.28em', textTransform: 'uppercase',
@@ -96,21 +96,9 @@ export default function EquipeContent() {
           <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 300, lineHeight: 1.1 }}>
             Notre <em style={{ fontStyle: 'italic' }}>équipe</em> bénévole
           </h1>
-          <p style={{ marginTop: '0.75rem', opacity: 0.6, fontSize: '0.92rem', lineHeight: 1.7, maxWidth: 520, margin: '0.75rem auto 2rem' }}>
+          <p style={{ marginTop: '0.75rem', opacity: 0.6, fontSize: '0.92rem', lineHeight: 1.7, maxWidth: 520, margin: '0.75rem auto 0' }}>
             Six bénévoles passionnés, unis par l&apos;amour de Tighremt et la volonté d&apos;agir pour préserver un patrimoine vivant.
           </p>
-          {/* Stats — filets dorés, sans glassmorphism */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 'clamp(1.5rem,4vw,3rem)', marginTop: '0.5rem' }}>
-            {[{ n: '6', l: 'Membres' }, { n: '14', l: 'Années' }, { n: '100%', l: 'Bénévoles' }].map(({ n, l }, i) => (
-              <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 'clamp(1.5rem,4vw,3rem)' }}>
-                {i > 0 && <span style={{ width: 1, height: 32, background: 'rgba(196,169,107,0.35)', display: 'block' }} />}
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: FONT.alt, fontSize: 'clamp(1.6rem,3vw,2rem)', fontWeight: 600, color: '#fff', lineHeight: 1 }}>{n}</div>
-                  <div style={{ fontSize: '0.6rem', color: 'rgba(196,169,107,0.85)', letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: '0.3rem', fontWeight: 500 }}>{l}</div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
