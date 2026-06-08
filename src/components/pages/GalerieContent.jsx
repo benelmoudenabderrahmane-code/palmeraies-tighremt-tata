@@ -210,7 +210,7 @@ export default function GalerieContent() {
       />
 
       {/* ── Strip marquee séparé ── */}
-      <div style={{ background: C.greenDeep, overflow: 'hidden', padding: '1.25rem 0' }}>
+      <div style={{ background: '#f5f0e8', overflow: 'hidden', padding: '1.25rem 0' }}>
         <motion.div
           style={{ display: 'flex', gap: '1rem', alignItems: 'center', willChange: 'transform' }}
           animate={{ x: ['0%', '-50%'] }}
