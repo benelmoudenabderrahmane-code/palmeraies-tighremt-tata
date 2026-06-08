@@ -1,15 +1,6 @@
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import FloatingDock from '@/components/FloatingDock';
 import ScrollReset from '@/components/ScrollReset';
-import ChatbotClient from '@/components/ui/ChatbotClient';
-import WhatsAppButton from '@/components/ui/WhatsAppButton';
-import BackToTop from '@/components/ui/BackToTop';
-import ToastContainer from '@/components/ui/Toast';
-import CookieBanner from '@/components/ui/CookieBanner';
-import InstallPrompt from '@/components/ui/InstallPrompt';
-import PageTransition from '@/components/ui/PageTransition';
+import ConditionalShell from '@/components/ConditionalShell';
 
 export const viewport = {
   width: 'device-width',
@@ -31,6 +22,37 @@ export const metadata = {
   },
 };
 
+const SW_SCRIPT = `if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'))}`;
+
+const LD_NGO = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "name": "Association Palmeraies Tighremt",
+  "alternateName": "Palmeraies Tighremt TATA",
+  "url": "https://palmeries-tighremt.org",
+  "logo": "https://palmeries-tighremt.org/logo.png",
+  "description": "Association loi 1901 fondee en 2010. Sauvegarde de la palmeraie et developpement du village de Tighremt, province de Tata, Maroc.",
+  "foundingDate": "2010",
+  "areaServed": { "@type": "Place", "name": "Tighremt, Tata, Maroc" },
+  "contactPoint": { "@type": "ContactPoint", "email": "palmeraies.tighremt.tata@gmail.com", "contactType": "customer service" },
+});
+
+const LD_VIDEO = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "Palmeraie de Tighremt - Association Palmeraies Tighremt",
+  "description": "Decouvrez la beaute de la palmeraie de Tighremt, Maroc. Association loi 1901 oeuvrant pour la sauvegarde de cet ecosysteme unique.",
+  "thumbnailUrl": "https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg",
+  "uploadDate": "2024-01-01",
+  "contentUrl": "https://palmeries-tighremt.org/palmeraie-hd.mp4",
+  "embedUrl": "https://palmeries-tighremt.org",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Association Palmeraies Tighremt",
+    "logo": { "@type": "ImageObject", "url": "https://palmeries-tighremt.org/logo.png" },
+  },
+});
+
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
@@ -49,38 +71,9 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Literata:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@300;400;500;600&display=swap"
           rel="stylesheet"
         />
-        <script dangerouslySetInnerHTML={{ __html: `
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
-    }
-  `}} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "NGO",
-          "name": "Association Palmeraies Tighremt",
-          "alternateName": "Palmeraies Tighremt TATA",
-          "url": "https://palmeries-tighremt.org",
-          "logo": "https://palmeries-tighremt.org/logo.png",
-          "description": "Association loi 1901 fondée en 2010. Sauvegarde de la palmeraie et développement du village de Tighremt, province de Tata, Maroc.",
-          "foundingDate": "2010",
-          "areaServed": { "@type": "Place", "name": "Tighremt, Tata, Maroc" },
-          "contactPoint": { "@type": "ContactPoint", "email": "palmeraies.tighremt.tata@gmail.com", "contactType": "customer service" }
-        })}} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "VideoObject",
-          "name": "Palmeraie de Tighremt — Association Palmeraies Tighremt",
-          "description": "Découvrez la beauté de la palmeraie de Tighremt, Maroc. Association loi 1901 œuvrant pour la sauvegarde de cet écosystème unique.",
-          "thumbnailUrl": "https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg",
-          "uploadDate": "2024-01-01",
-          "contentUrl": "https://palmeries-tighremt.org/palmeraie-hd.mp4",
-          "embedUrl": "https://palmeries-tighremt.org",
-          "publisher": {
-            "@type": "Organization",
-            "name": "Association Palmeraies Tighremt",
-            "logo": { "@type": "ImageObject", "url": "https://palmeries-tighremt.org/logo.png" }
-          }
-        })}} />
+        <script dangerouslySetInnerHTML={{ __html: SW_SCRIPT }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: LD_NGO }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: LD_VIDEO }} />
       </head>
       <body suppressHydrationWarning>
         {/* Cursor trail — client only */}
@@ -91,21 +84,9 @@ export default function RootLayout({ children }) {
           Aller au contenu principal
         </a>
 
-        <Navbar />
-
-        <main id="main-content">
+        <ConditionalShell>
           {children}
-        </main>
-
-        <Footer />
-        <FloatingDock />
-        <ChatbotClient />
-        <WhatsAppButton />
-        <BackToTop />
-        <ToastContainer />
-        <CookieBanner />
-        <InstallPrompt />
-        <PageTransition />
+        </ConditionalShell>
       </body>
     </html>
   );
