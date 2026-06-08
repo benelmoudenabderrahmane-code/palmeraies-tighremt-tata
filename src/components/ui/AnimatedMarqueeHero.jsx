@@ -3,16 +3,16 @@ import { motion } from 'framer-motion';
 import { C, FONT } from '@/lib/tokens';
 
 /**
- * Hero plein écran avec marquee d'images défilant en bas.
- * Adapté du pattern AnimatedMarqueeHero — styles inline + tokens de la marque.
+ * Hero plein écran avec image de fond optionnelle + marquee d'images défilant en bas.
  *
  * Props:
- *  - tagline   : petit label en pilule (petites caps)
- *  - title     : titre principal (string ou JSX)
+ *  - tagline     : petit label en pilule (petites caps)
+ *  - title       : titre principal (string ou JSX)
  *  - description : sous-titre
- *  - ctaText   : libellé du bouton
- *  - ctaHref   : lien (ancre ou page)
- *  - images    : tableau d'objets { src, alt }
+ *  - ctaText     : libellé du bouton
+ *  - ctaHref     : lien (ancre ou page)
+ *  - bgImage     : URL image de fond (optionnel — fallback C.greenDeep)
+ *  - images      : tableau d'objets { src, alt } pour le marquee en bas
  */
 
 const FADE = {
@@ -52,8 +52,11 @@ export default function AnimatedMarqueeHero({
   description,
   ctaText,
   ctaHref = '#galerie-grid',
-  videoSrc,
+  bgImage,
+  images = [],
 }) {
+  // Duplication pour une boucle sans couture
+  const loop = [...images, ...images];
 
   return (
     <section
@@ -72,16 +75,14 @@ export default function AnimatedMarqueeHero({
         padding: '0 1.5rem',
       }}
     >
-      {/* ── Vidéo de fond (optionnelle) ── */}
-      {videoSrc && (
+      {/* ── Image de fond (optionnelle) ── */}
+      {bgImage && (
         <>
-          <video
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             aria-hidden="true"
-            autoPlay
-            muted
-            loop
-            playsInline
-            src={videoSrc}
+            src={bgImage}
+            alt=""
             style={{
               position: 'absolute',
               inset: 0,
@@ -194,6 +195,56 @@ export default function AnimatedMarqueeHero({
         </motion.div>
       </div>
 
+      {/* ── Marquee d'images en bas ── */}
+      {loop.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            height: '38%',
+            minHeight: 200,
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 22%, black 80%, transparent)',
+            maskImage: 'linear-gradient(to bottom, transparent, black 22%, black 80%, transparent)',
+            zIndex: 5,
+          }}
+        >
+          <motion.div
+            style={{ display: 'flex', gap: '1rem', height: '100%', alignItems: 'center', willChange: 'transform' }}
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ ease: 'linear', duration: 55, repeat: Infinity }}
+          >
+            {loop.map((img, index) => (
+              <div
+                key={index}
+                style={{
+                  position: 'relative',
+                  flexShrink: 0,
+                  aspectRatio: '3 / 4',
+                  height: 'clamp(150px, 24vw, 240px)',
+                  transform: `rotate(${index % 2 === 0 ? -2 : 4}deg)`,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.src}
+                  alt={img.alt || ''}
+                  loading="lazy"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '1rem',
+                    boxShadow: '0 12px 30px rgba(0,0,0,0.35)',
+                    border: '3px solid rgba(255,255,255,0.06)',
+                  }}
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 }

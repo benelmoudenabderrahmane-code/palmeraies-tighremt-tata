@@ -310,11 +310,17 @@ export default function DonContent() {
         justifyContent: 'center', alignItems: 'center',
         padding: 'clamp(8rem,14vw,11rem) 1.5rem clamp(4rem,8vw,6rem)',
         overflow: 'hidden', textAlign: 'center',
-        background: `linear-gradient(168deg, #2a1206 0%, ${C.ochreDark} 50%, ${C.ochre} 100%)`,
+        background: '#1a0d00',
       }}>
+        {/* Image de fond */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img aria-hidden="true" src="/don-hero.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
+        {/* Overlay sombre pour lisibilité */}
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(168deg, rgba(10,5,0,0.62) 0%, rgba(10,5,0,0.38) 50%, rgba(10,5,0,0.55) 100%)', zIndex: 1 }} />
+
         {/* Lignes de dunes ondulantes (motif désert chaud) */}
         <svg aria-hidden="true" viewBox="0 0 1440 600" preserveAspectRatio="none"
-          style={{ position: 'absolute', inset: 0, width: '120%', height: '100%', left: '-10%', pointerEvents: 'none', opacity: 0.5 }}>
+          style={{ position: 'absolute', inset: 0, width: '120%', height: '100%', left: '-10%', pointerEvents: 'none', opacity: 0.5, zIndex: 2 }}>
           <g className="don-dune-a" fill="none" stroke="#FFD27A" strokeWidth="1.1" opacity="0.5">
             <path d="M-100,160 C260,80 540,240 820,160 C1080,90 1320,200 1640,130" />
             <path d="M-100,215 C260,135 540,295 820,215 C1080,145 1320,255 1640,185" />
@@ -333,14 +339,14 @@ export default function DonContent() {
           position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
           fontFamily: FONT.alt, fontSize: 'clamp(14rem,34vw,28rem)',
           fontWeight: 500, color: 'rgba(255,235,160,0.07)', lineHeight: 1, pointerEvents: 'none',
-          userSelect: 'none',
+          userSelect: 'none', zIndex: 2,
         }}>
           ♥
         </div>
 
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(20,8,0,0.22)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(20,8,0,0.22)', pointerEvents: 'none', zIndex: 2 }} />
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 720 }}>
+        <div style={{ position: 'relative', zIndex: 3, maxWidth: 720 }}>
           <div style={{ fontSize: '0.63rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,210,120,0.9)', fontWeight: 500, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
             <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(255,210,120,0.6)' }} />
             Association Palmeraies Tighremt

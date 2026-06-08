@@ -205,7 +205,8 @@ export default function GalerieContent() {
         description="La beauté de la palmeraie, du ksar et du village à travers nos photos — et celles de la ville de Tata."
         ctaText="Découvrir la galerie"
         ctaHref="#galerie-grid"
-        videoSrc="/galerie-hero.mp4"
+        bgImage="/galerie-hero.png"
+        images={MARQUEE}
       />
 
       <SectionDivider />
