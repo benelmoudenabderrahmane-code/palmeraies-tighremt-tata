@@ -89,6 +89,7 @@ export default function AnimatedMarqueeHero({
               width: '100%',
               height: '100%',
               objectFit: 'cover',
+              objectPosition: 'top center',
               zIndex: 0,
             }}
           />
