@@ -76,7 +76,7 @@ export default function EquipeContent() {
   useScrollReveal();
 
   return (
-    <>
+    <div style={{ paddingTop: '6rem', minHeight: '100vh', background: C.sand }}>
       <style>{`
         .team-carousel-track::-webkit-scrollbar { display: none; }
       `}</style>
@@ -196,6 +196,6 @@ export default function EquipeContent() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

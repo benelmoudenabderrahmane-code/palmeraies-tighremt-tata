@@ -172,7 +172,7 @@ export default function MissionContent() {
   useScrollReveal();
 
   return (
-    <>
+    <div style={{ paddingTop: '6rem', minHeight: '100vh', background: C.sand }}>
       {/* ══ 1. HERO ══════════════════════════════════════════════════════════ */}
       <section style={{ background: C.greenDeep, color: '#fff', padding: 'clamp(5rem,10vw,7rem) 1.5rem clamp(3.5rem,6vw,5rem)', textAlign: 'center' }}>
         <div className="reveal" style={{ maxWidth: 700, margin: '0 auto' }}>
@@ -393,6 +393,6 @@ export default function MissionContent() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
