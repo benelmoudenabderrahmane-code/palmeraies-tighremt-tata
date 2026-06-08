@@ -53,6 +53,7 @@ export default function AnimatedMarqueeHero({
   ctaText,
   ctaHref = '#galerie-grid',
   images = [],
+  videoSrc,
 }) {
   // Duplication pour une boucle sans couture
   const loop = [...images, ...images];
@@ -74,6 +75,38 @@ export default function AnimatedMarqueeHero({
         padding: '0 1.5rem',
       }}
     >
+      {/* ── Vidéo de fond (optionnelle) ── */}
+      {videoSrc && (
+        <>
+          <video
+            aria-hidden="true"
+            autoPlay
+            muted
+            loop
+            playsInline
+            src={videoSrc}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 0,
+            }}
+          />
+          {/* Overlay sombre pour lisibilité du texte */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to bottom, rgba(10,28,15,0.55) 0%, rgba(10,28,15,0.38) 55%, rgba(10,28,15,0.70) 100%)',
+              zIndex: 1,
+            }}
+          />
+        </>
+      )}
+
       {/* Halo doré décoratif */}
       <div
         aria-hidden="true"
@@ -86,6 +119,7 @@ export default function AnimatedMarqueeHero({
           height: 400,
           background: 'radial-gradient(ellipse at center, rgba(196,169,107,0.16) 0%, transparent 70%)',
           pointerEvents: 'none',
+          zIndex: 2,
         }}
       />
 

@@ -206,6 +206,7 @@ export default function GalerieContent() {
         ctaText="Découvrir la galerie"
         ctaHref="#galerie-grid"
         images={MARQUEE}
+        videoSrc="/galerie-hero.mp4"
       />
 
       <SectionDivider />
