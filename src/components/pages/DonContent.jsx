@@ -312,39 +312,11 @@ export default function DonContent() {
         overflow: 'hidden', textAlign: 'center',
         background: '#1a0d00',
       }}>
-        {/* Image de fond */}
+        {/* Image de fond pleine qualité */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img aria-hidden="true" src="/don-hero.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
-        {/* Overlay sombre pour lisibilité */}
-        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(168deg, rgba(10,5,0,0.62) 0%, rgba(10,5,0,0.38) 50%, rgba(10,5,0,0.55) 100%)', zIndex: 1 }} />
-
-        {/* Lignes de dunes ondulantes (motif désert chaud) */}
-        <svg aria-hidden="true" viewBox="0 0 1440 600" preserveAspectRatio="none"
-          style={{ position: 'absolute', inset: 0, width: '120%', height: '100%', left: '-10%', pointerEvents: 'none', opacity: 0.5, zIndex: 2 }}>
-          <g className="don-dune-a" fill="none" stroke="#FFD27A" strokeWidth="1.1" opacity="0.5">
-            <path d="M-100,160 C260,80 540,240 820,160 C1080,90 1320,200 1640,130" />
-            <path d="M-100,215 C260,135 540,295 820,215 C1080,145 1320,255 1640,185" />
-          </g>
-          <g className="don-dune-b" fill="none" stroke="#FFE8A0" strokeWidth="1" opacity="0.38">
-            <path d="M-100,330 C300,250 560,410 860,320 C1120,245 1340,370 1640,290" />
-            <path d="M-100,385 C300,305 560,465 860,375 C1120,300 1340,425 1640,345" />
-          </g>
-          <g className="don-dune-c" fill="none" stroke="#fff" strokeWidth="1.3" opacity="0.28">
-            <path d="M-100,485 C320,415 600,555 900,465 C1160,390 1380,505 1640,435" />
-          </g>
-        </svg>
-
-        {/* Filigrane éditorial : cœur */}
-        <div aria-hidden="true" style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-          fontFamily: FONT.alt, fontSize: 'clamp(14rem,34vw,28rem)',
-          fontWeight: 500, color: 'rgba(255,235,160,0.07)', lineHeight: 1, pointerEvents: 'none',
-          userSelect: 'none', zIndex: 2,
-        }}>
-          ♥
-        </div>
-
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(20,8,0,0.22)', pointerEvents: 'none', zIndex: 2 }} />
+        {/* Overlay léger — juste pour la lisibilité du texte blanc */}
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.42) 100%)', zIndex: 1 }} />
 
         <div style={{ position: 'relative', zIndex: 3, maxWidth: 720 }}>
           <div style={{ fontSize: '0.63rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,210,120,0.9)', fontWeight: 500, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
