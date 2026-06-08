@@ -92,13 +92,13 @@ export default function AnimatedMarqueeHero({
               zIndex: 0,
             }}
           />
-          {/* Overlay sombre pour lisibilité du texte */}
+          {/* Overlay léger — lisibilité du texte sans écraser l'image */}
           <div
             aria-hidden="true"
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to bottom, rgba(10,28,15,0.55) 0%, rgba(10,28,15,0.38) 55%, rgba(10,28,15,0.70) 100%)',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.42) 100%)',
               zIndex: 1,
             }}
           />
