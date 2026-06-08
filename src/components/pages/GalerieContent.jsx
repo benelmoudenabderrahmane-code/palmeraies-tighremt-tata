@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SectionDivider from '@/components/ui/SectionDivider';
@@ -198,7 +199,7 @@ export default function GalerieContent() {
         @media (max-width: 560px) { .gal-masonry { columns: 1; } }
       `}</style>
 
-      {/* ── Hero marquee animé ── */}
+      {/* ── Hero — image pleine sans marquee ── */}
       <AnimatedMarqueeHero
         tagline="Galerie · Tata & Tighremt"
         title="Tighremt en images"
@@ -206,8 +207,36 @@ export default function GalerieContent() {
         ctaText="Découvrir la galerie"
         ctaHref="#galerie-grid"
         bgImage="/galerie-hero.png"
-        images={MARQUEE}
       />
+
+      {/* ── Strip marquee séparé ── */}
+      <div style={{ background: C.greenDeep, overflow: 'hidden', padding: '1.25rem 0' }}>
+        <motion.div
+          style={{ display: 'flex', gap: '1rem', alignItems: 'center', willChange: 'transform' }}
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ ease: 'linear', duration: 55, repeat: Infinity }}
+        >
+          {[...MARQUEE, ...MARQUEE].map((img, i) => (
+            <div key={i} style={{
+              flexShrink: 0,
+              width: 'clamp(160px, 22vw, 260px)',
+              aspectRatio: '3 / 2',
+              borderRadius: '0.75rem',
+              overflow: 'hidden',
+              transform: `rotate(${i % 2 === 0 ? -1.5 : 1.5}deg)`,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={img.src}
+                alt={img.alt || ''}
+                loading="lazy"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </div>
+          ))}
+        </motion.div>
+      </div>
 
       <SectionDivider />
 
