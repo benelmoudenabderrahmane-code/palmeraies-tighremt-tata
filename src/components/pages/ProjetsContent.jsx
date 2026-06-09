@@ -1060,7 +1060,7 @@ function ScrollBentoHero() {
         </div>
       </div>
 
-      <ContainerScroll>
+      <ContainerScroll style={{ background: C.greenDeep }}>
         {/* ── Bento grid slides up over the title ── */}
         <BentoGrid style={{ background: C.greenDeep }}>
           {/* Big dominant cell — col 1-6, row 1-3 */}
