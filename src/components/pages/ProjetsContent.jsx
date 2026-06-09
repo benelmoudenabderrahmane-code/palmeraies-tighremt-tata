@@ -1012,28 +1012,26 @@ function ScrollBentoHero() {
   const top5 = PROJECTS.slice(0, 5);
 
   return (
-    <div style={{ background: C.greenDeep, paddingTop: '6rem', marginBottom: '-1px', position: 'relative' }}>
-      {/* ── Image hero Projets ── */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        aria-hidden="true"
-        src="/projet-hero.png"
-        alt=""
-        style={{
-          position: 'absolute', top: 0, left: 0, width: '100%',
-          height: 'clamp(420px, 60vh, 720px)',
-          objectFit: 'cover', objectPosition: 'center center',
-          zIndex: 0, display: 'block',
-        }}
-      />
-      {/* Dégradé : image visible en haut → fondu vert en bas */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', top: 0, left: 0, width: '100%',
-        height: 'clamp(420px, 60vh, 720px)',
-        background: 'linear-gradient(to bottom, rgba(19,61,32,0.45) 0%, rgba(19,61,32,0.62) 55%, rgb(19,61,32) 100%)',
-        zIndex: 1,
-      }} />
-      <ContainerScroll style={{ position: 'relative', zIndex: 2 }}>
+    <div style={{ background: C.greenDeep, paddingTop: '6rem', marginBottom: '-1px' }}>
+
+      {/* ── Image hero Projets — pleine qualité 16:9, aucun recadrage ── */}
+      <div style={{ position: 'relative', width: '100%' }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          aria-hidden="true"
+          src="/projet-hero.png"
+          alt=""
+          style={{ width: '100%', height: 'auto', display: 'block' }}
+        />
+        {/* Fondu bas vers vert pour transition propre */}
+        <div aria-hidden="true" style={{
+          position: 'absolute', bottom: 0, left: 0, width: '100%', height: '35%',
+          background: 'linear-gradient(to bottom, transparent, rgb(19,61,32))',
+          pointerEvents: 'none',
+        }} />
+      </div>
+
+      <ContainerScroll>
         {/* ── Sticky hero title ── */}
         <ContainerScale>
           <div style={{ textAlign: 'center', padding: '0 1.5rem', maxWidth: 740, position: 'relative', zIndex: 20 }}>
