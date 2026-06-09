@@ -206,7 +206,7 @@ export default function GalerieContent() {
         description="La beauté de la palmeraie, du ksar et du village à travers nos photos — et celles de la ville de Tata."
         ctaText="Découvrir la galerie"
         ctaHref="#galerie-grid"
-        bgImage="/galerie-hero.png"
+        bgImage="/galerie-hero.png?v=2"
       />
 
       {/* ── Strip marquee séparé ── */}
