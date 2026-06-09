@@ -1060,45 +1060,37 @@ function ScrollBentoHero() {
         </div>
       </div>
 
-      <ContainerScroll style={{ background: C.greenDeep }}>
-        {/* ── Bento grid slides up over the title ── */}
-        <BentoGrid style={{ background: C.greenDeep }}>
-          {/* Big dominant cell — col 1-6, row 1-3 */}
-          <BentoCell colSpan={6} rowSpan={3} colStart={1} rowStart={1} delay={0}>
-            <a href={`#${top5[0].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
-              <BentoCard project={top5[0]} fill />
-            </a>
-          </BentoCell>
-
-          {/* Tall right top — col 7-8, row 1-2 */}
-          <BentoCell colSpan={2} rowSpan={2} colStart={7} rowStart={1} delay={0.04}>
-            <a href={`#${top5[1].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
-              <BentoCard project={top5[1]} />
-            </a>
-          </BentoCell>
-
-          {/* Tall right bottom — col 7-8, row 3 */}
-          <BentoCell colSpan={2} rowSpan={1} colStart={7} rowStart={3} delay={0.07}>
-            <a href={`#${top5[2].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
-              <BentoCard project={top5[2]} />
-            </a>
-          </BentoCell>
-
-          {/* Bottom wide left — col 1-4, row 4-5 */}
-          <BentoCell colSpan={4} rowSpan={2} colStart={1} rowStart={4} delay={0.1}>
-            <a href={`#${top5[3].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
-              <BentoCard project={top5[3]} />
-            </a>
-          </BentoCell>
-
-          {/* Bottom wide right — col 5-8, row 4-5 */}
-          <BentoCell colSpan={4} rowSpan={2} colStart={5} rowStart={4} delay={0.13}>
-            <a href={`#${top5[4].id}`} style={{ display: 'block', width: '100%', height: '100%', textDecoration: 'none' }}>
-              <BentoCard project={top5[4]} />
-            </a>
-          </BentoCell>
-        </BentoGrid>
-      </ContainerScroll>
+      {/* ── Bento grid statique — fond vert explicite, aucune transparence ── */}
+      <div style={{
+        background: C.greenDeep,
+        padding: '1.5rem',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(8, 1fr)',
+        gridTemplateRows: 'repeat(5, 14vw)',
+        gap: '0.75rem',
+        minHeight: '70vh',
+      }}>
+        {/* Big dominant — col 1-6, row 1-3 */}
+        <a href={`#${top5[0].id}`} style={{ gridColumn: '1 / 7', gridRow: '1 / 4', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
+          <BentoCard project={top5[0]} fill />
+        </a>
+        {/* Tall right top — col 7-8, row 1-2 */}
+        <a href={`#${top5[1].id}`} style={{ gridColumn: '7 / 9', gridRow: '1 / 3', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
+          <BentoCard project={top5[1]} />
+        </a>
+        {/* Tall right bottom — col 7-8, row 3 */}
+        <a href={`#${top5[2].id}`} style={{ gridColumn: '7 / 9', gridRow: '3 / 4', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
+          <BentoCard project={top5[2]} />
+        </a>
+        {/* Bottom wide left — col 1-4, row 4-5 */}
+        <a href={`#${top5[3].id}`} style={{ gridColumn: '1 / 5', gridRow: '4 / 6', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
+          <BentoCard project={top5[3]} />
+        </a>
+        {/* Bottom wide right — col 5-8, row 4-5 */}
+        <a href={`#${top5[4].id}`} style={{ gridColumn: '5 / 9', gridRow: '4 / 6', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
+          <BentoCard project={top5[4]} />
+        </a>
+      </div>
     </div>
   );
 }
