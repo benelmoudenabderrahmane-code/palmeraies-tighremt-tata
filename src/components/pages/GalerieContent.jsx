@@ -162,9 +162,10 @@ export default function GalerieContent() {
         .gal-filter {
           background: none; border: none; cursor: pointer;
           font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
-          font-weight: 500; padding: 0 0 0.3rem;
+          font-weight: 500; padding: 0.7rem 0 0.5rem; min-height: 44px;
           position: relative; transition: color 0.25s;
         }
+        .gal-filter::after { bottom: 0.3rem; }
         .gal-filter::after {
           content: '';
           position: absolute; bottom: 0; left: 0;

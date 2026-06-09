@@ -438,3 +438,10 @@ html.dark .card-premium { background: var(--card-bg); }
     animation: none !important;
   }
 }
+
+/* ── Mobile : dégager le bas du footer des boutons flottants ── */
+@media (max-width: 600px) {
+  footer#contact {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important;
+  }
+}

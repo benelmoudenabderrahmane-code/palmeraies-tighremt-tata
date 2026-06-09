@@ -315,7 +315,8 @@ export default function DonContent() {
           user-select: none;
         }
         .frequency-option {
-          padding: 0.5rem 1.4rem;
+          padding: 0.72rem 1.4rem;
+          min-height: 44px;
           border-radius: 999px;
           font-size: 0.82rem;
           font-weight: 600;

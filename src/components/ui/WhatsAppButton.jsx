@@ -18,7 +18,7 @@ export default function WhatsAppButton() {
       href={url} target="_blank" rel="noopener noreferrer"
       aria-label="Contactez-nous sur WhatsApp"
       style={{
-        position: 'fixed', bottom: '5.5rem', right: '1.25rem', zIndex: 200,
+        position: 'fixed', bottom: 'calc(5.5rem + env(safe-area-inset-bottom))', right: '1.25rem', zIndex: 200,
         width: 52, height: 52, borderRadius: '50%',
         background: '#25d366', display: 'flex', alignItems: 'center', justifyContent: 'center',
         boxShadow: '0 4px 20px rgba(37,211,102,0.4)',

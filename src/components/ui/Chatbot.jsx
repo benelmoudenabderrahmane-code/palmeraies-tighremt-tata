@@ -295,7 +295,7 @@ export default function Chatbot() {
         onClick={() => setOpen(o => !o)}
         aria-label={open ? 'Fermer le chat' : 'Ouvrir le chat'}
         style={{
-          position: 'fixed', bottom: 24, right: 24, zIndex: 9000,
+          position: 'fixed', bottom: 'calc(24px + env(safe-area-inset-bottom))', right: 24, zIndex: 9000,
           width: 58, height: 58, borderRadius: '50%',
           background: open ? GD : `linear-gradient(135deg, ${G}, ${GD})`,
           border: 'none', cursor: 'pointer',

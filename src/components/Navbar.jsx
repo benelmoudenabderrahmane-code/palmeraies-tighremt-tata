@@ -64,8 +64,8 @@ export default function Navbar() {
           initialLoadAnimation={false}
         />
         <button onClick={() => setSearchOpen(true)} aria-label="Ouvrir la recherche"
-          style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(232,131,42,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <Search size={15} color={transparent ? '#fff' : C.inkMuted} />
+          style={{ width: 44, height: 44, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(232,131,42,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Search size={16} color={transparent ? '#fff' : C.inkMuted} />
         </button>
         {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
       </div>
