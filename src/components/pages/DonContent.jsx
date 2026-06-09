@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
   Heart, ChevronDown, CalendarDays, FolderCheck, Users, Droplets,
@@ -147,6 +148,42 @@ function ProgressBar({ item, inView, delay = 0, index }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/* ─── RotatingText ────────────────────────────────────────────── */
+const DON_TEXTS = [
+  'change une vie',
+  'plante un palmier',
+  'nourrit une famille',
+  'restaure une foggara',
+  'éduque un enfant',
+  'préserve un héritage',
+];
+
+function RotatingText({ texts, interval = 2600 }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setIndex(i => (i + 1) % texts.length), interval);
+    return () => clearInterval(id);
+  }, [texts.length, interval]);
+
+  return (
+    <span style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', minWidth: '14ch' }}>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.em
+          key={index}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '-110%', opacity: 0 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 320, duration: 0.45 }}
+          style={{ display: 'block', fontWeight: 400, fontStyle: 'italic', color: 'rgba(255,235,160,1)' }}
+        >
+          {texts[index]}
+        </motion.em>
+      </AnimatePresence>
+    </span>
   );
 }
 
@@ -333,9 +370,9 @@ export default function DonContent() {
             <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(255,210,120,0.6)' }} />
           </div>
 
-          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(3rem, 8vw, 5.5rem)', fontWeight: 300, lineHeight: 1.05, color: '#fff', letterSpacing: '-0.02em', marginBottom: '1.25rem', textShadow: '0 2px 40px rgba(0,0,0,0.4)' }}>
+          <h1 style={{ fontFamily: FONT.alt, fontSize: 'clamp(3rem, 8vw, 5.5rem)', fontWeight: 300, lineHeight: 1.15, color: '#fff', letterSpacing: '-0.02em', marginBottom: '1.25rem', textShadow: '0 2px 40px rgba(0,0,0,0.4)' }}>
             Votre geste<br />
-            <em style={{ fontWeight: 400, color: 'rgba(255,235,160,1)' }}>change une vie</em>
+            <RotatingText texts={DON_TEXTS} interval={2600} />
           </h1>
 
           <div style={{ width: 56, height: 1.5, background: 'rgba(255,210,120,0.7)', margin: '0 auto 1.5rem' }} />
