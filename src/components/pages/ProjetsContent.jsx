@@ -1012,7 +1012,7 @@ function ScrollBentoHero() {
   const top5 = PROJECTS.slice(0, 5);
 
   return (
-    <div style={{ background: C.greenDeep, marginBottom: '-1px' }}>
+    <div style={{ background: '#000', marginBottom: '-1px' }}>
 
       {/* ── Hero image pleine qualité + titre centré par-dessus ── */}
       <div style={{ position: 'relative', width: '100%' }}>
@@ -1026,7 +1026,7 @@ function ScrollBentoHero() {
         {/* Overlay sombre léger pour lisibilité du texte */}
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.22) 50%, rgba(19,61,32,0.85) 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.22) 50%, rgba(0,0,0,0.62) 100%)',
           pointerEvents: 'none',
         }} />
         {/* Titre centré sur l'image */}
