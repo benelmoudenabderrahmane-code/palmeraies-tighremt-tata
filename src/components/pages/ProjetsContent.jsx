@@ -1009,7 +1009,6 @@ function BentoCard({ project, fill = false }) {
 /* ── Hero Projets — image plein écran + grille 3×3 interactive ───────────── */
 function ScrollBentoHero() {
   const top9 = PROJECTS.slice(0, 9);
-  const top5 = PROJECTS.slice(0, 5);
 
   return (
     <div style={{ marginBottom: '-1px' }}>
@@ -1088,33 +1087,6 @@ function ScrollBentoHero() {
             <DynamicFrameLayout projects={top9} hoverSize={6} gap={5} />
           </div>
         </div>
-      </div>
-
-      {/* ── Bento grid statique (fond vert, aucune transparence) ── */}
-      <div style={{
-        background: C.greenDeep,
-        padding: '1.5rem',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(8, 1fr)',
-        gridTemplateRows: 'repeat(5, 14vw)',
-        gap: '0.75rem',
-        minHeight: '70vh',
-      }}>
-        <a href={`#${top5[0].id}`} style={{ gridColumn: '1 / 7', gridRow: '1 / 4', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
-          <BentoCard project={top5[0]} fill />
-        </a>
-        <a href={`#${top5[1].id}`} style={{ gridColumn: '7 / 9', gridRow: '1 / 3', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
-          <BentoCard project={top5[1]} />
-        </a>
-        <a href={`#${top5[2].id}`} style={{ gridColumn: '7 / 9', gridRow: '3 / 4', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
-          <BentoCard project={top5[2]} />
-        </a>
-        <a href={`#${top5[3].id}`} style={{ gridColumn: '1 / 5', gridRow: '4 / 6', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
-          <BentoCard project={top5[3]} />
-        </a>
-        <a href={`#${top5[4].id}`} style={{ gridColumn: '5 / 9', gridRow: '4 / 6', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
-          <BentoCard project={top5[4]} />
-        </a>
       </div>
     </div>
   );
