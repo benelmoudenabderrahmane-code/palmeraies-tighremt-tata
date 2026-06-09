@@ -54,6 +54,7 @@ export default function AnimatedMarqueeHero({
   ctaHref = '#galerie-grid',
   bgImage,
   images = [],
+  fadeColor,
 }) {
   // Duplication pour une boucle sans couture
   const loop = [...images, ...images];
@@ -120,6 +121,23 @@ export default function AnimatedMarqueeHero({
           zIndex: 2,
         }}
       />
+
+      {/* Dégradé bas — fond l'image hero vers la section suivante (transition douce) */}
+      {fadeColor && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: '38%',
+            background: `linear-gradient(to bottom, transparent 0%, ${fadeColor} 100%)`,
+            pointerEvents: 'none',
+            zIndex: 3,
+          }}
+        />
+      )}
 
       {/* ── Contenu texte ── */}
       <div style={{ zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 760 }}>

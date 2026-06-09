@@ -207,10 +207,11 @@ export default function GalerieContent() {
         ctaText="Découvrir la galerie"
         ctaHref="#galerie-grid"
         bgImage="/galerie-hero.png?v=2"
+        fadeColor="#f5f0e8"
       />
 
       {/* ── Strip marquee séparé ── */}
-      <div style={{ background: '#f5f0e8', overflow: 'hidden', padding: '1.25rem 0' }}>
+      <div style={{ background: '#f5f0e8', overflow: 'hidden', padding: '2.25rem 0 1.5rem', marginTop: '-1px' }}>
         <motion.div
           style={{ display: 'flex', gap: '1rem', alignItems: 'center', willChange: 'transform' }}
           animate={{ x: ['0%', '-50%'] }}
