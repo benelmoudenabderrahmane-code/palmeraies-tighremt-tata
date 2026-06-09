@@ -7,7 +7,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
 import SectionDivider from '@/components/ui/SectionDivider';
 import { TextEffect } from '@/components/ui/TextEffect';
-import { ContainerScroll, ContainerScale, BentoGrid, BentoCell } from '@/components/ui/ScrollBentoGrid';
+import DynamicFrameLayout from '@/components/ui/DynamicFrameLayout';
 
 const ImageComparison = dynamic(
   () => import('@/components/ui/ImageComparison'),
@@ -1006,61 +1006,91 @@ function BentoCard({ project, fill = false }) {
   );
 }
 
-/* ── Scroll Bento Hero (replaces PageHero + ProjectsIndex) ───────────────── */
+/* ── Hero Projets — image plein écran + grille 3×3 interactive ───────────── */
 function ScrollBentoHero() {
-  // Projects layout: [0]=big, [1][2]=tall right, [3][4]=wide bottom-left/right
+  const top9 = PROJECTS.slice(0, 9);
   const top5 = PROJECTS.slice(0, 5);
 
   return (
     <div style={{ marginBottom: '-1px' }}>
 
-      {/* ── Hero image plein écran (100vh) + titre centré par-dessus ── */}
+      {/* ── Hero 100vh ── */}
       <div style={{ position: 'relative', width: '100%', height: '100vh', minHeight: 520, overflow: 'hidden' }}>
+        {/* Background */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           aria-hidden="true"
           src="/projet-hero.png"
           alt=""
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center',
+            display: 'block',
+          }}
         />
-        {/* Overlay sombre léger pour lisibilité du texte */}
+
+        {/* Overlay — plus sombre à gauche (texte), plus clair à droite (grille) */}
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.55) 100%)',
+          background: 'linear-gradient(105deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 42%, rgba(0,0,0,0.12) 100%)',
           pointerEvents: 'none',
         }} />
-        {/* Titre centré sur l'image */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          textAlign: 'center', padding: '6rem 1.5rem 2rem',
-        }}>
-          <p style={{
-            fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase',
-            color: 'rgba(196,169,107,0.9)', marginBottom: '1rem',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-          }}>
-            <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
-            Nos projets
-            <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
-          </p>
-          <h1 style={{
-            fontFamily: FONT.alt,
-            fontSize: 'clamp(2.4rem,6vw,4.5rem)',
-            fontWeight: 300, lineHeight: 1.15, color: '#fff',
-            margin: '0 0 1rem', textShadow: '0 2px 30px rgba(0,0,0,0.5)',
-          }}>
-            {PROJECTS.length} projets pour<br />
-            <RotatingText texts={PROJETS_TEXTS} interval={2600} />
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.93rem', lineHeight: 1.7, fontWeight: 300 }}>
-            Environnement · Infrastructure · Éducation · Solidarité · Mémoire
-          </p>
+
+        {/* Layout gauche / droite */}
+        <div
+          className="proj-hero-content"
+          style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center',
+            padding: 'clamp(5rem,8vw,7rem) clamp(1.5rem,3vw,3.5rem) clamp(1.5rem,3vw,2.5rem)',
+            gap: 'clamp(1.5rem,3vw,3rem)',
+          }}
+        >
+          {/* ── Texte gauche ── */}
+          <div className="proj-hero-left" style={{ flex: '0 0 42%', maxWidth: 460 }}>
+            <p style={{
+              fontSize: '0.64rem', letterSpacing: '0.3em', textTransform: 'uppercase',
+              color: 'rgba(196,169,107,0.9)', marginBottom: '1rem',
+              display: 'flex', alignItems: 'center', gap: '0.75rem',
+            }}>
+              <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
+              Nos projets
+            </p>
+            <h1 style={{
+              fontFamily: FONT.alt,
+              fontSize: 'clamp(2rem,4.5vw,3.8rem)',
+              fontWeight: 300, lineHeight: 1.15, color: '#fff',
+              margin: '0 0 1rem', textShadow: '0 2px 30px rgba(0,0,0,0.45)',
+            }}>
+              {PROJECTS.length} projets pour<br />
+              <RotatingText texts={PROJETS_TEXTS} interval={2600} />
+            </h1>
+            <p style={{
+              color: 'rgba(255,255,255,0.62)', fontSize: '0.86rem',
+              lineHeight: 1.7, fontWeight: 300, marginBottom: '1.5rem',
+            }}>
+              Environnement · Infrastructure · Éducation · Solidarité · Mémoire
+            </p>
+            <p style={{
+              fontSize: '0.58rem', color: 'rgba(255,255,255,0.38)',
+              letterSpacing: '0.05em',
+            }}>
+              Survolez · cliquez pour voir avant / après
+            </p>
+          </div>
+
+          {/* ── Grille 3×3 droite ── */}
+          <div
+            className="proj-hero-grid"
+            style={{ flex: 1, height: 'clamp(280px,62vh,560px)', minWidth: 0 }}
+          >
+            <DynamicFrameLayout projects={top9} hoverSize={6} gap={5} />
+          </div>
         </div>
       </div>
 
-      {/* ── Bento grid statique — fond vert explicite, aucune transparence ── */}
+      {/* ── Bento grid statique (fond vert, aucune transparence) ── */}
       <div style={{
         background: C.greenDeep,
         padding: '1.5rem',
@@ -1070,23 +1100,18 @@ function ScrollBentoHero() {
         gap: '0.75rem',
         minHeight: '70vh',
       }}>
-        {/* Big dominant — col 1-6, row 1-3 */}
         <a href={`#${top5[0].id}`} style={{ gridColumn: '1 / 7', gridRow: '1 / 4', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
           <BentoCard project={top5[0]} fill />
         </a>
-        {/* Tall right top — col 7-8, row 1-2 */}
         <a href={`#${top5[1].id}`} style={{ gridColumn: '7 / 9', gridRow: '1 / 3', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
           <BentoCard project={top5[1]} />
         </a>
-        {/* Tall right bottom — col 7-8, row 3 */}
         <a href={`#${top5[2].id}`} style={{ gridColumn: '7 / 9', gridRow: '3 / 4', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
           <BentoCard project={top5[2]} />
         </a>
-        {/* Bottom wide left — col 1-4, row 4-5 */}
         <a href={`#${top5[3].id}`} style={{ gridColumn: '1 / 5', gridRow: '4 / 6', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
           <BentoCard project={top5[3]} />
         </a>
-        {/* Bottom wide right — col 5-8, row 4-5 */}
         <a href={`#${top5[4].id}`} style={{ gridColumn: '5 / 9', gridRow: '4 / 6', display: 'block', textDecoration: 'none', borderRadius: '0.75rem', overflow: 'hidden' }}>
           <BentoCard project={top5[4]} />
         </a>
@@ -1136,6 +1161,11 @@ export default function ProjetsContent() {
   return (
     <>
       <style>{`
+        @media (max-width: 700px) {
+          .proj-hero-grid { display: none !important; }
+          .proj-hero-left { flex: 0 0 100% !important; max-width: 100% !important; }
+          .proj-hero-content { justify-content: center !important; }
+        }
         @media (max-width: 440px) {
           .proj-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
