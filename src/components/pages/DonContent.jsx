@@ -314,7 +314,7 @@ export default function DonContent() {
       }}>
         {/* Image de fond pleine qualité */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img aria-hidden="true" src="/don-hero.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
+        <img aria-hidden="true" src="/don-hero.png?v=3" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
         {/* Overlay léger — juste pour la lisibilité du texte blanc */}
         <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.42) 100%)', zIndex: 1 }} />
 
