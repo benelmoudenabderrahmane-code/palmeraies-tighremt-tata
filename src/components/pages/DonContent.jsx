@@ -312,11 +312,19 @@ export default function DonContent() {
         overflow: 'hidden', textAlign: 'center',
         background: '#1a0d00',
       }}>
-        {/* Image de fond pleine qualité */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img aria-hidden="true" src="/don-hero.png?v=3" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
-        {/* Overlay léger — juste pour la lisibilité du texte blanc */}
-        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.42) 100%)', zIndex: 1 }} />
+        {/* Vidéo de fond 16:9 pleine qualité */}
+        <video
+          aria-hidden="true"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+        >
+          <source src="/don-hero.mp4" type="video/mp4" />
+        </video>
+        {/* Overlay léger — lisibilité du texte sans écraser la vidéo */}
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.45) 100%)', zIndex: 1 }} />
 
         <div style={{ position: 'relative', zIndex: 3, maxWidth: 720 }}>
           <div style={{ fontSize: '0.63rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,210,120,0.9)', fontWeight: 500, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
