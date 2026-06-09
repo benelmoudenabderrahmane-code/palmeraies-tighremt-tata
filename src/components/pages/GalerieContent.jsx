@@ -114,11 +114,46 @@ const MARQUEE = [
 const THEMES       = ['tous', 'tighremt', 'palmeraie', 'village', 'paysage', 'tata'];
 const THEME_LABELS = { tous: 'Tous', tighremt: 'Tighremt', palmeraie: 'Palmeraie', village: 'Village', paysage: 'Paysage', tata: 'Tata' };
 
+/* ── Vignette galerie (image + overlay légende + ouverture lightbox) ── */
+function GalThumb({ img, idx, onOpen, priority = false }) {
+  return (
+    <div
+      className="gal-cell"
+      onClick={() => onOpen(idx)}
+      onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onOpen(idx)}
+      role="button"
+      tabIndex={0}
+      aria-label={`Voir en grand : ${img.alt}`}
+      style={{ position: 'relative' }}
+    >
+      <Image
+        src={img.src}
+        alt={img.alt}
+        fill
+        sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
+        priority={priority}
+        style={{ objectFit: 'cover' }}
+      />
+      <div className="gal-overlay">
+        <span className="gal-caption">{img.alt}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function GalerieContent() {
   useScrollReveal();
   const [theme, setTheme]          = useState('tous');
   const [lightboxIdx, setLightbox] = useState(null);
   const filtered = theme === 'tous' ? IMAGES : IMAGES.filter(img => img.theme === theme);
+
+  // Distribution en 3 colonnes : la colonne centrale reste fixe (sticky) pendant le scroll
+  const withIdx  = filtered.map((img, i) => ({ img, idx: i }));
+  const sticky   = withIdx.slice(0, 3);
+  const rest     = withIdx.slice(3);
+  const leftCol  = rest.filter((_, i) => i % 2 === 0);
+  const rightCol = rest.filter((_, i) => i % 2 === 1);
+  const stickyRows = Math.max(sticky.length, 1);
 
   return (
     <div style={{ minHeight: '100vh', background: '#f5f0e8' }}>
@@ -181,22 +216,35 @@ export default function GalerieContent() {
         }
         .gal-cell:hover .gal-caption { opacity: 1; transform: translateY(0); }
 
-        /* ── Masonry CSS columns ── */
-        .gal-masonry {
-          columns: 3;
-          column-gap: 0.6rem;
+        /* ── Galerie scroll — colonnes avec colonne centrale fixe (sticky) ── */
+        .gal-sticky {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.6rem;
+          align-items: start;
         }
-        .gal-masonry-item {
-          break-inside: avoid;
-          margin-bottom: 0.6rem;
-          height: auto !important;
+        .gal-track { display: grid; gap: 0.6rem; }
+        .gal-track .gal-cell { height: clamp(220px, 26vw, 360px); }
+        .gal-pin {
+          position: sticky;
+          top: 0.6rem;
+          height: calc(100vh - 1.2rem);
+          display: grid;
+          gap: 0.6rem;
         }
-        .gal-masonry-item img {
-          height: auto !important;
-          object-fit: unset !important;
+        .gal-pin .gal-cell { height: 100%; }
+        @media (max-width: 900px) {
+          .gal-sticky { grid-template-columns: repeat(2, 1fr); }
+          .gal-pin {
+            position: static !important;
+            height: auto !important;
+            grid-template-rows: auto !important;
+          }
+          .gal-pin .gal-cell { height: clamp(220px, 40vw, 340px); }
         }
-        @media (max-width: 900px) { .gal-masonry { columns: 2; } }
-        @media (max-width: 560px) { .gal-masonry { columns: 1; } }
+        @media (max-width: 560px) {
+          .gal-sticky { grid-template-columns: 1fr; }
+        }
       `}</style>
 
       {/* ── Hero — image pleine sans marquee ── */}
@@ -268,31 +316,27 @@ export default function GalerieContent() {
             Aucune photo dans ce thème.
           </p>
         ) : (
-          <div className="gal-masonry">
-            {filtered.map((img, i) => (
-              <div
-                key={img.src}
-                className={`gal-cell gal-masonry-item reveal reveal-delay-${(i % 4) + 1}`}
-                onClick={() => setLightbox(i)}
-                onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && setLightbox(i)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Voir en grand : ${img.alt}`}
-              >
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  width={img.w}
-                  height={img.h}
-                  sizes="(max-width: 520px) 100vw, (max-width: 900px) 50vw, 33vw"
-                  priority={i < 6}
-                  style={{ width: '100%', height: 'auto', display: 'block' }}
-                />
-                <div className="gal-overlay">
-                  <span className="gal-caption">{img.alt}</span>
-                </div>
-              </div>
-            ))}
+          <div className="gal-sticky">
+            {/* Colonne gauche — défile normalement */}
+            <div className="gal-track">
+              {leftCol.map(({ img, idx }) => (
+                <GalThumb key={img.src} img={img} idx={idx} onOpen={setLightbox} />
+              ))}
+            </div>
+
+            {/* Colonne centrale — reste fixe pendant le scroll */}
+            <div className="gal-pin" style={{ gridTemplateRows: `repeat(${stickyRows}, 1fr)` }}>
+              {sticky.map(({ img, idx }) => (
+                <GalThumb key={img.src} img={img} idx={idx} onOpen={setLightbox} priority />
+              ))}
+            </div>
+
+            {/* Colonne droite — défile normalement */}
+            <div className="gal-track">
+              {rightCol.map(({ img, idx }) => (
+                <GalThumb key={img.src} img={img} idx={idx} onOpen={setLightbox} />
+              ))}
+            </div>
           </div>
         )}
       </section>
