@@ -1,7 +1,7 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
@@ -1012,9 +1012,9 @@ function ScrollBentoHero() {
   const top5 = PROJECTS.slice(0, 5);
 
   return (
-    <div style={{ background: C.greenDeep, paddingTop: '6rem', marginBottom: '-1px' }}>
+    <div style={{ background: C.greenDeep, marginBottom: '-1px' }}>
 
-      {/* ── Image hero Projets — pleine qualité 16:9, aucun recadrage ── */}
+      {/* ── Hero image pleine qualité + titre centré par-dessus ── */}
       <div style={{ position: 'relative', width: '100%' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -1023,42 +1023,44 @@ function ScrollBentoHero() {
           alt=""
           style={{ width: '100%', height: 'auto', display: 'block' }}
         />
-        {/* Fondu bas vers vert pour transition propre */}
+        {/* Overlay sombre léger pour lisibilité du texte */}
         <div aria-hidden="true" style={{
-          position: 'absolute', bottom: 0, left: 0, width: '100%', height: '35%',
-          background: 'linear-gradient(to bottom, transparent, rgb(19,61,32))',
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.22) 50%, rgba(19,61,32,0.85) 100%)',
           pointerEvents: 'none',
         }} />
+        {/* Titre centré sur l'image */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          paddingTop: '6rem', textAlign: 'center', padding: '6rem 1.5rem 2rem',
+        }}>
+          <p style={{
+            fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase',
+            color: 'rgba(196,169,107,0.9)', marginBottom: '1rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+          }}>
+            <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
+            Nos projets
+            <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
+          </p>
+          <h1 style={{
+            fontFamily: FONT.alt,
+            fontSize: 'clamp(2.4rem,6vw,4.5rem)',
+            fontWeight: 300, lineHeight: 1.15, color: '#fff',
+            margin: '0 0 1rem', textShadow: '0 2px 30px rgba(0,0,0,0.5)',
+          }}>
+            {PROJECTS.length} projets pour<br />
+            <RotatingText texts={PROJETS_TEXTS} interval={2600} />
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.93rem', lineHeight: 1.7, fontWeight: 300 }}>
+            Environnement · Infrastructure · Éducation · Solidarité · Mémoire
+          </p>
+        </div>
       </div>
 
       <ContainerScroll>
-        {/* ── Sticky hero title ── */}
-        <ContainerScale>
-          <div style={{ textAlign: 'center', padding: '0 1.5rem', maxWidth: 740, position: 'relative', zIndex: 20 }}>
-            <p style={{
-              fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase',
-              color: 'rgba(196,169,107,0.85)', marginBottom: '1rem',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-            }}>
-              <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
-              Nos projets
-              <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
-            </p>
-            <h1 style={{
-              fontFamily: FONT.alt,
-              fontSize: 'clamp(2.4rem,6vw,4.5rem)',
-              fontWeight: 300, lineHeight: 1.05, color: '#fff',
-              margin: '0 0 1rem',
-            }}>
-              {PROJECTS.length} projets pour<br />
-              <em style={{ fontStyle: 'italic', fontWeight: 400, color: C.gold }}>Tighremt &amp; la région</em>
-            </h1>
-            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.93rem', lineHeight: 1.7, fontWeight: 300 }}>
-              Environnement · Infrastructure · Éducation · Solidarité · Mémoire
-            </p>
-          </div>
-        </ContainerScale>
-
         {/* ── Bento grid slides up over the title ── */}
         <BentoGrid style={{ background: C.greenDeep }}>
           {/* Big dominant cell — col 1-6, row 1-3 */}
@@ -1098,6 +1100,40 @@ function ScrollBentoHero() {
         </BentoGrid>
       </ContainerScroll>
     </div>
+  );
+}
+
+/* ── RotatingText (même animation que Don) ─────────────────────────────── */
+const PROJETS_TEXTS = [
+  'Tighremt & la région',
+  'la palmeraie',
+  'les familles',
+  'l\'eau & l\'irrigation',
+  'le patrimoine',
+  'les enfants',
+];
+
+function RotatingText({ texts, interval = 2600 }) {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setIndex(i => (i + 1) % texts.length), interval);
+    return () => clearInterval(id);
+  }, [texts.length, interval]);
+  return (
+    <span style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', minWidth: '14ch' }}>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.em
+          key={index}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '-110%', opacity: 0 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+          style={{ display: 'block', fontWeight: 400, fontStyle: 'italic', color: 'rgba(255,220,100,1)' }}
+        >
+          {texts[index]}
+        </motion.em>
+      </AnimatePresence>
+    </span>
   );
 }
 
