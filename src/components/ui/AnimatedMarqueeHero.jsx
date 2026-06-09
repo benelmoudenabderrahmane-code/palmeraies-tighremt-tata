@@ -63,8 +63,7 @@ export default function AnimatedMarqueeHero({
       style={{
         position: 'relative',
         width: '100%',
-        height: '100vh',
-        minHeight: 620,
+        aspectRatio: '1535 / 1024',
         overflow: 'hidden',
         background: '#05090e',
         display: 'flex',
@@ -88,7 +87,7 @@ export default function AnimatedMarqueeHero({
               inset: 0,
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
+              objectFit: 'cover',
               objectPosition: 'center center',
               zIndex: 0,
             }}
