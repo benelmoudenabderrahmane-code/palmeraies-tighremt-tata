@@ -1012,21 +1012,21 @@ function ScrollBentoHero() {
   const top5 = PROJECTS.slice(0, 5);
 
   return (
-    <div style={{ background: '#000', marginBottom: '-1px' }}>
+    <div style={{ marginBottom: '-1px' }}>
 
-      {/* ── Hero image pleine qualité + titre centré par-dessus ── */}
-      <div style={{ position: 'relative', width: '100%' }}>
+      {/* ── Hero image plein écran (100vh) + titre centré par-dessus ── */}
+      <div style={{ position: 'relative', width: '100%', height: '100vh', minHeight: 520, overflow: 'hidden' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           aria-hidden="true"
           src="/projet-hero.png"
           alt=""
-          style={{ width: '100%', height: 'auto', display: 'block' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
         />
         {/* Overlay sombre léger pour lisibilité du texte */}
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.22) 50%, rgba(0,0,0,0.62) 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.55) 100%)',
           pointerEvents: 'none',
         }} />
         {/* Titre centré sur l'image */}
@@ -1034,7 +1034,7 @@ function ScrollBentoHero() {
           position: 'absolute', inset: 0,
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
-          paddingTop: '6rem', textAlign: 'center', padding: '6rem 1.5rem 2rem',
+          textAlign: 'center', padding: '6rem 1.5rem 2rem',
         }}>
           <p style={{
             fontSize: '0.66rem', letterSpacing: '0.3em', textTransform: 'uppercase',
