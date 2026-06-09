@@ -1135,8 +1135,10 @@ export default function ProjetsContent() {
       <style>{`
         @media (max-width: 700px) {
           .proj-hero-grid { display: none !important; }
-          .proj-hero-left { flex: 0 0 100% !important; max-width: 100% !important; }
-          .proj-hero-content { justify-content: center !important; }
+          .proj-hero-left { flex: 0 0 100% !important; max-width: 100% !important; text-align: center !important; }
+          .proj-hero-content { justify-content: center !important; align-items: center !important; }
+          /* Centrer la pastille "Nos projets" (rendue en flex) */
+          .proj-hero-left > p:first-child { justify-content: center !important; }
         }
         @media (max-width: 440px) {
           .proj-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }

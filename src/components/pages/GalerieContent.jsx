@@ -234,16 +234,21 @@ export default function GalerieContent() {
         }
         .gal-pin .gal-cell { height: 100%; }
         @media (max-width: 900px) {
-          .gal-sticky { grid-template-columns: repeat(2, 1fr); }
-          .gal-pin {
-            position: static !important;
-            height: auto !important;
-            grid-template-rows: auto !important;
+          /* Mobile : vraie galerie 2 colonnes équilibrée (colonne sticky désactivée) */
+          .gal-sticky {
+            display: block;
+            column-count: 2;
+            column-gap: 0.6rem;
           }
-          .gal-pin .gal-cell { height: clamp(220px, 40vw, 340px); }
+          .gal-track, .gal-pin { display: contents; }
+          .gal-sticky .gal-cell {
+            break-inside: avoid;
+            margin-bottom: 0.6rem;
+            height: clamp(150px, 40vw, 240px) !important;
+          }
         }
-        @media (max-width: 560px) {
-          .gal-sticky { grid-template-columns: 1fr; }
+        @media (max-width: 380px) {
+          .gal-sticky { column-count: 1; }
         }
       `}</style>
 

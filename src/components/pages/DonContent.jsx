@@ -195,6 +195,18 @@ export default function DonContent() {
   const [barsIn, setBarsIn]         = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const barsRef = useRef(null);
+  const heroVideoRef = useRef(null);
+
+  // Forcer la lecture de la vidéo hero (autoplay parfois bloqué sur iOS/Android)
+  useEffect(() => {
+    const v = heroVideoRef.current;
+    if (!v) return;
+    v.muted = true;
+    const tryPlay = () => { v.play().catch(() => {}); };
+    tryPlay();
+    v.addEventListener('canplay', tryPlay, { once: true });
+    return () => v.removeEventListener('canplay', tryPlay);
+  }, []);
 
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') { setBarsIn(true); return; }
@@ -351,11 +363,13 @@ export default function DonContent() {
       }}>
         {/* Vidéo de fond 16:9 pleine qualité */}
         <video
+          ref={heroVideoRef}
           aria-hidden="true"
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
         >
           <source src="/don-hero.mp4" type="video/mp4" />
