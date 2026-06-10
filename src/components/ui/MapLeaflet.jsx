@@ -4,7 +4,8 @@ import { C } from '@/lib/tokens';
 /**
  * MapLeaflet — carte satellite Google Maps de Tighremt.
  * Vue hybride (satellite + labels) centrée sur le village.
- * Coordonnées : 29.7534°N, 7.9860°W — Village Tighremt, Province de Tata, Maroc.
+ * Coordonnées : 29.7625°N, 7.9711°W — Tighremt (est de la R116, sud du jardin
+ * Igran), Province de Tata, Maroc. Vérifiées sur imagerie satellite 2026.
  */
 export default function MapLeaflet() {
   return (
@@ -19,7 +20,7 @@ export default function MapLeaflet() {
     }}>
       <iframe
         title="Tighremt — carte satellite"
-        src="https://maps.google.com/maps?q=29.7534,-7.9860&t=h&z=15&output=embed"
+        src="https://maps.google.com/maps?q=29.7625,-7.9711&t=h&z=15&output=embed"
         width="100%"
         height="100%"
         style={{ border: 0, display: 'block', width: '100%', height: '100%' }}
