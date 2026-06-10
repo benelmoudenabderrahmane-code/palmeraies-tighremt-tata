@@ -23,7 +23,7 @@ export default function FloatingDock() {
   }, []);
 
   return (
-    <div style={{
+    <div className="floating-dock-wrap" style={{
       position: 'fixed', bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))', left: '50%',
       transform: `translateX(-50%) translateY(${visible ? 0 : 100}px)`,
       opacity: visible ? 1 : 0,

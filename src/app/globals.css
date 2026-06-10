@@ -445,3 +445,8 @@ html.dark .card-premium { background: var(--card-bg); }
     padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important;
   }
 }
+
+/* ── Mobile : masquer FloatingDock (collision avec WhatsApp / Chat) ── */
+@media (max-width: 700px) {
+  .floating-dock-wrap { display: none !important; }
+}

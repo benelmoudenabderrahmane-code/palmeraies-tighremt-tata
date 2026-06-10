@@ -177,6 +177,17 @@
   transform-origin: center;
 }
 
+/* Backdrop plein écran derrière le menu mobile */
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 199;
+  visibility: hidden;
+  opacity: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Mobile menu */
 .mobile-menu-popover {
   position: absolute;

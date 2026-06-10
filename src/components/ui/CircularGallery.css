@@ -3,6 +3,7 @@
   height: 600px;
   overflow: hidden;
   position: relative;
+  background: #133d20; /* évite la zone blanche si WebGL alpha transparent */
 }
 
 .circular-gallery canvas {

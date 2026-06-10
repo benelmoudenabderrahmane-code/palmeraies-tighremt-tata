@@ -29,6 +29,7 @@ const PillNav = ({
   const logoTweenRef = useRef(null);
   const hamburgerRef = useRef(null);
   const mobileMenuRef = useRef(null);
+  const backdropRef = useRef(null);
   const navItemsRef = useRef(null);
   const logoRef = useRef(null);
 
@@ -119,6 +120,21 @@ const PillNav = ({
 
     return () => window.removeEventListener('resize', onResize);
   }, [items, ease, initialLoadAnimation]);
+
+  // Animate backdrop in/out whenever mobile menu state changes
+  useEffect(() => {
+    const backdrop = backdropRef.current;
+    if (!backdrop) return;
+    if (isMobileMenuOpen) {
+      gsap.set(backdrop, { visibility: 'visible' });
+      gsap.fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.3, ease });
+    } else {
+      gsap.to(backdrop, {
+        opacity: 0, duration: 0.2, ease,
+        onComplete: () => gsap.set(backdrop, { visibility: 'hidden' }),
+      });
+    }
+  }, [isMobileMenuOpen, ease]);
 
   const handleEnter = i => {
     const tl = tlRefs.current[i];
@@ -265,6 +281,14 @@ const PillNav = ({
           <span className="hamburger-line" />
         </button>
       </nav>
+
+      {/* Backdrop plein écran — ferme le menu au clic en dehors */}
+      <div
+        className="mobile-menu-backdrop mobile-only"
+        ref={backdropRef}
+        onClick={toggleMobileMenu}
+        aria-hidden="true"
+      />
 
       <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
         <ul className="mobile-menu-list">
