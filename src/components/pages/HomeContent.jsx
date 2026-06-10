@@ -129,6 +129,11 @@ function Hero() {
         .hero-sub     { animation: focusInSub 1.1s cubic-bezier(0.16,1,0.3,1) 1.15s both; }
         .hero-ctas    { animation: focusInSub 1.0s cubic-bezier(0.16,1,0.3,1) 1.4s both; }
         .hero-stats   { animation: focusInSub 0.9s cubic-bezier(0.16,1,0.3,1) 1.7s both; }
+        .stat-item { padding: 0 1.4rem; text-align: center; }
+        .stat-item + .stat-item { border-left: 1px solid rgba(255,255,255,0.18); }
+        @media (max-width: 420px) {
+          .stat-item { padding: 0 0.8rem; }
+        }
         @keyframes scrollFloat {
           0%, 100% { transform: translateX(-50%) translateY(0);   opacity: 0.3; }
           50%       { transform: translateX(-50%) translateY(6px); opacity: 0.55; }
@@ -208,7 +213,7 @@ function Hero() {
             </a>
           </div>
 
-          <div className="hero-stats" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div className="hero-stats" style={{ display: 'flex', flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center' }}>
             {[
               { val: '2010',     label: 'Année de fondation' },
               { val: 'Loi 1901', label: 'Statut juridique' },
