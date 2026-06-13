@@ -1126,53 +1126,6 @@ function RotatingText({ texts, interval = 2600 }) {
   );
 }
 
-/* ── Marquee strip ─────────────────────────────────────────────────────── */
-const MARQUEE_PROJ = [
-  { src: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Palmeraie de Tighremt' },
-  { src: '/images/tighremt/ain-g1.jpg',             alt: 'Bassin de rétention — Aïn' },
-  { src: '/images/tighremt/pont-g5.jpg',            alt: 'Pont de Tighremt' },
-  { src: '/images/tighremt/ecole-g8.jpg',           alt: 'Crèche rénovée' },
-  { src: '/images/tighremt/sidi-g5.jpg',            alt: 'Vestiaire Sidi Brahim' },
-  { src: '/images/tighremt/ksar-silhouette.jpg',    alt: 'Ksar de Tighremt' },
-  { src: '/images/tighremt/dattes.jpg',             alt: 'Dattes de Tighremt' },
-  { src: '/images/tighremt/cimetiere-g8.jpg',       alt: 'Cimetière Aslda' },
-  { src: '/images/tighremt/tournoi-g1.jpg',         alt: 'Tournoi de football' },
-  { src: '/images/tighremt/tighremt-panorama.jpg',  alt: 'Village de Tighremt' },
-];
-
-function ProjetsMarquee() {
-  const loop = [...MARQUEE_PROJ, ...MARQUEE_PROJ];
-  return (
-    <div style={{ background: C.sand, overflow: 'hidden', padding: '2.5rem 0 2rem' }}>
-      <motion.div
-        style={{ display: 'flex', gap: '1rem', alignItems: 'center', willChange: 'transform' }}
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ ease: 'linear', duration: 50, repeat: Infinity }}
-      >
-        {loop.map((img, i) => (
-          <div key={i} style={{
-            flexShrink: 0,
-            width: 'clamp(160px, 22vw, 260px)',
-            aspectRatio: '3 / 2',
-            borderRadius: '0.75rem',
-            overflow: 'hidden',
-            transform: `rotate(${i % 2 === 0 ? -1.5 : 1.5}deg)`,
-            boxShadow: '0 8px 28px rgba(19,61,32,0.18)',
-          }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={img.src}
-              alt={img.alt}
-              loading="lazy"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-          </div>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
-
 /* ── Main export ───────────────────────────────────────────────────────── */
 export default function ProjetsContent() {
   useScrollReveal();
@@ -1193,10 +1146,6 @@ export default function ProjetsContent() {
       `}</style>
 
       <ScrollBentoHero />
-
-      <SectionDivider />
-
-      <ProjetsMarquee />
 
       <SectionDivider />
 
