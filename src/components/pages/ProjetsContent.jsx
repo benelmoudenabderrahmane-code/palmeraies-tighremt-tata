@@ -1126,6 +1126,31 @@ function RotatingText({ texts, interval = 2600 }) {
   );
 }
 
+/* ── Grille bento pleine largeur — aperçu visuel de tous les projets ────── */
+function ProjetsGrid() {
+  const top9 = PROJECTS.slice(0, 9);
+  return (
+    <section style={{
+      background: C.greenDeep,
+      padding: 'clamp(3rem,6vw,5rem) clamp(1.25rem,4vw,2.5rem)',
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <p style={{
+          fontSize: '0.64rem', letterSpacing: '0.28em', textTransform: 'uppercase',
+          color: 'rgba(196,169,107,0.85)', marginBottom: '1.5rem', fontWeight: 600,
+          display: 'flex', alignItems: 'center', gap: '0.75rem',
+        }}>
+          <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,169,107,0.5)' }} />
+          Aperçu des projets
+        </p>
+        <div style={{ height: 'clamp(320px, 55vw, 620px)' }}>
+          <DynamicFrameLayout projects={top9} hoverSize={6} gap={5} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ── Main export ───────────────────────────────────────────────────────── */
 export default function ProjetsContent() {
   useScrollReveal();
@@ -1146,6 +1171,8 @@ export default function ProjetsContent() {
       `}</style>
 
       <ScrollBentoHero />
+
+      <ProjetsGrid />
 
       <SectionDivider />
 
