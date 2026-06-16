@@ -75,6 +75,7 @@ const PROJECTS = [
       { value: '2010',  label: 'année des travaux' },
       { value: '100%',  label: 'accès rétabli' },
     ],
+    budget: 12731.95,
     before:         '/images/tighremt/pont-avant.jpg',
     after:          '/images/tighremt/pont-apres.jpg',
     gallery: [
@@ -98,6 +99,7 @@ const PROJECTS = [
       { value: '80+',   label: 'enfants bénéficiaires' },
       { value: '100%',  label: 'autonomie visée' },
     ],
+    budget: 20000,
     before:         '/images/tighremt/ecole-avant.jpg',
     after:          '/images/tighremt/ecole-apres.jpg',
     gallery: [
@@ -124,6 +126,7 @@ const PROJECTS = [
       { value: '1',       label: 'bassin de rétention' },
       { value: 'Gabions', label: 'seuil de captage' },
     ],
+    budget: 4000,
     before: '/images/tighremt/ain-avant.jpg',
     after:  '/images/tighremt/ain-apres.jpg',
     video: {
@@ -254,6 +257,7 @@ const PROJECTS = [
       { value: '2018',  label: 'année de livraison' },
       { value: '100%',  label: 'financé par l\'association' },
     ],
+    budget: 40425,
     before: '/images/tighremt/cimetiere-avant.jpg',
     after:  '/images/tighremt/cimetiere-apres.jpg',
     gallery: [
@@ -390,6 +394,7 @@ const PROJECTS = [
       { value: '100%',  label: 'main-d\'œuvre locale' },
       { value: '50+',   label: 'jeunes bénéficiaires' },
     ],
+    budget: 8400,
     before:  '/images/tighremt/sidi-foot-avant.jpg',
     after:   '/images/tighremt/sidi-foot-apres.jpg',
     gallery: [
@@ -630,6 +635,38 @@ function ProjectBlock({ project, index }) {
                 </div>
               ))}
             </div>
+
+            {/* Budget */}
+            {typeof project.budget === 'number' && (
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginTop: '1.25rem',
+                padding: '0.55rem 0.9rem',
+                borderRadius: '0.5rem',
+                background: `${C.ochre}14`,
+                border: `1px solid ${C.ochre}35`,
+              }}>
+                <span style={{
+                  fontSize: '0.62rem',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  color: C.ochre,
+                }}>
+                  Budget
+                </span>
+                <span style={{
+                  fontFamily: FONT.alt,
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: C.greenDeep,
+                }}>
+                  {project.budget.toLocaleString('fr-FR')} DH
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Slider column (optional — only when before+after are defined) */}
@@ -717,6 +754,152 @@ function ProjectBlock({ project, index }) {
           </div>
         )}
 
+      </div>
+    </section>
+  );
+}
+
+/* ── Budget table (toutes les dépenses + total) ──────────────────────────── */
+const DEPENSES = [
+  { label: 'Cimetière — Sidi Brahim',                       amount: 120000,    projectId: null },
+  { label: 'Cimetière — Kasbat Tighremt',                   amount: 149812,    projectId: null },
+  { label: "Clôture cimetière — Aslda (Sidi Oua'aziz)",      amount: 40425,     projectId: 'cimetiere' },
+  { label: "Installation sportive — Sidi Oua'aziz",          amount: 8400,      projectId: 'sidi-oasis-foot' },
+  { label: 'Salle + toilettes — Madao',                      amount: 6000,      projectId: null },
+  { label: 'Construction raoud — Kasbat Tighremt',           amount: 9260,      projectId: null },
+  { label: 'Clôture crèche — Nadi',                          amount: 20000,     projectId: 'ecole' },
+  { label: 'Consolidation du pont de Tighremt',               amount: 12731.95,  projectId: 'pont' },
+  { label: "Déblayage + location traxe — Aïn Tamazirte",     amount: 4000,      projectId: 'ain-travaux' },
+  { label: "Aides à l'enseignante Hayat",                     amount: 5300,      projectId: null },
+];
+const DEPENSES_TOTAL = DEPENSES.reduce((sum, d) => sum + d.amount, 0);
+
+function formatDH(n) {
+  return n.toLocaleString('fr-FR', { minimumFractionDigits: n % 1 !== 0 ? 2 : 0, maximumFractionDigits: 2 }) + ' DH';
+}
+
+function BudgetTable() {
+  return (
+    <section style={{ background: C.sand, padding: 'clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,2rem)' }}>
+      <div className="reveal" style={{ maxWidth: 880, margin: '0 auto' }}>
+
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem,4vw,3rem)' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            fontSize: '0.65rem',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            fontWeight: 700,
+            color: C.gold,
+            marginBottom: '0.9rem',
+          }}>
+            <span style={{ width: 22, height: 1.5, background: C.gold, display: 'block', borderRadius: 1 }} />
+            Transparence financière
+            <span style={{ width: 22, height: 1.5, background: C.gold, display: 'block', borderRadius: 1 }} />
+          </div>
+          <h2 style={{
+            fontFamily: FONT.alt,
+            fontSize: 'clamp(1.7rem, 3.5vw, 2.5rem)',
+            fontWeight: 400,
+            color: C.greenDeep,
+            margin: '0 0 0.75rem',
+          }}>
+            Tableau des dépenses
+          </h2>
+          <p style={{
+            fontSize: '0.9rem',
+            color: C.inkMuted,
+            fontWeight: 300,
+            lineHeight: 1.75,
+            maxWidth: 540,
+            margin: '0 auto',
+          }}>
+            Le détail de chaque dépense engagée par l'association sur le terrain — y compris celles
+            qui ne correspondent pas à un projet présenté ci-dessus.
+          </p>
+        </div>
+
+        <div style={{
+          background: C.white,
+          borderRadius: '1rem',
+          border: `1px solid ${C.sandDark}`,
+          overflow: 'hidden',
+          boxShadow: '0 16px 40px rgba(19,61,32,0.1)',
+        }}>
+          {DEPENSES.map((d, i) => (
+            <div
+              key={d.label}
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                gap: '0.5rem 1rem',
+                padding: 'clamp(0.9rem,2vw,1.1rem) clamp(1.1rem,3vw,1.6rem)',
+                background: i % 2 === 0 ? C.white : C.sand,
+                borderBottom: i < DEPENSES.length - 1 ? `1px solid ${C.sandDark}` : 'none',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.92rem', color: C.greenDeep, fontWeight: 500 }}>
+                  {d.label}
+                </div>
+                {d.projectId ? (
+                  <a
+                    href={`#${d.projectId}`}
+                    style={{ fontSize: '0.7rem', color: C.ochre, letterSpacing: '0.03em', textDecoration: 'none' }}
+                  >
+                    ↳ voir le projet
+                  </a>
+                ) : (
+                  <span style={{ fontSize: '0.7rem', color: C.inkLight, letterSpacing: '0.02em' }}>
+                    Dépense hors projets présentés ci-dessus
+                  </span>
+                )}
+              </div>
+              <div style={{
+                fontFamily: FONT.alt,
+                fontSize: '1.05rem',
+                fontWeight: 600,
+                color: C.greenDeep,
+                whiteSpace: 'nowrap',
+              }}>
+                {formatDH(d.amount)}
+              </div>
+            </div>
+          ))}
+
+          {/* Total */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '0.5rem 1rem',
+            padding: 'clamp(1.1rem,2.5vw,1.4rem) clamp(1.1rem,3vw,1.6rem)',
+            background: C.greenDeep,
+          }}>
+            <div style={{
+              fontSize: '0.72rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              color: 'rgba(255,255,255,0.75)',
+            }}>
+              Total général
+            </div>
+            <div style={{
+              fontFamily: FONT.alt,
+              fontSize: 'clamp(1.4rem,2.5vw,1.7rem)',
+              fontWeight: 600,
+              color: C.gold,
+            }}>
+              {formatDH(DEPENSES_TOTAL)}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -1156,6 +1339,10 @@ export default function ProjetsContent() {
       {PROJECTS.map((project, i) => (
         <ProjectBlock key={project.id} project={project} index={i} />
       ))}
+
+      <SectionDivider />
+
+      <BudgetTable />
 
       <SectionDivider />
 
