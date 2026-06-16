@@ -76,10 +76,11 @@ export default function DynamicFrameLayout({ projects, hoverSize = 6, gap = 5 })
                 overflow: 'hidden',
                 borderRadius: '0.45rem',
                 cursor: 'pointer',
-                /* Cadre verre — ni crème ni vert, juste blanc translucide */
-                border: `1px solid rgba(255,255,255,${isHov ? 0.42 : 0.16})`,
-                boxShadow: isHov ? '0 0 0 1px rgba(196,169,107,0.25)' : 'none',
-                transition: 'border-color 0.35s ease, box-shadow 0.35s ease',
+                /* Élévation d'ambiance — le cadre lui-même est un calque séparé au-dessus de la photo */
+                boxShadow: isHov
+                  ? '0 20px 44px rgba(8,26,14,0.5)'
+                  : '0 8px 22px rgba(8,26,14,0.28)',
+                transition: 'box-shadow 0.35s ease',
               }}
             >
               {/* Photo */}
@@ -115,6 +116,21 @@ export default function DynamicFrameLayout({ projects, hoverSize = 6, gap = 5 })
                     : 'linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 60%)',
                   transition: 'background 0.3s ease',
                   pointerEvents: 'none',
+                }}
+              />
+
+              {/* Cadre premium — double filet doré + mat crème, façon encadrement musée */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '0.45rem',
+                  pointerEvents: 'none',
+                  boxShadow: isHov
+                    ? 'inset 0 0 0 1.5px rgba(196,169,107,0.95), inset 0 0 0 5px rgba(250,246,236,0.92), inset 0 0 0 6.5px rgba(196,169,107,0.6)'
+                    : 'inset 0 0 0 1px rgba(196,169,107,0.55), inset 0 0 0 4px rgba(250,246,236,0.7), inset 0 0 0 5px rgba(196,169,107,0.28)',
+                  transition: 'box-shadow 0.35s ease',
                 }}
               />
 
