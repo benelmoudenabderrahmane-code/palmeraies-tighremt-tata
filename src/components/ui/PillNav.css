@@ -37,20 +37,21 @@
 
 .pill-logo-name {
   font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   line-height: 1.15;
   color: var(--base, #fff);
   white-space: nowrap;
 }
 
 .pill-logo-subtitle {
-  font-size: 0.58rem;
-  letter-spacing: 0.22em;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--base, #fff);
-  opacity: 0.65;
-  font-weight: 500;
+  opacity: 0.8;
+  font-weight: 600;
 }
 
 /* Nav items wrapper */
