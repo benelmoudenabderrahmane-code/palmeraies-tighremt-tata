@@ -439,7 +439,7 @@ function SectionGalerie() {
         <CircularGallery
           items={CIRCULAR_GALLERY_ITEMS}
           bend={3} textColor="#ffffff" borderRadius={0.05}
-          font="bold 28px 'Plus Jakarta Sans', sans-serif"
+          font="italic bold 32px 'Cormorant Garamond', serif"
           scrollSpeed={2} scrollEase={0.05}
         />
       </div>
