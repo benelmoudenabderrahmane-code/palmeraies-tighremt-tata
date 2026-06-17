@@ -778,15 +778,16 @@ function formatDH(n) {
   return n.toLocaleString('fr-FR', { minimumFractionDigits: n % 1 !== 0 ? 2 : 0, maximumFractionDigits: 2 }) + ' DH';
 }
 
-function BudgetTable() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+const VP = { once: true, amount: 0 };
 
+function BudgetTable() {
   const [count, setCount] = useState(0);
   const [countDone, setCountDone] = useState(false);
+  const counterStarted = useRef(false);
 
-  useEffect(() => {
-    if (!inView) return;
+  const startCounter = () => {
+    if (counterStarted.current) return;
+    counterStarted.current = true;
     const duration = 2200;
     const start = performance.now();
     let rafId;
@@ -798,27 +799,27 @@ function BudgetTable() {
       else { setCountDone(true); }
     };
     rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [inView]);
-
-  const containerVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.055, delayChildren: 0.32 } },
   };
+
   const rowVariants = {
     hidden: { opacity: 0, x: -18 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.48, ease: [0.16, 1, 0.3, 1] } },
   };
 
   return (
-    <section ref={ref} style={{ background: C.sand, padding: 'clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,2rem)' }}>
+    <motion.section
+      onViewportEnter={startCounter}
+      viewport={VP}
+      style={{ background: C.sand, padding: 'clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,2rem)' }}
+    >
       <div style={{ maxWidth: 880, margin: '0 auto' }}>
 
         {/* ── Header ── */}
         <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem,4vw,3rem)' }}>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VP}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             style={{
               display: 'inline-flex',
@@ -834,14 +835,16 @@ function BudgetTable() {
           >
             <motion.span
               initial={{ width: 0, opacity: 0 }}
-              animate={inView ? { width: 28, opacity: 1 } : {}}
+              whileInView={{ width: 28, opacity: 1 }}
+              viewport={VP}
               transition={{ duration: 0.9, delay: 0.2, ease: 'easeOut' }}
               style={{ height: 1.5, background: C.gold, display: 'block', borderRadius: 1, flexShrink: 0 }}
             />
             Transparence financière
             <motion.span
               initial={{ width: 0, opacity: 0 }}
-              animate={inView ? { width: 28, opacity: 1 } : {}}
+              whileInView={{ width: 28, opacity: 1 }}
+              viewport={VP}
               transition={{ duration: 0.9, delay: 0.2, ease: 'easeOut' }}
               style={{ height: 1.5, background: C.gold, display: 'block', borderRadius: 1, flexShrink: 0 }}
             />
@@ -849,7 +852,8 @@ function BudgetTable() {
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VP}
             transition={{ duration: 0.65, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             style={{
               fontFamily: FONT.alt,
@@ -864,7 +868,8 @@ function BudgetTable() {
 
           <motion.p
             initial={{ opacity: 0, y: 14 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VP}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             style={{
               fontSize: '0.9rem',
@@ -883,7 +888,8 @@ function BudgetTable() {
         {/* ── Table card ── */}
         <motion.div
           initial={{ opacity: 0, y: 32, scale: 0.98 }}
-          animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={VP}
           transition={{ duration: 0.7, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
           style={{
             background: C.white,
@@ -893,61 +899,60 @@ function BudgetTable() {
             boxShadow: '0 16px 40px rgba(19,61,32,0.1)',
           }}
         >
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-          >
-            {DEPENSES.map((d, i) => (
-              <motion.div
-                key={d.label}
-                variants={rowVariants}
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  gap: '0.5rem 1rem',
-                  padding: 'clamp(0.9rem,2vw,1.1rem) clamp(1.1rem,3vw,1.6rem)',
-                  background: i % 2 === 0 ? C.white : C.sand,
-                  borderBottom: i < DEPENSES.length - 1 ? `1px solid ${C.sandDark}` : 'none',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '0.92rem', color: C.greenDeep, fontWeight: 500 }}>
-                    {d.label}
-                  </div>
-                  {d.projectId ? (
-                    <a
-                      href={`#${d.projectId}`}
-                      style={{ fontSize: '0.7rem', color: C.ochre, letterSpacing: '0.03em', textDecoration: 'none' }}
-                    >
-                      ↳ voir le projet
-                    </a>
-                  ) : (
-                    <span style={{ fontSize: '0.7rem', color: C.inkLight, letterSpacing: '0.02em' }}>
-                      Dépense hors projets présentés ci-dessus
-                    </span>
-                  )}
+          {DEPENSES.map((d, i) => (
+            <motion.div
+              key={d.label}
+              variants={rowVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={VP}
+              transition={{ delay: i * 0.055 }}
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                gap: '0.5rem 1rem',
+                padding: 'clamp(0.9rem,2vw,1.1rem) clamp(1.1rem,3vw,1.6rem)',
+                background: i % 2 === 0 ? C.white : C.sand,
+                borderBottom: i < DEPENSES.length - 1 ? `1px solid ${C.sandDark}` : 'none',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.92rem', color: C.greenDeep, fontWeight: 500 }}>
+                  {d.label}
                 </div>
-                <div style={{
-                  fontFamily: FONT.alt,
-                  fontSize: '1.05rem',
-                  fontWeight: 600,
-                  color: C.greenDeep,
-                  whiteSpace: 'nowrap',
-                }}>
-                  {formatDH(d.amount)}
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                {d.projectId ? (
+                  <a
+                    href={`#${d.projectId}`}
+                    style={{ fontSize: '0.7rem', color: C.ochre, letterSpacing: '0.03em', textDecoration: 'none' }}
+                  >
+                    ↳ voir le projet
+                  </a>
+                ) : (
+                  <span style={{ fontSize: '0.7rem', color: C.inkLight, letterSpacing: '0.02em' }}>
+                    Dépense hors projets présentés ci-dessus
+                  </span>
+                )}
+              </div>
+              <div style={{
+                fontFamily: FONT.alt,
+                fontSize: '1.05rem',
+                fontWeight: 600,
+                color: C.greenDeep,
+                whiteSpace: 'nowrap',
+              }}>
+                {formatDH(d.amount)}
+              </div>
+            </motion.div>
+          ))}
 
           {/* ── Total row ── */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.32 + DEPENSES.length * 0.055 + 0.12 }}
+            whileInView={{ opacity: 1 }}
+            viewport={VP}
+            transition={{ duration: 0.5, delay: DEPENSES.length * 0.055 + 0.12 }}
             style={{
               display: 'flex',
               flexWrap: 'wrap',
@@ -969,8 +974,9 @@ function BudgetTable() {
             </div>
             <motion.div
               initial={{ scale: 0.85, opacity: 0 }}
-              animate={inView ? { scale: 1, opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.32 + DEPENSES.length * 0.055 + 0.18, ease: [0.16, 1, 0.3, 1] }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={VP}
+              transition={{ duration: 0.6, delay: DEPENSES.length * 0.055 + 0.18, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 fontFamily: FONT.alt,
                 fontSize: 'clamp(1.4rem,2.5vw,1.7rem)',
@@ -985,7 +991,7 @@ function BudgetTable() {
           </motion.div>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
