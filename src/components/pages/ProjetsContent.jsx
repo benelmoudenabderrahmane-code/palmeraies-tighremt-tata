@@ -995,141 +995,221 @@ function BudgetTable() {
   );
 }
 
-/* ── Projects Index (animated overview between hero and blocks) ─────────── */
-function ProjectRow({ project, index, isActive, onEnter, onLeave }) {
-  const rowRef = useRef(null);
-  const inView = useInView(rowRef, { once: true, margin: '-60px' });
+/* ── Projects Index (hover-slider overview menu) ───────────────────────── */
 
+/* Responsive géré en CSS pur (media query) — pas de JS, pas de flash SSR */
+const PIDX_CSS = `
+.pidx-grid{display:grid;grid-template-columns:1fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:start;}
+.pidx-row{grid-template-columns:2.6rem 1fr auto;}
+.pidx-panel{display:none;}
+@media (min-width:900px){
+  .pidx-grid{grid-template-columns:1.05fr 0.95fr;}
+  .pidx-row{grid-template-columns:2.6rem 1fr;}
+  .pidx-thumb{display:none !important;}
+  .pidx-panel{display:block;}
+}
+`;
+
+/* Titre dont les lettres se retournent en cascade au survol */
+function StaggerTitle({ text, isActive, topColor, bottomColor, style }) {
+  const words = text.split(' ');
+  let ci = -1;
+  return (
+    <span style={{ display: 'inline-block', ...style }}>
+      {words.map((word, wi) => (
+        <span key={wi} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+          {word.split('').map((char) => {
+            ci += 1;
+            const idx = ci;
+            return (
+              <span key={idx} style={{ position: 'relative', display: 'inline-block', overflow: 'hidden' }}>
+                <motion.span
+                  style={{ display: 'inline-block', color: topColor }}
+                  initial={false}
+                  animate={{ y: isActive ? '-110%' : '0%' }}
+                  transition={{ delay: idx * 0.022, duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  {char}
+                </motion.span>
+                <motion.span
+                  style={{ position: 'absolute', left: 0, top: 0, display: 'inline-block', color: bottomColor }}
+                  initial={false}
+                  animate={{ y: isActive ? '0%' : '110%' }}
+                  transition={{ delay: idx * 0.022, duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  {char}
+                </motion.span>
+              </span>
+            );
+          })}
+          {wi < words.length - 1 && <span style={{ display: 'inline-block' }}>&nbsp;</span>}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/* Ligne de la liste — survol = active (titre animé + image preview) */
+function ProjectListRow({ project, index, isActive, onActivate }) {
   const imgSrc = project.after || project.afterFallback || project.banner || project.gallery?.[0]?.src;
   const fallback = project.afterFallback || project.gallery?.[0]?.src;
 
   return (
-    <motion.div
-      ref={rowRef}
-      initial={{ opacity: 0, x: -44 }}
-      animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -44 }}
-      transition={{ duration: 0.7, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => onEnter(index)}
-      onMouseLeave={onLeave}
-      style={{ position: 'relative' }}
+    <motion.a
+      href={`#${project.id}`}
+      className="pidx-row"
+      initial={{ opacity: 0, x: -28 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => onActivate(index)}
+      onFocus={() => onActivate(index)}
+      style={{
+        position: 'relative',
+        display: 'grid',
+        alignItems: 'center',
+        gap: '1rem',
+        padding: 'clamp(0.85rem,2.2vw,1.3rem) 0.4rem',
+        borderBottom: `1px solid ${C.sandDark}`,
+        textDecoration: 'none',
+        cursor: 'pointer',
+      }}
     >
-      <a
-        href={`#${project.id}`}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '3.5rem 1fr auto',
-          alignItems: 'center',
-          gap: '1.5rem',
-          padding: 'clamp(1.1rem,2.5vw,1.6rem) clamp(1rem,2vw,1.5rem)',
-          borderBottom: `1px solid ${isActive ? C.green + '40' : C.sandDark}`,
-          background: isActive
-            ? `linear-gradient(90deg, ${C.green}08 0%, transparent 80%)`
-            : 'transparent',
-          textDecoration: 'none',
-          transition: 'background 0.35s ease, border-color 0.35s ease',
-          cursor: 'pointer',
-          borderRadius: isActive ? '0.75rem' : '0',
-        }}
-      >
-        {/* ── Number ── */}
-        <span style={{
-          fontFamily: FONT.alt,
-          fontSize: 'clamp(1.4rem,2.5vw,1.9rem)',
-          fontWeight: 700,
-          color: isActive ? project.categoryColor : C.sandDark,
-          lineHeight: 1,
-          transition: 'color 0.35s ease',
-          userSelect: 'none',
-        }}>
-          {String(index + 1).padStart(2, '0')}
-        </span>
-
-        {/* ── Title + meta ── */}
-        <div>
-          <div style={{
-            fontFamily: FONT.alt,
-            fontSize: 'clamp(1.1rem,2.2vw,1.55rem)',
-            fontWeight: isActive ? 600 : 400,
-            color: isActive ? C.greenDeep : C.ink,
-            lineHeight: 1.2,
-            marginBottom: '0.25rem',
-            transition: 'color 0.3s ease, font-weight 0.1s',
-          }}>
-            {project.title}
-          </div>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '0.6rem',
-            flexWrap: 'wrap',
-          }}>
-            <span style={{
-              fontSize: '0.62rem',
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: project.categoryColor,
-              background: project.categoryColor + '14',
-              padding: '2px 8px',
-              borderRadius: 999,
-            }}>
-              {project.category}
-            </span>
-            <span style={{ fontSize: '0.75rem', color: C.inkLight, fontWeight: 300 }}>
-              {project.subtitle}
-            </span>
-          </div>
-        </div>
-
-        {/* ── Thumbnail ── */}
-        <div style={{
-          width: 'clamp(64px,10vw,110px)',
-          height: 'clamp(44px,6.5vw,74px)',
-          borderRadius: '0.6rem',
-          overflow: 'hidden',
-          flexShrink: 0,
-          boxShadow: isActive
-            ? '0 10px 28px rgba(19,61,32,0.22)'
-            : '0 2px 8px rgba(0,0,0,0.1)',
-          transition: 'box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-          transform: isActive ? 'scale(1.06)' : 'scale(1)',
-        }}>
-          <img
-            src={imgSrc}
-            alt={project.title}
-            width="900"
-            height="600"
-            loading={index < 2 ? 'eager' : 'lazy'}
-            onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
-            style={{
-              width: '100%', height: '100%',
-              objectFit: 'cover',
-              display: 'block',
-              transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
-              transform: isActive ? 'scale(1.12)' : 'scale(1)',
-            }}
-          />
-        </div>
-      </a>
-
-      {/* Active indicator bar */}
-      <motion.div
-        animate={{ scaleX: isActive ? 1 : 0 }}
+      {/* barre active */}
+      <motion.span
+        aria-hidden="true"
+        animate={{ scaleY: isActive ? 1 : 0, opacity: isActive ? 1 : 0 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          position: 'absolute',
-          left: 0, top: '15%', bottom: '15%',
+          position: 'absolute', left: -8, top: '20%', bottom: '20%',
           width: 3, borderRadius: 3,
-          background: project.categoryColor,
-          transformOrigin: 'top',
+          background: project.categoryColor, transformOrigin: 'top',
         }}
       />
-    </motion.div>
+
+      {/* numéro */}
+      <span style={{
+        fontFamily: FONT.alt,
+        fontSize: 'clamp(1.1rem,2vw,1.6rem)',
+        fontWeight: 700,
+        color: isActive ? project.categoryColor : C.sandDark,
+        lineHeight: 1,
+        transition: 'color 0.35s ease',
+        userSelect: 'none',
+      }}>
+        {String(index + 1).padStart(2, '0')}
+      </span>
+
+      {/* titre + meta */}
+      <div>
+        <StaggerTitle
+          text={project.title}
+          isActive={isActive}
+          topColor={C.ink}
+          bottomColor={project.categoryColor}
+          style={{
+            fontFamily: FONT.alt,
+            fontSize: 'clamp(1.15rem,2.4vw,1.7rem)',
+            fontWeight: 500,
+            lineHeight: 1.15,
+          }}
+        />
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '0.6rem',
+          flexWrap: 'wrap', marginTop: '0.35rem',
+        }}>
+          <span style={{
+            fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: project.categoryColor,
+            background: project.categoryColor + '14',
+            padding: '2px 8px', borderRadius: 999,
+          }}>
+            {project.category}
+          </span>
+          <span style={{ fontSize: '0.74rem', color: C.inkLight, fontWeight: 300 }}>
+            {project.subtitle}
+          </span>
+        </div>
+      </div>
+
+      {/* miniature (mobile — masquée en desktop via CSS) */}
+      <div className="pidx-thumb" style={{
+        width: 'clamp(58px,16vw,84px)',
+        height: 'clamp(40px,11vw,56px)',
+        borderRadius: '0.5rem', overflow: 'hidden', flexShrink: 0,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+      }}>
+        <img
+          src={imgSrc} alt={project.title} width="900" height="600" loading="lazy"
+          onError={fallback ? (e) => { e.target.onerror = null; e.target.src = fallback; } : undefined}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </div>
+    </motion.a>
+  );
+}
+
+/* Panneau image qui se révèle en clip-path selon le projet survolé */
+function ProjectImagePanel({ activeIdx }) {
+  return (
+    <div className="pidx-panel" style={{
+      position: 'sticky', top: '5.5rem',
+      height: 'clamp(380px,42vw,540px)',
+      borderRadius: '1rem', overflow: 'hidden',
+      background: C.greenDeep,
+      boxShadow: '0 24px 60px rgba(19,61,32,0.22)',
+    }}>
+      {PROJECTS.map((p, i) => {
+        const src = p.after || p.afterFallback || p.banner || p.gallery?.[0]?.src;
+        const fb = p.afterFallback || p.gallery?.[0]?.src;
+        const active = activeIdx === i;
+        const CLIP_FULL = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
+        const CLIP_NONE = 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)';
+        return (
+          <div
+            key={p.id}
+            style={{
+              position: 'absolute', inset: 0,
+              zIndex: active ? 2 : 1,
+              clipPath: active ? CLIP_FULL : CLIP_NONE,
+              WebkitClipPath: active ? CLIP_FULL : CLIP_NONE,
+              transition: 'clip-path 0.8s cubic-bezier(0.33,1,0.68,1), -webkit-clip-path 0.8s cubic-bezier(0.33,1,0.68,1)',
+            }}
+          >
+            <img
+              src={src} alt={p.title} width="900" height="600"
+              loading={i < 2 ? 'eager' : 'lazy'}
+              onError={fb ? (e) => { e.target.onerror = null; e.target.src = fb; } : undefined}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to top, rgba(19,61,32,0.85) 0%, rgba(19,61,32,0.15) 55%, transparent 100%)',
+            }} />
+            <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: 'clamp(1.25rem,3vw,2rem)' }}>
+              <span style={{
+                fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase',
+                fontWeight: 700, color: C.gold, display: 'block', marginBottom: '0.4rem',
+              }}>
+                {String(i + 1).padStart(2, '0')} · {p.category}
+              </span>
+              <div style={{
+                fontFamily: FONT.alt,
+                fontSize: 'clamp(1.3rem,2.4vw,1.9rem)',
+                fontWeight: 500, color: '#fff', lineHeight: 1.15,
+              }}>
+                {p.title}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
 function ProjectsIndex() {
-  const [activeIdx, setActiveIdx] = useState(null);
-  const headerRef = useRef(null);
-  const headerInView = useInView(headerRef, { once: true, margin: '-40px' });
+  const [activeIdx, setActiveIdx] = useState(0);
 
   return (
     <section style={{
@@ -1138,6 +1218,8 @@ function ProjectsIndex() {
       position: 'relative',
       overflow: 'hidden',
     }}>
+      <style>{PIDX_CSS}</style>
+
       {/* Subtle decorative bg text */}
       <div style={{
         position: 'absolute',
@@ -1161,9 +1243,9 @@ function ProjectsIndex() {
 
         {/* Header */}
         <motion.div
-          ref={headerRef}
           initial={{ opacity: 0, y: 28 }}
-          animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ marginBottom: 'clamp(2rem,4vw,3.5rem)' }}
         >
@@ -1193,37 +1275,45 @@ function ProjectsIndex() {
           </TextEffect>
         </motion.div>
 
-        {/* Project rows */}
-        <div style={{ borderTop: `1px solid ${C.sandDark}` }}>
-          {PROJECTS.map((p, i) => (
-            <ProjectRow
-              key={p.id}
-              project={p}
-              index={i}
-              isActive={activeIdx === i}
-              onEnter={setActiveIdx}
-              onLeave={() => setActiveIdx(null)}
-            />
-          ))}
-        </div>
+        {/* Grille : liste à gauche + panneau image à droite */}
+        <div className="pidx-grid">
+          {/* Liste des projets */}
+          <div>
+            <div style={{ borderTop: `1px solid ${C.sandDark}` }}>
+              {PROJECTS.map((p, i) => (
+                <ProjectListRow
+                  key={p.id}
+                  project={p}
+                  index={i}
+                  isActive={activeIdx === i}
+                  onActivate={setActiveIdx}
+                />
+              ))}
+            </div>
 
-        {/* Footer hint */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={headerInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.6, delay: PROJECTS.length * 0.07 + 0.3 }}
-          style={{
-            marginTop: '2rem',
-            fontSize: '0.72rem',
-            color: C.inkLight,
-            fontWeight: 400,
-            letterSpacing: '0.04em',
-            display: 'flex', alignItems: 'center', gap: '0.5rem',
-          }}
-        >
-          <span style={{ width: 16, height: 1, background: C.inkLight, display: 'block' }} />
-          Survolez un projet pour l&apos;apercevoir — cliquez pour y accéder
-        </motion.div>
+            {/* Indication */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              style={{
+                marginTop: '2rem',
+                fontSize: '0.72rem',
+                color: C.inkLight,
+                fontWeight: 400,
+                letterSpacing: '0.04em',
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+              }}
+            >
+              <span style={{ width: 16, height: 1, background: C.inkLight, display: 'block' }} />
+              Survolez ou touchez un projet pour le découvrir — cliquez pour y accéder
+            </motion.div>
+          </div>
+
+          {/* Panneau image (desktop — masqué en mobile via CSS) */}
+          <ProjectImagePanel activeIdx={activeIdx} />
+        </div>
       </div>
     </section>
   );
