@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -543,6 +544,141 @@ function SectionEquipe() {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   8. TÉMOIGNAGES — infinite scroll columns
+───────────────────────────────────────────────────────────── */
+const TESTIMONIALS = [
+  {
+    text: "Je donne chaque année depuis 5 ans. La transparence de leur rapport financier m'a convaincu dès le début.",
+    name: "Karim B.", role: "Donateur, Lyon", initiales: "KB",
+  },
+  {
+    text: "J'ai participé à la mission de 2023. Distribuer les aides aux familles de Tighremt reste l'une des expériences les plus marquantes de ma vie.",
+    name: "Fatima A.", role: "Bénévole, Paris", initiales: "FA",
+  },
+  {
+    text: "Grâce à l'association, nos enfants ont accès à des fournitures scolaires chaque année. Merci infiniment.",
+    name: "Hassan O.", role: "Habitant de Tighremt", initiales: "HO",
+  },
+  {
+    text: "La réhabilitation des foggaras a changé notre quotidien. Nos cultures sont de nouveau irriguées comme au temps de nos ancêtres.",
+    name: "Brahim M.", role: "Agriculteur, Tata", initiales: "BM",
+  },
+  {
+    text: "Un don de 50 € suffit à financer une aide médicale complète pour une famille dans le besoin. Je n'hésite plus.",
+    name: "Sarah L.", role: "Donatrice, Marseille", initiales: "SL",
+  },
+  {
+    text: "L'association est gérée avec une rigueur et une passion qui force le respect. Chaque euro est utilisé avec soin.",
+    name: "Ahmed T.", role: "Membre actif, Casablanca", initiales: "AT",
+  },
+  {
+    text: "Replanter des palmiers dattiers, c'est replanter des racines. Ce projet m'a touché profondément en tant que Marocain de la diaspora.",
+    name: "Youssef N.", role: "Bénévole, Montréal", initiales: "YN",
+  },
+  {
+    text: "Ma mère est née à Tighremt. Quand j'ai vu les photos de la palmeraie restaurée, j'ai eu les larmes aux yeux. Merci pour ce travail.",
+    name: "Najat R.", role: "Donatrice, Bordeaux", initiales: "NR",
+  },
+  {
+    text: "La mission humanitaire annuelle prouve que l'argent des donateurs va vraiment aux familles. Pas de bureaucratie inutile.",
+    name: "Pierre D.", role: "Donateur, Nantes", initiales: "PD",
+  },
+];
+
+function TestimonialsColumn({ items, duration = 20 }) {
+  const doubled = [...items, ...items];
+  return (
+    <div style={{ overflow: 'hidden', height: 560, position: 'relative' }}>
+      <motion.div
+        animate={{ translateY: '-50%' }}
+        transition={{ duration, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
+        style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+      >
+        {doubled.map((t, i) => (
+          <div
+            key={i}
+            style={{
+              background: '#fff',
+              borderRadius: 16,
+              border: '1px solid #e0d8c8',
+              padding: '1.5rem',
+              boxShadow: '0 2px 16px rgba(19,61,32,0.05)',
+            }}
+          >
+            <p style={{ fontSize: '0.88rem', color: C.ink, lineHeight: 1.75, fontWeight: 300, marginBottom: '1.25rem' }}>
+              &ldquo;{t.text}&rdquo;
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: '50%',
+                background: C.greenDeep,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <span style={{ fontFamily: FONT.alt, fontSize: '0.78rem', fontWeight: 600, color: 'rgba(196,169,107,0.95)', letterSpacing: '0.04em' }}>
+                  {t.initiales}
+                </span>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 600, color: C.ink, lineHeight: 1.25 }}>{t.name}</div>
+                <div style={{ fontSize: '0.72rem', color: C.inkMuted, marginTop: '0.15rem', fontWeight: 300 }}>{t.role}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </motion.div>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 80, background: `linear-gradient(to bottom, ${C.sand}, transparent)`, pointerEvents: 'none', zIndex: 2 }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: `linear-gradient(to top, ${C.sand}, transparent)`, pointerEvents: 'none', zIndex: 2 }} />
+    </div>
+  );
+}
+
+function SectionTemoignages() {
+  return (
+    <section style={{ background: C.sand, padding: 'clamp(5rem,10vw,7rem) 1.5rem' }}>
+      <style>{`
+        .testi-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        .testi-col-2, .testi-col-3 { display: none; }
+        @media (min-width: 640px) {
+          .testi-grid { grid-template-columns: repeat(2, 1fr); }
+          .testi-col-2 { display: block; }
+        }
+        @media (min-width: 960px) {
+          .testi-grid { grid-template-columns: repeat(3, 1fr); }
+          .testi-col-3 { display: block; }
+        }
+      `}</style>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(3rem,6vw,4.5rem)' }}>
+          <p className="reveal" style={{ ...eyebrow(C.ochre), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,112,63,0.4)' }} />
+            Témoignages
+            <span style={{ display: 'block', width: 24, height: 1, background: 'rgba(196,112,63,0.4)' }} />
+          </p>
+          <h2 className="reveal reveal-delay-1" style={{ fontFamily: FONT.alt, fontSize: 'clamp(2rem,5vw,3.2rem)', fontWeight: 300, color: C.ink, lineHeight: 1.1 }}>
+            Ils soutiennent<br />
+            <em style={{ fontStyle: 'italic' }}>Tighremt</em>
+          </h2>
+        </div>
+
+        <div className="testi-grid">
+          <div>
+            <TestimonialsColumn items={TESTIMONIALS.slice(0, 3)} duration={20} />
+          </div>
+          <div className="testi-col-2">
+            <TestimonialsColumn items={TESTIMONIALS.slice(3, 6)} duration={26} />
+          </div>
+          <div className="testi-col-3">
+            <TestimonialsColumn items={TESTIMONIALS.slice(6, 9)} duration={17} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    ROOT — orchestration complète
 ───────────────────────────────────────────────────────────── */
 export default function HomeContent() {
@@ -561,6 +697,8 @@ export default function HomeContent() {
       <SectionDon />
       <SectionDivider />
       <SectionEquipe />
+      <SectionDivider />
+      <SectionTemoignages />
     </>
   );
 }
