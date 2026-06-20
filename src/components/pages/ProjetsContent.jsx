@@ -1216,27 +1216,28 @@ function ProjectsIndex() {
       background: C.sand,
       padding: 'clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,2rem)',
       position: 'relative',
-      overflow: 'hidden',
     }}>
       <style>{PIDX_CSS}</style>
 
-      {/* Subtle decorative bg text */}
-      <div style={{
-        position: 'absolute',
-        right: '-2rem',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        fontFamily: FONT.alt,
-        fontSize: 'clamp(6rem,14vw,12rem)',
-        fontWeight: 700,
-        color: C.sandDark,
-        opacity: 0.35,
-        lineHeight: 1,
-        userSelect: 'none',
-        pointerEvents: 'none',
-        letterSpacing: '-0.04em',
-      }}>
-        08
+      {/* Wrapper isolé pour le texte décoratif — overflow:hidden ici ne casse pas le sticky */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        <div style={{
+          position: 'absolute',
+          right: '-2rem',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          fontFamily: FONT.alt,
+          fontSize: 'clamp(6rem,14vw,12rem)',
+          fontWeight: 700,
+          color: C.sandDark,
+          opacity: 0.35,
+          lineHeight: 1,
+          userSelect: 'none',
+          pointerEvents: 'none',
+          letterSpacing: '-0.04em',
+        }}>
+          08
+        </div>
       </div>
 
       <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
