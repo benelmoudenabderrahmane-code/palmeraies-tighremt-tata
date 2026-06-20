@@ -1370,86 +1370,56 @@ function BentoCard({ project, fill = false }) {
   );
 }
 
-/* ── Hero Projets — image plein écran + grille 3×3 interactive ───────────── */
+/* ── Hero Projets — grille 3×3 plein écran ───────────────────────────────── */
 function ScrollBentoHero() {
   const top9 = PROJECTS.slice(0, 9);
 
   return (
     <div style={{ marginBottom: '-1px' }}>
-
-      {/* ── Hero 100vh ── */}
       <div style={{ position: 'relative', width: '100%', height: '100vh', minHeight: 520, overflow: 'hidden' }}>
-        {/* Background */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          aria-hidden="true"
-          src="/projet-hero.png"
-          alt=""
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'center',
-            display: 'block',
-          }}
-        />
 
-        {/* Overlay — plus sombre à gauche (texte), plus clair à droite (grille) */}
+        {/* Grille 3×3 — remplit tout le hero */}
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <DynamicFrameLayout projects={top9} hoverSize={6} gap={6} />
+        </div>
+
+        {/* Dégradé pour la lisibilité du texte en bas */}
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(105deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 42%, rgba(0,0,0,0.12) 100%)',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.28) 38%, transparent 65%)',
           pointerEvents: 'none',
         }} />
 
-        {/* Layout gauche / droite */}
-        <div
-          className="proj-hero-content"
-          style={{
-            position: 'absolute', inset: 0,
-            display: 'flex', alignItems: 'center',
-            padding: 'clamp(5rem,8vw,7rem) clamp(1.5rem,3vw,3.5rem) clamp(1.5rem,3vw,2.5rem)',
-            gap: 'clamp(1.5rem,3vw,3rem)',
-          }}
-        >
-          {/* ── Texte gauche ── */}
-          <div className="proj-hero-left" style={{ flex: '0 0 42%', maxWidth: 460 }}>
-            <p style={{
-              fontSize: '0.64rem', letterSpacing: '0.3em', textTransform: 'uppercase',
-              color: 'rgba(196,169,107,0.9)', marginBottom: '1rem',
-              display: 'flex', alignItems: 'center', gap: '0.75rem',
-            }}>
-              <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
-              Nos projets
-            </p>
-            <h1 style={{
-              fontFamily: FONT.alt,
-              fontSize: 'clamp(2rem,4.5vw,3.8rem)',
-              fontWeight: 300, lineHeight: 1.15, color: '#fff',
-              margin: '0 0 1rem', textShadow: '0 2px 30px rgba(0,0,0,0.45)',
-            }}>
-              {PROJECTS.length} projets pour<br />
-              <RotatingText texts={PROJETS_TEXTS} interval={2600} />
-            </h1>
-            <p style={{
-              color: 'rgba(255,255,255,0.62)', fontSize: '0.86rem',
-              lineHeight: 1.7, fontWeight: 300, marginBottom: '1.5rem',
-            }}>
-              Environnement · Infrastructure · Éducation · Solidarité · Mémoire
-            </p>
-            <p style={{
-              fontSize: '0.58rem', color: 'rgba(255,255,255,0.38)',
-              letterSpacing: '0.05em',
-            }}>
-              Survolez · cliquez pour voir avant / après
-            </p>
-          </div>
-
-          {/* ── Grille 3×3 droite ── */}
-          <div
-            className="proj-hero-grid"
-            style={{ flex: 1, height: 'clamp(280px,62vh,560px)', minWidth: 0 }}
-          >
-            <DynamicFrameLayout projects={top9} hoverSize={6} gap={5} />
-          </div>
+        {/* Texte en overlay bas-gauche */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0, left: 0, right: 0,
+          padding: 'clamp(2.5rem,5vw,4rem) clamp(1.5rem,3vw,3.5rem)',
+          pointerEvents: 'none',
+        }}>
+          <p style={{
+            fontSize: '0.64rem', letterSpacing: '0.3em', textTransform: 'uppercase',
+            color: 'rgba(196,169,107,0.9)', marginBottom: '1rem',
+            display: 'flex', alignItems: 'center', gap: '0.75rem',
+          }}>
+            <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(196,169,107,0.5)' }} />
+            Nos projets
+          </p>
+          <h1 style={{
+            fontFamily: FONT.alt,
+            fontSize: 'clamp(2rem,4.5vw,3.8rem)',
+            fontWeight: 300, lineHeight: 1.15, color: '#fff',
+            margin: '0 0 0.85rem', textShadow: '0 2px 30px rgba(0,0,0,0.6)',
+          }}>
+            {PROJECTS.length} projets pour<br />
+            <RotatingText texts={PROJETS_TEXTS} interval={2600} />
+          </h1>
+          <p style={{
+            color: 'rgba(255,255,255,0.62)', fontSize: '0.86rem',
+            lineHeight: 1.7, fontWeight: 300,
+          }}>
+            Environnement · Infrastructure · Éducation · Solidarité · Mémoire
+          </p>
         </div>
       </div>
     </div>
@@ -1497,13 +1467,6 @@ export default function ProjetsContent() {
   return (
     <>
       <style>{`
-        @media (max-width: 700px) {
-          .proj-hero-grid { display: none !important; }
-          .proj-hero-left { flex: 0 0 100% !important; max-width: 100% !important; text-align: center !important; }
-          .proj-hero-content { justify-content: center !important; align-items: center !important; }
-          /* Centrer la pastille "Nos projets" (rendue en flex) */
-          .proj-hero-left > p:first-child { justify-content: center !important; }
-        }
         @media (max-width: 440px) {
           .proj-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
