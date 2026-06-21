@@ -7,7 +7,6 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
 import SectionDivider from '@/components/ui/SectionDivider';
 import { TextEffect } from '@/components/ui/TextEffect';
-import DynamicFrameLayout from '@/components/ui/DynamicFrameLayout';
 
 const ImageComparison = dynamic(
   () => import('@/components/ui/ImageComparison'),
@@ -1370,20 +1369,26 @@ function BentoCard({ project, fill = false }) {
   );
 }
 
-/* ── Hero Projets — grille 3×3 plein écran ───────────────────────────────── */
+/* ── Hero Projets — image plein écran ────────────────────────────────────── */
 function ScrollBentoHero() {
-  const top9 = PROJECTS.slice(0, 9);
-
   return (
     <div style={{ marginBottom: '-1px' }}>
-      <div style={{ position: 'relative', width: '100%', height: '100vh', minHeight: 520, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', height: '100vh', minHeight: 520, overflow: 'hidden', background: '#05090e' }}>
 
-        {/* Grille 3×3 — remplit tout le hero */}
-        <div style={{ position: 'absolute', inset: 0 }}>
-          <DynamicFrameLayout projects={top9} hoverSize={6} gap={6} />
-        </div>
+        {/* Image de fond */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          aria-hidden="true"
+          src="/images/tighremt/palmeraie-panorama.jpg"
+          alt=""
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center 40%',
+          }}
+        />
 
-        {/* Dégradé pour la lisibilité du texte en bas */}
+        {/* Dégradé pour la lisibilité du texte */}
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.28) 38%, transparent 65%)',
