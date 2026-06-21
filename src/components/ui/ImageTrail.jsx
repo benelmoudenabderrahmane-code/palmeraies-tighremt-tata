@@ -1,157 +1,103 @@
 'use client';
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import './ImageTrail.css';
-
-const getPos = (e) => ({ x: e.clientX, y: e.clientY });
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /*
- * ImageTrail — mouse trail animation (adapted from React Bits, open-source)
+ * ImageTrail — mouse trail effect using React state + framer-motion.
+ * No RAF loop, no GSAP. Reliable in all environments.
  *
- * Props:
- *  images        : string[]  — local image URLs only (no external URLs)
- *  variant       : 1–8       — animation style
- *  mouseThreshold: number    — px distance before next image shown (default 80)
- *  resetDuration : number    — ms before image fades out (default 500)
- *
- * Security notes:
- *  - RAF cancelled on unmount via _destroyed flag
+ * Security:
  *  - mousemove listener removed on unmount
- *  - DOM elements cleaned up on unmount
- *  - Listener attached to parentElement so pointer-events:none still works
+ *  - setTimeout cleared on unmount via cleanup set
+ *  - Only local image paths accepted
  */
 export default function ImageTrail({
   images = [],
-  variant = 1,
   mouseThreshold = 80,
-  resetDuration = 500,
+  resetDuration = 600,
 }) {
   const containerRef = useRef(null);
+  const [trail, setTrail] = useState([]);
+  const lastPos = useRef({ x: -9999, y: -9999 });
+  const counterRef = useRef(0);
+  const timers = useRef(new Set());
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el || images.length === 0) return;
 
-    let _destroyed = false;
-    let rafId = null;
-    let zIndex = 1;
-    let ctr = 0;
-    let mouse = { x: -9999, y: -9999 };
-    let lastMouse = { x: -9999, y: -9999 };
+    const target = el.parentElement || window;
 
-    // Pre-build DOM nodes for all images
-    const imgEls = images.map((src) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'content__img';
-      const inner = document.createElement('div');
-      inner.className = 'content__img-inner';
-      inner.style.backgroundImage = `url(${src})`;
-      wrap.appendChild(inner);
-      el.appendChild(wrap);
-      return { wrap, inner };
-    });
+    const onMove = (e) => {
+      const { clientX, clientY } = e;
+      const dist = Math.hypot(clientX - lastPos.current.x, clientY - lastPos.current.y);
+      if (dist < mouseThreshold) return;
 
-    function showImg({ wrap, inner }, x, y) {
       const rect = el.getBoundingClientRect();
-      wrap.style.left = `${x - rect.left - 95}px`;
-      wrap.style.top = `${y - rect.top - 104}px`;
-      wrap.style.zIndex = String(zIndex++);
+      const id = counterRef.current++;
 
-      gsap.killTweensOf([wrap, inner]);
-      const delay = resetDuration / 1000;
+      setTrail(prev => [
+        ...prev.slice(-(images.length - 1)),
+        {
+          id,
+          src: images[id % images.length],
+          x: clientX - rect.left - 90,
+          y: clientY - rect.top - 99,
+          rot: id % 2 === 0 ? -5 : 5,
+          zIndex: id,
+        },
+      ]);
 
-      if (variant === 1) {
-        gsap.fromTo(wrap,
-          { opacity: 0, scale: 0, rotate: gsap.utils.random(-15, 15) },
-          { opacity: 1, scale: 1, rotate: gsap.utils.random(-5, 5), duration: 0.4, ease: 'power3.out',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, scale: 0.8, duration: 0.4, delay }); } }
-        );
-        gsap.fromTo(inner, { scale: 1.8 }, { scale: 1, duration: 0.8, ease: 'power2.out' });
-      } else if (variant === 2) {
-        gsap.fromTo(wrap,
-          { opacity: 0, scale: 0.6, y: 30, rotate: gsap.utils.random(-20, 20) },
-          { opacity: 1, scale: 1, y: 0, rotate: gsap.utils.random(-8, 8), duration: 0.5, ease: 'back.out(1.4)',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, y: -20, duration: 0.5, delay }); } }
-        );
-      } else if (variant === 3) {
-        gsap.fromTo(wrap,
-          { opacity: 0, scale: 1.4, filter: 'blur(8px)' },
-          { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.55, ease: 'power2.out',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, filter: 'blur(6px)', scale: 0.9, duration: 0.45, delay }); } }
-        );
-      } else if (variant === 4) {
-        gsap.fromTo(wrap,
-          { opacity: 0, skewX: 20, scale: 0.8 },
-          { opacity: 1, skewX: 0, scale: 1, duration: 0.4, ease: 'power3.out',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, skewX: -15, duration: 0.35, delay }); } }
-        );
-        gsap.fromTo(inner, { scale: 1.4 }, { scale: 1, duration: 0.7, ease: 'power2.out' });
-      } else if (variant === 5) {
-        gsap.fromTo(wrap,
-          { opacity: 0, x: -30, rotate: -10 },
-          { opacity: 1, x: 0, rotate: gsap.utils.random(-6, 6), duration: 0.4, ease: 'power2.out',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, x: 30, duration: 0.35, delay }); } }
-        );
-        gsap.fromTo(inner, { scale: 1.4 }, { scale: 1, duration: 0.7, ease: 'power1.out' });
-      } else if (variant === 6) {
-        gsap.fromTo(wrap,
-          { opacity: 0, y: -40, scale: 0.7 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, y: 20, scale: 0.8, duration: 0.4, delay }); } }
-        );
-      } else if (variant === 7) {
-        gsap.fromTo(wrap,
-          { opacity: 0, scale: 0.5, rotate: 45 },
-          { opacity: 1, scale: 1, rotate: gsap.utils.random(-5, 5), duration: 0.5, ease: 'power3.out',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, scale: 0.6, rotate: -30, duration: 0.4, delay }); } }
-        );
-        gsap.fromTo(inner, { scale: 1.6 }, { scale: 1, duration: 0.8, ease: 'power2.out' });
-      } else {
-        // variant 8
-        gsap.fromTo(wrap,
-          { opacity: 0, scale: 0.2, x: gsap.utils.random(-60, 60), y: gsap.utils.random(-40, 40) },
-          { opacity: 1, scale: 1, x: 0, y: 0, duration: 0.6, ease: 'power4.out',
-            onComplete: () => { if (!_destroyed) gsap.to(wrap, { opacity: 0, scale: 0.3, duration: 0.4, delay }); } }
-        );
-        gsap.fromTo(inner, { scale: 2 }, { scale: 1, duration: 0.9, ease: 'power2.out' });
-      }
-    }
+      lastPos.current = { x: clientX, y: clientY };
 
-    function render() {
-      if (_destroyed) return;
-      const dist = Math.hypot(mouse.x - lastMouse.x, mouse.y - lastMouse.y);
-      if (mouse.x > -9000 && dist > mouseThreshold) {
-        showImg(imgEls[ctr % imgEls.length], mouse.x, mouse.y);
-        lastMouse = { ...mouse };
-        ctr++;
-      }
-      rafId = requestAnimationFrame(render);
-    }
+      const t = setTimeout(() => {
+        setTrail(prev => prev.filter(img => img.id !== id));
+        timers.current.delete(t);
+      }, resetDuration + 500);
 
-    // Attach to parent so pointer-events:none on this container still works
-    const target = el.parentElement || el;
-    const onMove = (e) => { mouse = getPos(e); };
+      timers.current.add(t);
+    };
+
     target.addEventListener('mousemove', onMove);
 
-    rafId = requestAnimationFrame(render);
-
     return () => {
-      _destroyed = true;
-      cancelAnimationFrame(rafId);
       target.removeEventListener('mousemove', onMove);
-      imgEls.forEach(({ wrap }) => {
-        gsap.killTweensOf(wrap);
-        wrap.remove();
-      });
+      timers.current.forEach(clearTimeout);
+      timers.current.clear();
     };
-  }, [images, variant, mouseThreshold, resetDuration]);
+  }, [images, mouseThreshold, resetDuration]);
 
   return (
     <div
       ref={containerRef}
-      className="content"
       aria-hidden="true"
       style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}
-    />
+    >
+      <AnimatePresence>
+        {trail.map(({ id, src, x, y, rot, zIndex }) => (
+          <motion.div
+            key={id}
+            initial={{ opacity: 0, scale: 0, rotate: rot * 2.5 }}
+            animate={{ opacity: 1, scale: 1, rotate: rot }}
+            exit={{ opacity: 0, scale: 0.75, rotate: rot * -1.5 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: 'absolute',
+              left: x,
+              top: y,
+              width: 180,
+              aspectRatio: '1.1',
+              borderRadius: 14,
+              overflow: 'hidden',
+              zIndex,
+              boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
+              backgroundImage: `url(${src})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+        ))}
+      </AnimatePresence>
+    </div>
   );
 }
