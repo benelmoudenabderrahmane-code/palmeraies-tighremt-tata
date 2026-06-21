@@ -9,6 +9,7 @@ import SectionDivider from '@/components/ui/SectionDivider';
 import AnimatedMarqueeHero from '@/components/ui/AnimatedMarqueeHero';
 
 const Lightbox = dynamic(() => import('@/components/ui/Lightbox'), { ssr: false });
+const ImageTrail = dynamic(() => import('@/components/ui/ImageTrail'), { ssr: false });
 
 /* ────────────────────────────────────────────────
    Images — thème + dimensions indicatives pour
@@ -109,6 +110,20 @@ const MARQUEE = [
   { src: '/images/tighremt/tigh-g22.jpg', alt: 'Tighremt — paysage 22' },
   { src: '/images/tighremt/tigh-g34.jpg', alt: 'Tighremt — paysage 34' },
   { src: '/images/tighremt/tigh-g50.jpg', alt: 'Tighremt — paysage 50' },
+];
+
+/* Images pour le trail de la souris — sélection de 10 images variées */
+const TRAIL_IMAGES = [
+  '/images/tighremt/palmeraie-panorama.jpg',
+  '/images/tighremt/dattes.jpg',
+  '/images/tighremt/minaret.jpg',
+  '/images/tighremt/ksar-silhouette.jpg',
+  '/images/tata/tata-oasis.webp',
+  '/images/tata/tata-porte.webp',
+  '/images/tighremt/palmeraie-chemin.jpg',
+  '/images/tighremt/tigh-g14.jpg',
+  '/images/tata/tata-mosquee.webp',
+  '/images/tighremt/tigh-g22.jpg',
 ];
 
 const THEMES       = ['tous', 'tighremt', 'palmeraie', 'village', 'paysage', 'tata'];
@@ -253,16 +268,19 @@ export default function GalerieContent() {
         }
       `}</style>
 
-      {/* ── Hero — image pleine sans marquee ── */}
-      <AnimatedMarqueeHero
-        tagline="Galerie · Tata & Tighremt"
-        title="Tighremt en images"
-        description="La beauté de la palmeraie, du ksar et du village à travers nos photos — et celles de la ville de Tata."
-        ctaText="Découvrir la galerie"
-        ctaHref="#galerie-grid"
-        bgImage="/galerie-hero.png?v=2"
-        fadeColor="#f5f0e8"
-      />
+      {/* ── Hero — image pleine + trail de la souris ── */}
+      <div style={{ position: 'relative' }}>
+        <AnimatedMarqueeHero
+          tagline="Galerie · Tata & Tighremt"
+          title="Tighremt en images"
+          description="La beauté de la palmeraie, du ksar et du village à travers nos photos — et celles de la ville de Tata."
+          ctaText="Découvrir la galerie"
+          ctaHref="#galerie-grid"
+          bgImage="/galerie-hero.png?v=2"
+          fadeColor="#f5f0e8"
+        />
+        <ImageTrail images={TRAIL_IMAGES} variant={1} mouseThreshold={80} resetDuration={600} />
+      </div>
 
       {/* ── Strip marquee séparé ── */}
       <div style={{ background: '#f5f0e8', overflow: 'hidden', padding: '2.25rem 0 1.5rem', marginTop: '-1px' }}>
