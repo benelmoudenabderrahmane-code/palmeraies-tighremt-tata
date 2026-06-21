@@ -26,14 +26,16 @@ export default function ImageTrail({
     const el = containerRef.current;
     if (!el || images.length === 0) return;
 
-    const target = el.parentElement || window;
-
     const onMove = (e) => {
       const { clientX, clientY } = e;
+
+      // Only fire when cursor is inside the container
+      const rect = el.getBoundingClientRect();
+      if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return;
+
       const dist = Math.hypot(clientX - lastPos.current.x, clientY - lastPos.current.y);
       if (dist < mouseThreshold) return;
 
-      const rect = el.getBoundingClientRect();
       const id = counterRef.current++;
 
       setTrail(prev => [
@@ -58,10 +60,11 @@ export default function ImageTrail({
       timers.current.add(t);
     };
 
-    target.addEventListener('mousemove', onMove);
+    // Window-level listener: no bubbling dependency, bounds-checked above
+    window.addEventListener('mousemove', onMove);
 
     return () => {
-      target.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mousemove', onMove);
       timers.current.forEach(clearTimeout);
       timers.current.clear();
     };
