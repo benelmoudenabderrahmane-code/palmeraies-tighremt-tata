@@ -11,6 +11,20 @@ node_modules/
 .env.local
 .env*.local
 
+# Secrets / credentials — NEVER commit
+*.pickle
+youtube_client_secret.json
+*client_secret*.json
+*_token.json
+*.pem
+*.key
+
+# Heavy media — keep out of git
+*.mp4
+*.mov
+*.wav
+*.avi
+
 # Vercel
 .vercel/
 
