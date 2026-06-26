@@ -7,7 +7,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import Lightbox from '@/components/ui/Lightbox';
 import SectionDivider from '@/components/ui/SectionDivider';
 import { TextEffect } from '@/components/ui/TextEffect';
-import VideoFrameLayout from '@/components/ui/VideoFrameLayout';
+import DynamicFrameLayout from '@/components/ui/DynamicFrameLayout';
 
 const ImageComparison = dynamic(
   () => import('@/components/ui/ImageComparison'),
@@ -1370,21 +1370,9 @@ function BentoCard({ project, fill = false }) {
   );
 }
 
-/* ── Frames pour le hero (9 photos locales, grille 3×3) ─────────────────── */
-const HERO_FRAMES = [
-  { id: 1, image: '/images/tighremt/palmeraie-panorama.jpg', alt: 'Palmeraie de Tighremt', defaultPos: { x: 0, y: 0 }, mediaSize: 1.05 },
-  { id: 2, image: '/images/tighremt/minaret.jpg',            alt: 'Minaret de Tighremt',   defaultPos: { x: 4, y: 0 }, mediaSize: 1.08 },
-  { id: 3, image: '/images/tighremt/ksar-silhouette.jpg',    alt: 'Ksar de Tighremt',      defaultPos: { x: 8, y: 0 }, mediaSize: 1.06 },
-  { id: 4, image: '/images/tighremt/pont-apres.jpg',         alt: 'Pont de Tighremt',      defaultPos: { x: 0, y: 4 }, mediaSize: 1.07 },
-  { id: 5, image: '/images/tighremt/ain-g1.jpg',             alt: "Bassin d'Aïn",          defaultPos: { x: 4, y: 4 }, mediaSize: 1.06 },
-  { id: 6, image: '/images/tighremt/sidi-apres.jpg',         alt: 'Vestiaire Sidi Brahim', defaultPos: { x: 8, y: 4 }, mediaSize: 1.07 },
-  { id: 7, image: '/images/tighremt/cimetiere-apres.jpg',    alt: 'Cimetière Aslda',       defaultPos: { x: 0, y: 8 }, mediaSize: 1.05 },
-  { id: 8, image: '/images/tighremt/tournoi-g1.jpg',         alt: 'Tournoi de football',   defaultPos: { x: 4, y: 8 }, mediaSize: 1.06 },
-  { id: 9, image: '/images/tighremt/sidi-foot-g1.jpg',       alt: "Terrain Sidi Oua'aziz", defaultPos: { x: 8, y: 8 }, mediaSize: 1.08 },
-];
-
 /* ── Hero Projets — image plein écran ────────────────────────────────────── */
 function ScrollBentoHero() {
+  const top9 = PROJECTS.slice(0, 9);
 
   return (
     <div style={{ marginBottom: '-1px' }}>
@@ -1422,7 +1410,7 @@ function ScrollBentoHero() {
           }}
         >
           {/* ── Texte gauche ── */}
-          <div className="proj-hero-left" style={{ flex: '0 0 50%', maxWidth: 520 }}>
+          <div className="proj-hero-left" style={{ flex: '0 0 42%', maxWidth: 460 }}>
             <p style={{
               fontSize: '0.64rem', letterSpacing: '0.3em', textTransform: 'uppercase',
               color: 'rgba(196,169,107,0.9)', marginBottom: '1rem',
@@ -1454,12 +1442,12 @@ function ScrollBentoHero() {
             </p>
           </div>
 
-          {/* ── Animation 3×3 droite (VideoFrameLayout) ── */}
+          {/* ── Grille 3×3 droite ── */}
           <div
             className="proj-hero-grid"
             style={{ flex: 1, height: 'clamp(280px,62vh,560px)', minWidth: 0 }}
           >
-            <VideoFrameLayout frames={HERO_FRAMES} hoverSize={6} gapSize={5} />
+            <DynamicFrameLayout projects={top9} hoverSize={6} gap={5} />
           </div>
         </div>
       </div>
