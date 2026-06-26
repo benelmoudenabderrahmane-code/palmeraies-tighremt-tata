@@ -68,7 +68,7 @@ const PROJECTS = [
     category: 'Infrastructure',
     categoryColor: C.ochre,
     title: 'Consolidation du pont de Tighremt',
-    subtitle: 'Douar Tighremt, Province de Tata · 2010',
+    subtitle: 'Aslda · Douar Tighremt, Province de Tata · 2010',
     desc: "Le pont de Tighremt, seul axe de liaison entre le douar et la route principale, présentait des piliers fortement dégradés par les crues successives de l'oued. L'association a financé et coordonné les travaux de consolidation des piles en béton, assurant la sécurité des habitants et le maintien de l'accès au village tout au long de l'année.",
     stats: [
       { value: '4',     label: 'piliers consolidés' },
@@ -249,7 +249,7 @@ const PROJECTS = [
     bg: C.sandMid,
     category: 'Mémoire & Dignité',
     categoryColor: C.greenDeep,
-    title: 'Clôture du cimetière — Aslda',
+    title: 'Clôture du cimetière — Sidi Brahim',
     subtitle: 'Douar Tighremt, Province de Tata · 2017 – 2018',
     desc: "Notre association a érigé une clôture autour d'un premier cimetière pour protéger les tombes des parasites, préservant ainsi le lieu de repos des défunts et assurant le respect de leur mémoire. Ce projet, porté avec beaucoup de soin et de considération, témoigne de l'engagement de l'association pour la dignité et le patrimoine mémoriel du douar de Tighremt.",
     stats: [
@@ -763,7 +763,7 @@ function ProjectBlock({ project, index }) {
 const DEPENSES = [
   { label: 'Cimetière — Sidi Brahim',                       amount: 120000,    projectId: null },
   { label: 'Cimetière — Kasbat Tighremt',                   amount: 149812,    projectId: null },
-  { label: "Clôture cimetière — Aslda (Sidi Oua'aziz)",      amount: 40425,     projectId: 'cimetiere' },
+  { label: "Clôture cimetière — Sidi Brahim",               amount: 40425,     projectId: 'cimetiere' },
   { label: "Installation sportive — Sidi Oua'aziz",          amount: 8400,      projectId: 'sidi-oasis-foot' },
   { label: 'Salle + toilettes — Madao',                      amount: 6000,      projectId: null },
   { label: 'Construction raoud — Kasbat Tighremt',           amount: 9260,      projectId: null },

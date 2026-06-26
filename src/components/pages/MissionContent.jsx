@@ -46,7 +46,7 @@ const MISSIONS = [
     border: `${C.ochre}28`,
     titre: 'Infrastructure locale',
     desc: 'Consolidation du pont de Tighremt, construction de vestiaires sportifs et amélioration des équipements collectifs pour sécuriser et moderniser le quotidien des habitants.',
-    points: ['Pont consolidé — 4 piliers', 'Vestiaire terrain de football', 'Clôture du cimetière d\'Aslda'],
+    points: ['Pont consolidé — 4 piliers', 'Vestiaire terrain de football', 'Clôture du cimetière de Sidi Brahim'],
   },
   {
     Icon: Heart,
@@ -87,7 +87,7 @@ const VALEURS = [
 const TIMELINE = [
   { year: '2010', title: 'Fondation', desc: "Création de l'association loi 1901 par des membres de la diaspora tighrémtoise établis en France." },
   { year: '2010', title: 'Premiers travaux', desc: "Consolidation du pont de Tighremt — premier projet structurant pour le douar." },
-  { year: '2017', title: 'Dignité mémorielle', desc: "Érection de la clôture du cimetière d'Aslda pour protéger les sépultures." },
+  { year: '2017', title: 'Dignité mémorielle', desc: "Érection de la clôture du cimetière de Sidi Brahim pour protéger les sépultures." },
   { year: '2018', title: 'Sport & jeunesse', desc: "Construction du vestiaire du terrain de football Sidi Brahim, entièrement bénévole." },
   { year: '2020', title: 'Aide humanitaire', desc: "Lancement des distributions alimentaires régulières, renforcées pendant la pandémie." },
   { year: '2022', title: 'Palmeraie vivante', desc: "Démarrage du programme de replantation intensive — 1 200 palmiers en trois ans." },
