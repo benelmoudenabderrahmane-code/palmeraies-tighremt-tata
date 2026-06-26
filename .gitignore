@@ -24,6 +24,8 @@ youtube_client_secret.json
 *.mov
 *.wav
 *.avi
+# Exception : vidéo hero de l'accueil (servie par le site, doit être versionnée)
+!public/palmeraie-hero.mp4
 
 # Vercel
 .vercel/

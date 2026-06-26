@@ -19,7 +19,7 @@ const videoSchema = {
   description: 'Découvrez la beauté de la palmeraie de Tighremt, Maroc. Association loi 1901 œuvrant pour la sauvegarde de cet écosystème unique.',
   thumbnailUrl: `${BASE}/images/tighremt/palmeraie-panorama.jpg`,
   uploadDate: '2024-01-01',
-  contentUrl: `${BASE}/palmeraie-hd.mp4`,
+  contentUrl: `${BASE}/palmeraie-hero.mp4`,
   embedUrl: BASE,
   publisher: {
     '@type': 'Organization',
