@@ -28,7 +28,7 @@ const MISSIONS = [
     border: `${C.green}28`,
     titre: 'Environnement & Palmeraie',
     desc: 'Replantation de palmiers dattiers, restauration des canaux d\'irrigation foggara et lutte contre la désertification pour préserver l\'écosystème oasien de Tighremt.',
-    points: ['1 200 palmiers replantés', '4 ha de surface restaurée', '800 m de haies brise-vent'],
+    points: [],
   },
   {
     Icon: GraduationCap,
@@ -47,24 +47,6 @@ const MISSIONS = [
     titre: 'Infrastructure locale',
     desc: 'Consolidation du pont de Tighremt, construction de vestiaires sportifs et amélioration des équipements collectifs pour sécuriser et moderniser le quotidien des habitants.',
     points: ['Pont consolidé — 4 piliers', 'Vestiaire terrain de football', 'Clôture du cimetière de Sidi Brahim'],
-  },
-  {
-    Icon: Heart,
-    color: C.accent,
-    bg: `${C.accent}12`,
-    border: `${C.accent}28`,
-    titre: 'Aide humanitaire',
-    desc: 'Distributions alimentaires régulières (farine, huile, sucre, légumineuses) et de couvertures aux foyers les plus vulnérables, identifiés en lien avec les élus locaux.',
-    points: ['120 foyers aidés / an', '5 distributions annuelles', '3 tonnes de denrées livrées'],
-  },
-  {
-    Icon: Shield,
-    color: C.greenDeep,
-    bg: `${C.greenDeep}12`,
-    border: `${C.greenDeep}28`,
-    titre: 'Patrimoine & Mémoire',
-    desc: 'Inventaire numérique des ksour, greniers collectifs et gravures rupestres. Ateliers intergénérationnels de transmission des savoir-faire amazighs et restauration du patrimoine bâti.',
-    points: ['40+ sites inventoriés', '1 grenier restauré', '200 h de témoignages'],
   },
   {
     Icon: Droplets,
@@ -88,11 +70,8 @@ const TIMELINE = [
   { year: '2010', title: 'Fondation', desc: "Création de l'association loi 1901 par des membres de la diaspora tighrémtoise établis en France." },
   { year: '2010', title: 'Premiers travaux', desc: "Consolidation du pont de Tighremt — premier projet structurant pour le douar." },
   { year: '2017', title: 'Dignité mémorielle', desc: "Érection de la clôture du cimetière de Sidi Brahim pour protéger les sépultures." },
-  { year: '2018', title: 'Sport & jeunesse', desc: "Construction du vestiaire du terrain de football Sidi Brahim, entièrement bénévole." },
+  { year: '2018', title: 'Sport & jeunesse', desc: "Construction du vestiaire du terrain de football Sidi Oua'aziz, entièrement bénévole." },
   { year: '2020', title: 'Aide humanitaire', desc: "Lancement des distributions alimentaires régulières, renforcées pendant la pandémie." },
-  { year: '2022', title: 'Palmeraie vivante', desc: "Démarrage du programme de replantation intensive — 1 200 palmiers en trois ans." },
-  { year: '2023', title: 'Anti-désertification', desc: "Haies brise-vent, fascines de palmes et parcelles pilotes de surveillance végétale." },
-  { year: '2024', title: 'Patrimoine digital', desc: "Inventaire numérique de 40+ sites patrimoniaux, ateliers de transmission amazighe." },
 ];
 
 function StatCounter({ value, suffix, label, color }) {
@@ -212,7 +191,7 @@ export default function MissionContent() {
             <div style={{ width: 56, height: 2, background: `linear-gradient(to right, ${C.ochre}, transparent)`, marginBottom: '2rem' }} />
 
             <p className="reveal reveal-delay-1" style={{ color: C.inkMuted, lineHeight: 1.9, fontSize: '1rem', fontWeight: 300, marginBottom: '1.25rem' }}>
-              Tighremt est un petit douar de la province de Tata, au cœur du Souss-Massa, dans le sud du Maroc. Enclavée entre les contreforts de l&apos;Anti-Atlas et les premiers regs sahariens, la région est l&apos;une des plus arides du royaume — les précipitations y dépassent rarement 80 mm par an.
+              Tata, chef-lieu de la province du même nom, est une ville oasienne du sud du Maroc, réputée pour ses kasbahs en pisé et ses palmeraies aux portes des grands espaces sahariens. Tighremt est un petit douar de cette province, au cœur du Souss-Massa. Enclavée entre les contreforts de l&apos;Anti-Atlas et les premiers regs sahariens, la région est l&apos;une des plus arides du royaume — les précipitations y dépassent rarement 80 mm par an.
             </p>
             <p className="reveal reveal-delay-2" style={{ color: C.inkMuted, lineHeight: 1.9, fontSize: '1rem', fontWeight: 300, marginBottom: '1.25rem' }}>
               La palmeraie de Tighremt, symbole vivant d&apos;identité et de résilience, comptait autrefois des milliers de dattiers irrigués par un réseau de canaux foggara. L&apos;exode rural et la sécheresse cronique ont fragilisé cet équilibre millénaire.
@@ -364,7 +343,6 @@ export default function MissionContent() {
           gap: '1.5rem',
         }}>
           <StatCounter value={1200} suffix="+"  label="Palmiers préservés"   color="#fff" />
-          <StatCounter value={120}  suffix=""   label="Foyers aidés / an"    color="#fff" />
           <StatCounter value={14}   suffix=""   label="Années d'action"      color="#fff" />
           <StatCounter value={6}    suffix=""   label="Projets réalisés"     color="#fff" />
           <StatCounter value={80}   suffix="+"  label="Enfants bénéficiaires" color="#fff" />

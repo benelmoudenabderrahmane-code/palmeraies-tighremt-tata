@@ -69,7 +69,7 @@ const PROJECTS = [
     categoryColor: C.ochre,
     title: 'Consolidation du pont de Tighremt',
     subtitle: 'Aslda · Douar Tighremt, Province de Tata · 2010',
-    desc: "Le pont de Tighremt, seul axe de liaison entre le douar et la route principale, présentait des piliers fortement dégradés par les crues successives de l'oued. L'association a financé et coordonné les travaux de consolidation des piles en béton, assurant la sécurité des habitants et le maintien de l'accès au village tout au long de l'année.",
+    desc: "Le pont d'Aslda, seul axe de liaison entre le douar et la route principale, présentait des piliers fortement dégradés par les crues successives de l'oued. L'association a financé et coordonné les travaux de consolidation des piles en béton, assurant la sécurité des habitants et le maintien de l'accès au village tout au long de l'année.",
     stats: [
       { value: '4',     label: 'piliers consolidés' },
       { value: '2010',  label: 'année des travaux' },
@@ -127,8 +127,6 @@ const PROJECTS = [
       { value: 'Gabions', label: 'seuil de captage' },
     ],
     budget: 4000,
-    before: '/images/tighremt/ain-avant.jpg',
-    after:  '/images/tighremt/ain-apres.jpg',
     video: {
       src:         '/videos/ain-chantier.mp4',
       thumbnail:   '/images/tighremt/ain-g1.jpg',
@@ -165,7 +163,7 @@ const PROJECTS = [
     categoryColor: '#2b7cbf',
     title: 'Distribution de fournitures scolaires',
     subtitle: 'Douar de Tighremt · 2018 – présent',
-    desc: "Chaque année à la rentrée scolaire, l'association distribue des kits scolaires complets aux enfants du douar : cartables, cahiers, stylos, trousses, règles et livres. Aucun enfant de Tighremt ne doit manquer de matériel pour accéder à l'éducation. Les bénéficiaires sont identifiés avec les enseignants et les familles les plus vulnérables.",
+    desc: "L'association distribue des kits scolaires complets aux enfants du douar : cartables, cahiers, stylos, trousses, règles et livres. Aucun enfant de Tighremt ne doit manquer de matériel pour accéder à l'éducation. Les bénéficiaires sont identifiés avec les enseignants et les familles les plus vulnérables.",
     stats: [
       { value: '80+',  label: 'enfants bénéficiaires' },
       { value: '6',    label: 'rentrées couvertes' },
@@ -188,12 +186,8 @@ const PROJECTS = [
     categoryColor: C.greenDeep,
     title: 'Patrimoine culturel & Mémoire',
     subtitle: 'Région Tata · 2024 – présent',
-    desc: "Tighremt possède un riche patrimoine architectural (ksour, greniers collectifs, gravures rupestres) et immatériel (chants amazighs, savoir-faire artisanaux). Notre programme de sauvegarde inclut un inventaire numérique, des ateliers intergénérationnels de transmission du savoir-faire et la restauration d'un grenier collectif.",
-    stats: [
-      { value: '40+',   label: 'sites inventoriés' },
-      { value: '1',     label: 'grenier restauré' },
-      { value: '200 h', label: 'de témoignages enregistrés' },
-    ],
+    desc: "Tighremt possède un riche patrimoine architectural (ksour, greniers collectifs, gravures rupestres) et immatériel (chants amazighs, savoir-faire artisanaux).",
+    stats: [],
     before:         '/images/tighremt/ksar-ruines.jpg',
     beforeFallback: UNS.ruins,
     after:          '/images/tighremt/minaret.jpg',
@@ -210,7 +204,7 @@ const PROJECTS = [
     bg: C.sand,
     category: 'Infrastructure',
     categoryColor: C.green,
-    title: 'Vestiaire du terrain de football — Sidi Brahim',
+    title: "Vestiaire du terrain de football — Sidi Oua'aziz",
     subtitle: 'Douar Tighremt, Province de Tata · 2018 – 2019',
     desc: "Notre association a réalisé la construction d'un nouveau vestiaire avec sanitaires sur le terrain de football du village, améliorant ainsi le confort et les conditions de jeu des joueurs locaux. Un pas en avant concret pour les infrastructures sportives de Tighremt, entièrement porté par la mobilisation de nos bénévoles et de la communauté.",
     stats: [
@@ -278,7 +272,7 @@ const PROJECTS = [
     categoryColor: C.green,
     title: 'Tournoi de Football de Tighremt',
     subtitle: 'Douar Tighremt, Province de Tata',
-    desc: "Chaque année, l'association organise le tournoi de football de Tighremt, un événement festif et sportif qui rassemble équipes locales et villages voisins autour d'une compétition amicale. Ce tournoi est bien plus qu'un match : c'est un moment de cohésion, de fierté collective et de lien social pour toute la communauté du douar.",
+    desc: "L'association a organisé le tournoi de football de Tighremt, un événement festif et sportif qui rassemble équipes locales et villages voisins autour d'une compétition amicale. Ce tournoi est bien plus qu'un match : c'est un moment de cohésion, de fierté collective et de lien social pour toute la communauté du douar.",
     stats: [
       { value: '8+',    label: 'équipes participantes' },
       { value: '200+',  label: 'spectateurs par édition' },
@@ -384,19 +378,13 @@ const PROJECTS = [
   {
     id: 'sidi-oasis-foot',
     bg: C.sandMid,
-    category: 'Sport & Infrastructure',
-    categoryColor: C.greenDeep,
+    category: "Projet à venir",
+    categoryColor: C.ochre,
     title: "Terrain de Football — Sidi Oua'aziz",
     subtitle: "Douar Tighremt, Province de Tata",
-    desc: "L'association a réalisé l'aménagement et la réhabilitation du terrain de football de Sidi Oua'aziz : nivellement, marquage et mise en état de la surface de jeu pour offrir aux jeunes du douar un espace sportif digne et fonctionnel. Un investissement direct dans la jeunesse et la cohésion sociale de Tighremt.",
-    stats: [
-      { value: '1',     label: 'terrain aménagé' },
-      { value: '100%',  label: 'main-d\'œuvre locale' },
-      { value: '50+',   label: 'jeunes bénéficiaires' },
-    ],
+    desc: "L'association lance la réhabilitation du terrain de football de Sidi Oua'aziz : nivellement, marquage et mise en état de la surface de jeu pour offrir aux jeunes du douar un espace sportif digne et fonctionnel. Un projet à venir, porté par la mobilisation de nos bénévoles et le soutien de nos donateurs.",
+    stats: [],
     budget: 8400,
-    before:  '/images/tighremt/sidi-foot-avant.jpg',
-    after:   '/images/tighremt/sidi-foot-apres.jpg',
     gallery: [
       { src: '/images/tighremt/sidi-foot-g1.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 1" },
       { src: '/images/tighremt/sidi-foot-g2.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 2" },
