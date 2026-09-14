@@ -18,7 +18,7 @@ export const metadata = {
     description: 'Ensemble pour la sauvegarde de la palmeraie et le développement de Tighremt.',
     locale: 'fr_FR',
     type: 'website',
-    images: [{ url: 'https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg', width: 1200, height: 630, alt: 'Palmeraie de Tighremt' }],
+    images: [{ url: 'https://association-palmeraies-tighremt.com/images/tighremt/palmeraie-panorama.jpg', width: 1200, height: 630, alt: 'Palmeraie de Tighremt' }],
   },
 };
 
@@ -29,8 +29,8 @@ const LD_NGO = JSON.stringify({
   "@type": "NGO",
   "name": "Association Palmeraies Tighremt",
   "alternateName": "Palmeraies Tighremt TATA",
-  "url": "https://palmeries-tighremt.org",
-  "logo": "https://palmeries-tighremt.org/logo.png",
+  "url": "https://association-palmeraies-tighremt.com",
+  "logo": "https://association-palmeraies-tighremt.com/logo.png",
   "description": "Association loi 1901 fondee en 2010. Sauvegarde de la palmeraie et developpement du village de Tighremt, province de Tata, Maroc.",
   "foundingDate": "2010",
   "areaServed": { "@type": "Place", "name": "Tighremt, Tata, Maroc" },
@@ -42,14 +42,14 @@ const LD_VIDEO = JSON.stringify({
   "@type": "VideoObject",
   "name": "Palmeraie de Tighremt - Association Palmeraies Tighremt",
   "description": "Decouvrez la beaute de la palmeraie de Tighremt, Maroc. Association loi 1901 oeuvrant pour la sauvegarde de cet ecosysteme unique.",
-  "thumbnailUrl": "https://palmeries-tighremt.org/images/tighremt/palmeraie-panorama.jpg",
+  "thumbnailUrl": "https://association-palmeraies-tighremt.com/images/tighremt/palmeraie-panorama.jpg",
   "uploadDate": "2024-01-01",
-  "contentUrl": "https://palmeries-tighremt.org/palmeraie-hero.mp4",
-  "embedUrl": "https://palmeries-tighremt.org",
+  "contentUrl": "https://association-palmeraies-tighremt.com/palmeraie-hero.mp4",
+  "embedUrl": "https://association-palmeraies-tighremt.com",
   "publisher": {
     "@type": "Organization",
     "name": "Association Palmeraies Tighremt",
-    "logo": { "@type": "ImageObject", "url": "https://palmeries-tighremt.org/logo.png" },
+    "logo": { "@type": "ImageObject", "url": "https://association-palmeraies-tighremt.com/logo.png" },
   },
 });
 

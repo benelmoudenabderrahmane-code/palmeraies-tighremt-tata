@@ -9,7 +9,7 @@ export function generateMetadata({ params }) {
   return {
     title: `${shortTitle} | Tighremt`,
     description: article?.extrait?.slice(0, 155),
-    alternates: { canonical: `https://palmeries-tighremt.org/actualites/${article?.id}` },
+    alternates: { canonical: `https://association-palmeraies-tighremt.com/actualites/${article?.id}` },
   };
 }
 export default function ArticlePage({ params }) { return <ArticleContent id={params.id} />; }

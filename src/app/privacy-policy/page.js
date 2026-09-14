@@ -3,7 +3,7 @@ import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
 export const metadata = {
   title: 'Privacy Policy | Palmeraies Tighremt',
   description: "Privacy policy, legal notices and data protection information for the Association Palmeraies Tighremt TATA website, a non-profit founded in 2010.",
-  alternates: { canonical: 'https://palmeries-tighremt.org/mentions-legales' },
+  alternates: { canonical: 'https://association-palmeraies-tighremt.com/mentions-legales' },
 };
 
 const privacySchema = {
@@ -11,7 +11,7 @@ const privacySchema = {
   '@type': 'WebPage',
   name: 'Privacy Policy — Association Palmeraies Tighremt',
   description: 'Privacy policy for the Association Palmeraies Tighremt website.',
-  url: 'https://palmeries-tighremt.org/privacy-policy',
+  url: 'https://association-palmeraies-tighremt.com/privacy-policy',
   about: { '@type': 'NGO', name: 'Association Palmeraies Tighremt' },
 };
 

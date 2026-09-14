@@ -24,7 +24,7 @@ function checkRateLimit(ip) {
 /* ── Allowed origins (CSRF guard) ──────────────────────── */
 const ALLOWED_ORIGINS = [
   'https://palmeraies-tighremt-tata.vercel.app',
-  'https://palmeries-tighremt.org',
+  'https://association-palmeraies-tighremt.com',
   'http://localhost:3000',
 ];
 
