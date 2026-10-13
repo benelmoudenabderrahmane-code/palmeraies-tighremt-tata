@@ -28,7 +28,7 @@ export function mats() {
     concrete: std({ map: textures.concrete(), roughness: 0.8 }),
     pise: std({ map: textures.pise(), roughness: 0.95 }),
     wall: std({ map: textures.wall(), roughness: 0.95 }),
-    line: new THREE.MeshBasicMaterial({ color: '#f8f8f2', toneMapped: true }),
+    line: new THREE.MeshBasicMaterial({ color: '#f8f8f2', polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }),
     lineStd: std({ color: '#f6f6f0', roughness: 0.6 }),
     white: std({ color: '#f4f4f1', roughness: 0.4, metalness: 0.1 }),
     greenDoor: std({ color: '#3f7d4a', roughness: 0.6 }),
@@ -38,13 +38,18 @@ export function mats() {
     darkMetal: std({ color: '#2f3338', roughness: 0.5, metalness: 0.6 }),
     glass: std({ color: '#2a3a44', roughness: 0.15, metalness: 0.5 }),
     solar: std({ color: '#1b2a4a', roughness: 0.2, metalness: 0.6 }),
-    water: new THREE.MeshStandardMaterial({
-      map: textures.water(), color: '#9fd3d0', roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.88,
+    water: new THREE.MeshPhysicalMaterial({
+      map: textures.water(), color: '#7fbcbc', roughness: 0.04, metalness: 0, transparent: true, opacity: 0.9,
+      normalMap: textures.waterNormal(), normalScale: new THREE.Vector2(0.45, 0.45),
+      ior: 1.33, specularIntensity: 1, clearcoat: 0.6, clearcoatRoughness: 0.08,
     }),
+    poolFloor: std({ color: '#3d7f86', roughness: 0.7 }),
+    windowGlow: new THREE.MeshStandardMaterial({ color: '#26343c', roughness: 0.15, metalness: 0.5, emissive: '#ffc77a', emissiveIntensity: 0 }),
+    tuft: new THREE.MeshStandardMaterial({ map: textures.grassTuft(), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.95 }),
     net: new THREE.MeshStandardMaterial({ map: netTexture(), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.8 }),
     fence: new THREE.MeshStandardMaterial({ map: fenceTexture(), transparent: true, depthWrite: false, side: THREE.DoubleSide, roughness: 0.6, metalness: 0.4 }),
     sign: std({ color: '#133d20', roughness: 0.6 }),
-    lampGlow: new THREE.MeshStandardMaterial({ color: '#fff3d1', emissive: '#ffd98a', emissiveIntensity: 0.2 }),
+    lampGlow: new THREE.MeshStandardMaterial({ color: '#fff3d1', emissive: '#ffe2a8', emissiveIntensity: 0.2 }),
     skin: std({ color: '#a8754f' }),
     cloth1: std({ color: '#2f5d8a' }),
     cloth2: std({ color: '#c0502f' }),
@@ -213,7 +218,7 @@ function buildVestiaire(e) {
   // fenêtres à croisillons (côtés)
   const win = (x, z, rotY) => {
     const wg = new THREE.Group();
-    wg.add(box(0.9, 1, 0.06, m.glass, 0, 0, 0));
+    wg.add(box(0.9, 1, 0.06, m.windowGlow, 0, 0, 0));
     wg.add(box(1.05, 0.08, 0.1, m.darkWood, 0, 0.46, 0));
     wg.add(box(1.05, 0.08, 0.1, m.darkWood, 0, -0.04, 0));
     wg.add(box(0.08, 1.05, 0.1, m.darkWood, 0, -0.02, 0));
@@ -250,7 +255,7 @@ function buildBassin(e) {
   rim.holes.push(roundedRect(w - 2 * t, d - 2 * t, 0.05));
   g.add(mesh(slab(rim, 0.1, h, 1), m.curb));
   // fond + eau
-  g.add(box(w - 2 * t, 0.1, d - 2 * t, m.concrete, 0, 0.12, 0));
+  g.add(box(w - 2 * t, 0.1, d - 2 * t, m.poolFloor, 0, 0.12, 0));
   const water = new THREE.PlaneGeometry(w - 2 * t, d - 2 * t);
   water.rotateX(-Math.PI / 2);
   water.translate(0, h - 0.3, 0);
@@ -378,6 +383,7 @@ function buildParcelle(e) {
   const ring = shapeFrom(e.points);
   ring.holes.push(shapeFrom([...inner].reverse()));
   g.add(mesh(slab(ring, 0.22, 0, 1), m.curb));
+  if (culture === 'gazon') g.add(grassTufts(inner));
   if (culture === 'potager') {
     // sillons de culture
     const xs = inner.map((p) => p[0]), zs = inner.map((p) => p[1]);
@@ -395,6 +401,42 @@ function buildParcelle(e) {
     if (rows.length) g.add(mesh(mergeGeometries(rows), veg));
   }
   return g;
+}
+
+let tuftGeo = null;
+/** Touffes d'herbe instanciées (deux plans croisés) sur une parcelle */
+function grassTufts(poly) {
+  if (!tuftGeo) {
+    const a = new THREE.PlaneGeometry(0.6, 0.32);
+    a.translate(0, 0.16, 0);
+    const b = a.clone().rotateY(Math.PI / 2);
+    tuftGeo = mergeGeometries([a, b]);
+  }
+  const xs = poly.map((p) => p[0]), zs = poly.map((p) => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
+  const area = (maxX - minX) * (maxZ - minZ);
+  const n = Math.min(700, Math.round(area * 0.7));
+  const pts = [];
+  let seed = Math.abs(Math.round(minX * 131 + minZ * 17)) + 1;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < n * 2 && pts.length < n; i++) {
+    const x = minX + rnd() * (maxX - minX), z = minZ + rnd() * (maxZ - minZ);
+    if (pointInPoly(x, z, poly)) pts.push([x, z, 0.6 + rnd() * 0.9, rnd() * Math.PI]);
+  }
+  const im = new THREE.InstancedMesh(tuftGeo, mats().tuft, Math.max(1, pts.length));
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0);
+  const col = new THREE.Color();
+  pts.forEach(([x, z, s, r], i) => {
+    q.setFromAxisAngle(up, r);
+    sc.set(s, s * (0.8 + (s % 0.3)), s);
+    p.set(x, 0.1, z);
+    im.setMatrixAt(i, m4.compose(p, q, sc));
+    im.setColorAt(i, col.setHSL(0.22 + (s % 0.1) * 0.3, 0.3, 0.82 + (s % 0.15)));
+  });
+  im.count = pts.length;
+  im.castShadow = false;
+  im.receiveShadow = true;
+  return im;
 }
 
 function pointInPoly(x, z, pts) {
@@ -448,7 +490,8 @@ function buildBanc() {
   g.add(box(0.18, 0.42, 0.45, m.concrete, 0.75, 0, 0));
   for (let i = 0; i < 3; i++) g.add(box(1.9, 0.05, 0.12, m.wood, 0, 0.42, -0.15 + i * 0.15));
   for (let i = 0; i < 2; i++) {
-    const s = box(1.9, 0.1, 0.04, m.wood, 0, 0.6 + i * 0.16, -0.27);
+    const s = box(1.9, 0.1, 0.04, m.wood, 0, -0.05, 0);
+    s.position.set(0, 0.65 + i * 0.16, -0.27 - i * 0.025);
     s.rotation.x = -0.15;
     g.add(s);
   }
@@ -472,9 +515,35 @@ function buildLampadaire() {
   gm.userData.lamp = true;
   g.add(gm);
   // panneau solaire autonome
-  const p = box(0.9, 0.04, 0.6, m.solar, 0, 5.6, 0);
+  const p = box(0.9, 0.04, 0.6, m.solar, 0, -0.02, 0);
+  p.position.set(0, 5.62, 0);
   p.rotation.x = -0.4;
   g.add(p);
+  return g;
+}
+
+function buildProjecteur() {
+  const m = mats();
+  const g = new THREE.Group();
+  g.add(cyl(0.45, 0.55, 0.6, m.concrete, 0, 0, 0, 12));
+  g.add(cyl(0.12, 0.22, 15, m.metal, 0, 0.6, 0, 10));
+  // rampe de 4 projecteurs orientée vers +Z (vers le terrain)
+  const rack = new THREE.Group();
+  rack.add(box(2.6, 0.12, 0.12, m.darkMetal, 0, 0, 0));
+  [-0.95, -0.32, 0.32, 0.95].forEach((x) => {
+    const head = new THREE.Group();
+    head.add(box(0.55, 0.42, 0.22, m.darkMetal, 0, -0.21, 0));
+    const face = new THREE.PlaneGeometry(0.46, 0.34);
+    face.translate(0, 0, 0.115);
+    const fm = mesh(face, m.lampGlow, { cast: false });
+    fm.position.y = 0;
+    head.add(fm);
+    head.position.set(x, 0, 0.18);
+    head.rotation.x = 0.55;
+    rack.add(head);
+  });
+  rack.position.set(0, 15.4, 0.2);
+  g.add(rack);
   return g;
 }
 
@@ -653,9 +722,9 @@ function buildJeux() {
     g.add(box(0.5, 0.05, 0.22, m.darkWood, x, 0.55, 0));
   });
   // toboggan
-  const sl = box(0.6, 0.05, 3, m.play, 0, 0.9, 2.6);
+  const sl = box(0.6, 0.05, 3, m.play, 0, -0.025, 0);
+  sl.position.set(0, 0.85, 2.5);
   sl.rotation.x = 0.55;
-  sl.position.y = 0.9;
   g.add(box(1, 1.6, 1, m.wood, 0, 0, 1.2));
   g.add(sl);
   return g;
@@ -677,6 +746,7 @@ export const BUILDERS = {
   but: buildBut,
   banc: buildBanc,
   lampadaire: buildLampadaire,
+  projecteur: buildProjecteur,
   poubelle: buildPoubelle,
   fontaine: buildFontaine,
   panneau: buildPanneau,

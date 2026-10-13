@@ -6,6 +6,8 @@ import { buildEntity, mats } from './builders';
 import { vegetationParts, vegetationMesh, VEG_RADIUS, VEG_HEIGHT } from './vegetation';
 import { buildLandscape, buildPalmeraie, buildSky, sunPosition, sunVector } from './environment';
 import { PLAN_IMAGE, PX_PER_M, ORIGIN_PX, SITE, siteBounds } from './planData';
+import { PostFX } from './postfx';
+import { NightLights, buildStars } from './nightlights';
 
 const INSTANCED = new Set(['palmier', 'olivier', 'arbuste']);
 // vue d'ensemble par défaut : depuis le sud-est, terrain au centre, montagnes au fond
@@ -65,7 +67,7 @@ export class StudioEngine {
     const scene = (this.scene = new THREE.Scene());
     scene.fog = new THREE.Fog('#d9c9b4', 900, 3200);
 
-    this.camera = new THREE.PerspectiveCamera(42, w / h, 0.3, 12000);
+    this.camera = new THREE.PerspectiveCamera(42, w / h, 0.5, 5000);
     this.camera.position.set(HOME.pos[0], HOME.pos[1], HOME.pos[2]);
 
     const oc = (this.orbit = new OrbitControls(this.camera, r.domElement));
@@ -94,6 +96,15 @@ export class StudioEngine {
     sun.target.position.copy(this.center);
     scene.add(sun, sun.target);
     this.pmrem = new THREE.PMREMGenerator(r);
+
+    // nuit : étoiles, clair de lune, éclairage public
+    this.stars = buildStars(this.low ? 1200 : 2200);
+    scene.add(this.stars);
+    this.night = new NightLights(scene, this.low ? { points: 4, spots: 2 } : { points: 8, spots: 4 });
+
+    // post-traitement (occlusion ambiante, halo)
+    this.fx = new PostFX(r, scene, this.camera, { msaa: this.low ? 0 : 4 });
+    this.fx.aoEnabled = !this.low;
 
     // paysage
     this.envGroup = new THREE.Group();
@@ -222,6 +233,7 @@ export class StudioEngine {
       this._syncLabel(e);
     }
     this.entities = next;
+    this._refreshLightSources();
     if (vegDirty) this._rebuildVegetation();
     this._applyVisibility();
     if (this.selectedId && !this.entities.has(this.selectedId)) this.select(null);
@@ -294,7 +306,17 @@ export class StudioEngine {
     return true;
   }
 
+  _refreshLightSources() {
+    this.night?.setSources([...this.entities.values()].filter((e) => this._isVisible(e)));
+  }
+
+  /** Qualité « haute » (occlusion ambiante, MSAA) ou « rapide » */
+  setQuality(high) {
+    this.fx.aoEnabled = !!high;
+  }
+
   _applyVisibility() {
+    this._refreshLightSources();
     for (const [id, rec] of this.objects) {
       const e = this.entities.get(id);
       rec.obj.visible = !!e && this._isVisible(e);
@@ -580,7 +602,7 @@ export class StudioEngine {
       let o = h.object, visible = true;
       while (o) { if (!o.visible) { visible = false; break; } o = o.parent; }
       if (!visible) continue;
-      if (h.object.isInstancedMesh) {
+      if (h.object.isInstancedMesh && h.object.userData.instancedType) {
         const rec = this.instanced[h.object.userData.instancedType];
         const id = rec?.ids[h.instanceId];
         if (id) return id;
@@ -748,8 +770,24 @@ export class StudioEngine {
     this.renderer.toneMappingExposure = 0.35 + 0.25 * day;
     const fogCol = new THREE.Color('#d9c9b4').lerp(new THREE.Color('#f0b28a'), golden * 0.5).lerp(new THREE.Color('#1c2236'), 1 - day);
     this.scene.fog.color.copy(fogCol);
-    // éclairage public la nuit
-    mats().lampGlow.emissiveIntensity = day < 0.4 ? 3 : 0.2;
+    // nuit : clair de lune, étoiles, éclairage public, halo
+    const night = 1 - THREE.MathUtils.smoothstep(elev, -0.12, 0.04);
+    this._nightLevel = night;
+    if (day < 0.25) {
+      const moon = new THREE.Vector3(0.45, 0.7, -0.55).normalize();
+      this.sun.position.copy(this.center).add(moon.multiplyScalar(500));
+      this.sun.intensity = 0.7 * night;
+      this.sun.color.set('#9fb6ff');
+    }
+    this.hemi.intensity = Math.max(this.hemi.intensity, 0.3);
+    this.stars.material.opacity = night;
+    this.stars.visible = night > 0.01;
+    const lit = THREE.MathUtils.smoothstep(night, 0.1, 0.6);
+    mats().lampGlow.emissiveIntensity = 0.2 + lit * 6;
+    mats().windowGlow.emissiveIntensity = lit * 1.6;
+    this.fx.bloomEnabled = lit > 0.05;
+    this._lightsLevel = lit;
+    if (night > 0.5) this.renderer.toneMappingExposure = 0.55;
     this._envDirty = true;
     return { elevation: THREE.MathUtils.radToDeg(elev), azimuth: THREE.MathUtils.radToDeg(sp.azimuth) };
   }
@@ -806,7 +844,9 @@ export class StudioEngine {
       this._updateEnvironment();
     }
 
-    if (this.tour) {
+    if (this._recording) {
+      // caméra pilotée par l'enregistrement vidéo
+    } else if (this.tour) {
       const t = ((now - this.tour.start) % this.tour.dur) / this.tour.dur;
       this.camera.position.copy(this.tour.path.getPointAt(t));
       this.camera.lookAt(this.tour.look.getPointAt(t));
@@ -838,13 +878,24 @@ export class StudioEngine {
       this.orbit.update();
     }
 
-    // eau animée
-    const wt = mats().water.map;
-    if (wt) { wt.offset.x = (now * 0.00002) % 1; wt.offset.y = (now * 0.000013) % 1; }
+    // eau animée (deux directions de houle)
+    const w = mats().water;
+    if (w.normalMap) { w.normalMap.offset.set((now * 0.000018) % 1, (now * 0.000011) % 1); }
+    if (w.map) { w.map.offset.set((-now * 0.000009) % 1, (now * 0.000014) % 1); }
+
+    // éclairage nocturne (réparti sur les sources proches de la caméra)
+    if (!this._lightT || now - this._lightT > 300) {
+      this._lightT = now;
+      this.night.update(this.camera, this._lightsLevel || 0);
+    }
+    this.stars.position.copy(this.camera.position);
 
     // taille du gizmo de sélection au sol
-    this.renderer.render(this.scene, this.camera);
-    this.labelRenderer.render(this.scene, this.camera);
+    if (this._recording) this._recordFrame(now);
+    else {
+      this.fx.render();
+      this.labelRenderer.render(this.scene, this.camera);
+    }
   }
 
   setWalkJoystick(v) {
@@ -853,35 +904,196 @@ export class StudioEngine {
 
   resize() {
     const w = this.container.clientWidth, h = this.container.clientHeight;
-    if (!w || !h) return;
+    if (!w || !h || this._recording) return;
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
+    const s = this.renderer.getDrawingBufferSize(new THREE.Vector2());
+    this.fx.setSize(s.x, s.y);
   }
 
   /* ============================ exports =========================== */
 
-  /** Capture HD : rendu hors écran à la taille demandée → dataURL PNG */
-  screenshot(width = 3840, height = 2160) {
+  /** Capture HD : rendu à la taille demandée → canvas (copie) */
+  renderToCanvas(width = 3840, height = 2160) {
     const r = this.renderer;
     const prevSize = r.getSize(new THREE.Vector2());
     const prevRatio = r.getPixelRatio();
-    const helpers = [this.selBox, this.selRing, this.transformHelper];
+    const helpers = [this.selBox, this.selRing, this.transformHelper, this.measureGroup, this.ghost].filter(Boolean);
     const vis = helpers.map((h) => h.visible);
     helpers.forEach((h) => (h.visible = false));
     r.setPixelRatio(1);
     r.setSize(width, height, false);
+    this.fx.setSize(width, height);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
-    r.render(this.scene, this.camera);
-    const url = r.domElement.toDataURL('image/png');
+    this.night.update(this.camera, this._lightsLevel || 0);
+    this.fx.render();
+    const out = document.createElement('canvas');
+    out.width = width;
+    out.height = height;
+    out.getContext('2d').drawImage(r.domElement, 0, 0);
     r.setPixelRatio(prevRatio);
     r.setSize(prevSize.x, prevSize.y);
+    const s = r.getDrawingBufferSize(new THREE.Vector2());
+    this.fx.setSize(s.x, s.y);
     this.camera.aspect = prevSize.x / prevSize.y;
     this.camera.updateProjectionMatrix();
     helpers.forEach((h, i) => (h.visible = vis[i]));
-    return url;
+    return out;
+  }
+
+  screenshot(width = 3840, height = 2160) {
+    return this.renderToCanvas(width, height).toDataURL('image/png');
+  }
+
+  /* ========================== présentation ======================== */
+
+  _snapshotState() {
+    return {
+      pos: this.camera.position.clone(), target: this.orbit.target.clone(), fov: this.camera.fov,
+      hour: this.hour, day: this.dayOfYear, mode: this.mode, labels: this.labels.visible,
+    };
+  }
+
+  _restoreState(st) {
+    if (st.mode !== this.mode) this.setMode(st.mode);
+    this.setTime(st.hour, st.day);
+    this._updateEnvironment();
+    this.camera.position.copy(st.pos);
+    this.orbit.target.copy(st.target);
+    this.camera.fov = st.fov;
+    this.camera.updateProjectionMatrix();
+    this.labels.visible = st.labels;
+    this.orbit.update();
+    this._lightT = 0;
+  }
+
+  /** Rendu d'une vue fixe (caméra, heure, avant/après) → canvas */
+  renderStill({ pos, target, hour, mode, fov = 42, width = 3840, height = 2160 }) {
+    this.stopTour();
+    this._camAnim = null;
+    const st = this._snapshotState();
+    if (mode && mode !== this.mode) this.setMode(mode);
+    this.setTime(hour ?? this.hour, this.dayOfYear);
+    this._updateEnvironment();
+    this.camera.fov = fov;
+    this.camera.position.set(...pos);
+    this.camera.lookAt(new THREE.Vector3(...target));
+    this.camera.updateMatrixWorld();
+    // les ombres suivent le soleil : la carte d'ombre est recalculée au rendu
+    const canvas = this.renderToCanvas(width, height);
+    this._restoreState(st);
+    return canvas;
+  }
+
+  /**
+   * Enregistre la visite guidée en vidéo (MediaRecorder sur un canvas
+   * de composition : image 3D + habillage).
+   */
+  recordTour({ keyframes, width = 1920, height = 1080, duration = 45, hourFrom, hourTo, mime, overlay, onProgress }) {
+    return new Promise((resolve, reject) => {
+      this.stopTour();
+      this._camAnim = null;
+      if (this.view === 'walk') this.setView('orbit');
+      this.transform.detach();
+      const st = this._snapshotState();
+      const r = this.renderer;
+      const prevSize = r.getSize(new THREE.Vector2());
+      const prevRatio = r.getPixelRatio();
+      const helpers = [this.selBox, this.selRing, this.transformHelper, this.measureGroup, this.ghost].filter(Boolean);
+      const vis = helpers.map((h) => h.visible);
+      helpers.forEach((h) => (h.visible = false));
+      this.labels.visible = false;
+      this.labelRenderer.domElement.style.visibility = 'hidden';
+      r.setPixelRatio(1);
+      r.setSize(width, height, false);
+      r.domElement.style.objectFit = 'contain';
+      this.fx.setSize(width, height);
+      this.camera.aspect = width / height;
+      this.camera.fov = 42;
+      this.camera.updateProjectionMatrix();
+      this.orbit.enabled = false;
+
+      const comp = document.createElement('canvas');
+      comp.width = width;
+      comp.height = height;
+      const ctx = comp.getContext('2d');
+      let rec;
+      try {
+        const stream = comp.captureStream(30);
+        rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: width >= 1920 ? 16e6 : 9e6 });
+      } catch (e) {
+        reject(e);
+        return;
+      }
+      const chunks = [];
+      rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+      const finish = () => {
+        const R = this._recording;
+        this._recording = null;
+        r.setPixelRatio(prevRatio);
+        r.setSize(prevSize.x, prevSize.y);
+        r.domElement.style.objectFit = '';
+        const s = r.getDrawingBufferSize(new THREE.Vector2());
+        this.fx.setSize(s.x, s.y);
+        this.camera.aspect = prevSize.x / prevSize.y;
+        helpers.forEach((h, i) => (h.visible = vis[i]));
+        this.labelRenderer.domElement.style.visibility = '';
+        this.orbit.enabled = this.view !== 'walk';
+        this._restoreState(st);
+        this.select(this.selectedId);
+        if (R?.cancelled) reject(new Error('cancelled'));
+        else resolve(new Blob(chunks, { type: mime.split(';')[0] }));
+      };
+      rec.onstop = finish;
+      rec.onerror = (e) => { reject(e.error || e); };
+
+      const pts = keyframes.map((k) => new THREE.Vector3(...k.pos));
+      const looks = keyframes.map((k) => new THREE.Vector3(...k.look));
+      this._recording = {
+        path: new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5),
+        look: new THREE.CatmullRomCurve3(looks, false, 'centripetal', 0.5),
+        start: null, dur: duration * 1000, duration, ctx, rec, overlay, onProgress, hourFrom, hourTo, lastHour: null,
+      };
+      if (hourFrom != null) {
+        this.setTime(hourFrom, this.dayOfYear);
+        this._updateEnvironment();
+      }
+      rec.start(500);
+    });
+  }
+
+  cancelRecording() {
+    const R = this._recording;
+    if (!R) return;
+    R.cancelled = true;
+    if (R.rec.state !== 'inactive') R.rec.stop();
+  }
+
+  _recordFrame(now) {
+    const R = this._recording;
+    if (R.start == null) R.start = now;
+    const raw = Math.min(1, (now - R.start) / R.dur);
+    // départ et arrivée en douceur
+    const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+    this.camera.position.copy(R.path.getPointAt(t));
+    this.camera.lookAt(R.look.getPointAt(t));
+    this.camera.updateMatrixWorld();
+    if (R.hourFrom != null && R.hourTo != null) {
+      const h = R.hourFrom + (R.hourTo - R.hourFrom) * raw;
+      if (R.lastHour == null || Math.abs(h - R.lastHour) > 0.03) {
+        R.lastHour = h;
+        this.setTime(h, this.dayOfYear);
+      }
+    }
+    this.night.update(this.camera, this._lightsLevel || 0);
+    this.fx.render();
+    R.ctx.drawImage(this.renderer.domElement, 0, 0);
+    R.overlay?.(R.ctx, raw, R.ctx.canvas.width, R.ctx.canvas.height, R.duration);
+    R.onProgress?.(raw);
+    if (raw >= 1 && R.rec.state === 'recording') R.rec.stop();
   }
 
   async exportGLB() {
@@ -925,6 +1137,7 @@ export class StudioEngine {
     this.transform.dispose();
     this.orbit.dispose();
     this._envRT?.dispose();
+    this.fx.dispose();
     this.pmrem.dispose();
     this.renderer.dispose();
     el.remove();

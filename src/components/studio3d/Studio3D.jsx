@@ -5,13 +5,14 @@ import Link from 'next/link';
 import {
   MousePointer2, RotateCw, Scaling, Ruler, Magnet, Box, Map as MapIcon, Footprints, Clapperboard,
   Undo2, Redo2, Upload, Camera, Layers, Library, ListTree, Trash2, Copy, Lock, LockOpen,
-  Eye, EyeOff, Sun, Moon, Focus, RefreshCcw, ArrowLeft, Info, Search, X, FileJson, Rotate3d, Pause,
+  Eye, EyeOff, Sun, Moon, Focus, RefreshCcw, ArrowLeft, Info, Search, X, FileJson, Rotate3d, Pause, Presentation as PresentationIcon, Sparkles,
 } from 'lucide-react';
 import { StudioEngine } from './engine/Engine';
 import { buildInitialEntities, polygonArea, SITE } from './engine/planData';
 import {
   CATALOG, CATEGORIES, PLAN_FIELDS, STATUS, LAYERS, DEFAULT_LAYERS, newEntity, ghostEntity,
 } from './catalog';
+import Presentation from './Presentation';
 import './studio3d.css';
 
 const STORAGE_KEY = 'studio3d-sidi-ouaziz-v1';
@@ -88,6 +89,8 @@ export default function Studio3D() {
   const [webglError, setWebglError] = useState(false);
   const [panelsOpen, setPanelsOpen] = useState({ left: true, right: true });
   const [savedAt, setSavedAt] = useState(null);
+  const [presenting, setPresenting] = useState(false);
+  const [highQuality, setHighQuality] = useState(true);
 
   const selected = useMemo(() => entities.find((e) => e.id === selectedId) || null, [entities, selectedId]);
   const notify = useCallback((msg) => {
@@ -138,6 +141,7 @@ export default function Studio3D() {
       setSavedAt(saved.savedAt || null);
     }
     if (window.innerWidth < 900) setPanelsOpen({ left: false, right: false });
+    setHighQuality(!engine.low);
     setReady(true);
     return () => {
       engine.dispose();
@@ -153,6 +157,7 @@ export default function Studio3D() {
   useEffect(() => { engineRef.current?.setTransformMode(tmode); }, [tmode, ready]);
   useEffect(() => { engineRef.current?.setSnapPlacement(snap); }, [snap, ready]);
   useEffect(() => { engineRef.current?.setTool(tool); }, [tool, ready]);
+  useEffect(() => { engineRef.current?.setQuality(highQuality); }, [highQuality, ready]);
   useEffect(() => {
     if (!engineRef.current) return;
     setSunInfo(engineRef.current.setTime(hour, MONTH_DAY[month]));
@@ -270,6 +275,7 @@ export default function Studio3D() {
     const onKey = (e) => {
       const tag = (e.target?.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (presenting) return;
       const k = e.key.toLowerCase();
       const mod = e.ctrlKey || e.metaKey;
       if (mod && k === 'z' && !e.shiftKey) { e.preventDefault(); dispatch({ type: 'undo' }); return; }
@@ -356,7 +362,11 @@ export default function Studio3D() {
           <IconBtn icon={Undo2} label="Annuler (Ctrl+Z)" onClick={() => dispatch({ type: 'undo' })} disabled={!state.past.length} />
           <IconBtn icon={Redo2} label="Rétablir (Ctrl+Y)" onClick={() => dispatch({ type: 'redo' })} disabled={!state.future.length} />
           <span className="s3d-sep" />
-          <IconBtn icon={Camera} label="Capture 4K (PNG)" onClick={screenshot} text="Capture HD" />
+          <button className="s3d-cta" onClick={() => { setTool('select'); setPresenting(true); }} title="Planches 4K et vidéo pour le dossier">
+            <PresentationIcon size={16} /> <span>Présentation</span>
+          </button>
+          <IconBtn icon={Sparkles} label={highQuality ? 'Qualité : haute (occlusion ambiante) — cliquer pour le mode rapide' : 'Qualité : rapide — cliquer pour la qualité haute'} onClick={() => setHighQuality((q) => !q)} text={highQuality ? 'Haute' : 'Rapide'} />
+          <IconBtn icon={Camera} label="Capture 4K (PNG) de la vue actuelle" onClick={screenshot} />
           <IconBtn icon={Box} label="Exporter le modèle 3D (.glb)" onClick={exportGLB} text=".glb" />
           <IconBtn icon={FileJson} label="Exporter le projet (.json)" onClick={exportJSON} />
           <IconBtn icon={Upload} label="Importer un projet (.json)" onClick={() => fileRef.current?.click()} />
@@ -519,6 +529,9 @@ export default function Studio3D() {
 
           {view === 'walk' && <WalkPad onChange={(v) => engineRef.current?.setWalkJoystick(v)} />}
           {toast && <div className="s3d-toast">{toast}</div>}
+          {presenting && engineRef.current && (
+            <Presentation engine={engineRef.current} onClose={() => setPresenting(false)} notify={notify} />
+          )}
         </main>
 
         {/* ------------------------------ panneau droit ------------------------------ */}

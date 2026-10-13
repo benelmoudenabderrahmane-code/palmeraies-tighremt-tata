@@ -366,6 +366,45 @@ export function buildInitialEntities() {
     });
   });
 
+  // --- Proposition d'éclairage (non figurée sur le plan) ------------------
+  const NOTE_ECL = "Proposition d'éclairage pour la vue de nuit — non prévue au plan, supprimable.";
+  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => {
+    const lx = sx * 30, lz = sz * 53;
+    const wx = lx * c + lz * s, wz = -lx * s + lz * c;
+    // orienté vers le centre du terrain
+    const rot = Math.atan2(-wx, -wz);
+    entities.push({
+      id: uid('projecteur'),
+      type: 'projecteur',
+      name: 'Mât d’éclairage du terrain',
+      status: 'projet',
+      layer: 'mobilier',
+      position: [+wx.toFixed(2), +wz.toFixed(2)],
+      rotation: +rot.toFixed(4),
+      scale: 1,
+      props: {},
+      notes: NOTE_ECL,
+    });
+  });
+  [-47, -20, 20, 47].forEach((lz) => {
+    [-1, 1].forEach((side) => {
+      const lx = side * 38;
+      entities.push({
+        id: uid('lampadaire'),
+        type: 'lampadaire',
+        name: 'Lampadaire solaire',
+        status: 'projet',
+        layer: 'mobilier',
+        position: [+(lx * c + lz * s).toFixed(2), +(-lx * s + lz * c).toFixed(2)],
+        // bras tourné vers l'allée
+        rotation: +(PITCH_ROT + (side > 0 ? Math.PI : 0)).toFixed(4),
+        scale: 1,
+        props: {},
+        notes: NOTE_ECL,
+      });
+    });
+  });
+
   return entities;
 }
 

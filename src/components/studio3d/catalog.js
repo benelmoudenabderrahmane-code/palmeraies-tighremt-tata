@@ -1,6 +1,6 @@
 import {
   TreePalm, Trees, Shrub, Armchair, LampFloor, Trash, Droplets, Signpost, Tent, Goal,
-  Fence, BrickWall, User, Car, Cylinder, Baby, Sun, Warehouse, Waves, Sprout, Building2, LandPlot,
+  Fence, BrickWall, Lightbulb, User, Car, Cylinder, Baby, Sun, Warehouse, Waves, Sprout, Building2, LandPlot,
 } from 'lucide-react';
 
 /** Catégories de la bibliothèque d'objets */
@@ -25,6 +25,7 @@ export const CATALOG = {
 
   banc: { label: 'Banc', cat: 'mobilier', icon: Armchair, layer: 'mobilier', desc: 'Béton et bois, 2 m' },
   lampadaire: { label: 'Lampadaire solaire', cat: 'mobilier', icon: LampFloor, layer: 'mobilier', desc: 'Mât 5 m' },
+  projecteur: { label: 'Mât d’éclairage', cat: 'sport', icon: Lightbulb, layer: 'mobilier', desc: 'Projecteurs 15 m' },
   poubelle: { label: 'Poubelle', cat: 'mobilier', icon: Trash, layer: 'mobilier' },
   fontaine: { label: 'Fontaine à boire', cat: 'mobilier', icon: Droplets, layer: 'mobilier' },
   panneau: {

@@ -198,7 +198,7 @@ export function buildPalmeraie(center, density = 1) {
 
 export function buildSky() {
   const sky = new Sky();
-  sky.scale.setScalar(10000);
+  sky.scale.setScalar(4000);
   const u = sky.material.uniforms;
   u.turbidity.value = 3.2;
   u.rayleigh.value = 1.1;

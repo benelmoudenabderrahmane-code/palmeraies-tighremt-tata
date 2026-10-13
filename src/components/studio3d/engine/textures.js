@@ -75,23 +75,83 @@ export const textures = {
   sand: () => cached('sand', () => finish(speckle('#c9a57a', ['#b8936a', '#d8b78d', '#a98560', '#e0c39c'], 12000, 512, 3, 0.4, 1.4), 1)),
   grass: () =>
     cached('grass', () => {
-      const [c, g] = canvas(512);
-      g.fillStyle = '#4d7a2e';
-      g.fillRect(0, 0, 512, 512);
+      // gazon : touffes, variations de teinte et brins
+      const S = 512;
+      const [c, g] = canvas(S);
+      g.fillStyle = '#4a7430';
+      g.fillRect(0, 0, S, S);
       const r = rng(4);
-      for (let i = 0; i < 26000; i++) {
-        const x = r() * 512, y = r() * 512;
-        const l = 25 + r() * 25;
-        g.strokeStyle = `hsl(${88 + r() * 22}, ${45 + r() * 25}%, ${l}%)`;
-        g.globalAlpha = 0.55;
-        g.lineWidth = 1;
+      for (let i = 0; i < 140; i++) {
+        const x = r() * S, y = r() * S, rad = 20 + r() * 60;
+        const gr = g.createRadialGradient(x, y, 0, x, y, rad);
+        gr.addColorStop(0, r() > 0.5 ? 'rgba(98,140,52,0.35)' : 'rgba(46,82,30,0.35)');
+        gr.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = gr;
+        // motif répété sans couture
+        for (const dx of [-S, 0, S]) for (const dy of [-S, 0, S]) {
+          g.save(); g.translate(dx, dy); g.fillRect(x - rad, y - rad, rad * 2, rad * 2); g.restore();
+        }
+      }
+      for (let i = 0; i < 42000; i++) {
+        const x = r() * S, y = r() * S;
+        const l = 22 + r() * 30;
+        g.strokeStyle = `hsl(${78 + r() * 34}, ${38 + r() * 30}%, ${l}%)`;
+        g.globalAlpha = 0.5 + r() * 0.4;
+        g.lineWidth = 0.8 + r() * 0.8;
         g.beginPath();
         g.moveTo(x, y);
-        g.lineTo(x + (r() - 0.5) * 3, y - 2 - r() * 4);
+        g.lineTo(x + (r() - 0.5) * 4, y - 3 - r() * 6);
         g.stroke();
       }
       g.globalAlpha = 1;
       return finish(c, 1);
+    }),
+  grassTuft: () =>
+    cached('grassTuft', () => {
+      const [c, g] = canvas(128);
+      g.clearRect(0, 0, 128, 128);
+      const r = rng(15);
+      for (let i = 0; i < 70; i++) {
+        const x = 20 + r() * 88, h = 50 + r() * 75, bend = (r() - 0.5) * 30;
+        g.strokeStyle = `hsl(${78 + r() * 26}, ${38 + r() * 22}%, ${32 + r() * 22}%)`;
+        g.lineWidth = 1.5 + r() * 2;
+        g.beginPath();
+        g.moveTo(x, 128);
+        g.quadraticCurveTo(x + bend * 0.3, 128 - h * 0.6, x + bend, 128 - h);
+        g.stroke();
+      }
+      const t = new THREE.CanvasTexture(c);
+      t.colorSpace = THREE.SRGBColorSpace;
+      return t;
+    }),
+  waterNormal: () =>
+    cached('waterNormal', () => {
+      // carte de normales de houle, périodique (somme d'ondes)
+      const S = 256;
+      const [c, g] = canvas(S);
+      const img = g.createImageData(S, S);
+      const r = rng(21);
+      const waves = Array.from({ length: 9 }, () => ({
+        kx: Math.round((r() - 0.5) * 12), ky: Math.round((r() - 0.5) * 12) || 1, a: 0.4 + r(), ph: r() * 6.28,
+      }));
+      const h = (x, y) => waves.reduce((s, w) => s + w.a * Math.sin(((w.kx * x + w.ky * y) / S) * Math.PI * 2 + w.ph), 0);
+      for (let y = 0; y < S; y++) {
+        for (let x = 0; x < S; x++) {
+          const dx = h(x + 1, y) - h(x - 1, y), dy = h(x, y + 1) - h(x, y - 1);
+          const nx = -dx * 2, ny = -dy * 2, nz = 1;
+          const l = Math.hypot(nx, ny, nz);
+          const i = (y * S + x) * 4;
+          img.data[i] = ((nx / l) * 0.5 + 0.5) * 255;
+          img.data[i + 1] = ((ny / l) * 0.5 + 0.5) * 255;
+          img.data[i + 2] = ((nz / l) * 0.5 + 0.5) * 255;
+          img.data[i + 3] = 255;
+        }
+      }
+      g.putImageData(img, 0, 0);
+      const t = new THREE.CanvasTexture(c);
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.repeat.set(3, 3);
+      return t;
     }),
   turf: () =>
     cached('turf', () => {
