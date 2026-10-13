@@ -29,6 +29,7 @@
     "imagesloaded": "^5.0.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.511.0",
+    "mediabunny": "1.60.0",
     "motion": "^12.38.0",
     "motion-v": "^2.2.0",
     "next": "^15.5.15",

@@ -834,6 +834,7 @@ export class StudioEngine {
   _loop() {
     if (!this._running) return;
     this._raf = requestAnimationFrame(() => this._loop());
+    if (this._offline) return; // rendu vidéo image par image en cours
     const now = performance.now();
     const dt = Math.min((now - this._last) / 1000, 0.1);
     this._last = now;
@@ -988,74 +989,150 @@ export class StudioEngine {
     return canvas;
   }
 
+  /** Prépare un rendu à taille fixe (vidéo) ; renvoie la fonction de remise en état */
+  _beginCapture(width, height) {
+    this.stopTour();
+    this._camAnim = null;
+    if (this.view === 'walk') this.setView('orbit');
+    this.transform.detach();
+    const st = this._snapshotState();
+    const r = this.renderer;
+    const prevSize = r.getSize(new THREE.Vector2());
+    const prevRatio = r.getPixelRatio();
+    const helpers = [this.selBox, this.selRing, this.transformHelper, this.measureGroup, this.ghost].filter(Boolean);
+    const vis = helpers.map((h) => h.visible);
+    helpers.forEach((h) => (h.visible = false));
+    this.labels.visible = false;
+    this.labelRenderer.domElement.style.visibility = 'hidden';
+    r.setPixelRatio(1);
+    r.setSize(width, height, false);
+    r.domElement.style.objectFit = 'contain';
+    this.fx.setSize(width, height);
+    this.camera.aspect = width / height;
+    this.camera.fov = 42;
+    this.camera.updateProjectionMatrix();
+    this.orbit.enabled = false;
+    return () => {
+      r.setPixelRatio(prevRatio);
+      r.setSize(prevSize.x, prevSize.y);
+      r.domElement.style.objectFit = '';
+      const s = r.getDrawingBufferSize(new THREE.Vector2());
+      this.fx.setSize(s.x, s.y);
+      this.camera.aspect = prevSize.x / prevSize.y;
+      helpers.forEach((h, i) => (h.visible = vis[i]));
+      this.labelRenderer.domElement.style.visibility = '';
+      this.orbit.enabled = this.view !== 'walk';
+      this._restoreState(st);
+      this.select(this.selectedId);
+    };
+  }
+
+  _tourCurves(keyframes) {
+    return {
+      path: new THREE.CatmullRomCurve3(keyframes.map((k) => new THREE.Vector3(...k.pos)), false, 'centripetal', 0.5),
+      look: new THREE.CatmullRomCurve3(keyframes.map((k) => new THREE.Vector3(...k.look)), false, 'centripetal', 0.5),
+    };
+  }
+
+  /** Place la caméra et le soleil à l'instant raw ∈ [0, 1] de la visite */
+  _tourPose(curves, raw, hourFrom, hourTo, state) {
+    const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+    this.camera.position.copy(curves.path.getPointAt(t));
+    this.camera.lookAt(curves.look.getPointAt(t));
+    this.camera.updateMatrixWorld();
+    if (hourFrom != null && hourTo != null) {
+      const h = hourFrom + (hourTo - hourFrom) * raw;
+      if (state.lastHour == null || Math.abs(h - state.lastHour) > 0.03) {
+        state.lastHour = h;
+        this.setTime(h, this.dayOfYear);
+        if (state.syncEnv) this._updateEnvironment();
+      }
+    }
+    this.night.update(this.camera, this._lightsLevel || 0);
+  }
+
   /**
-   * Enregistre la visite guidée en vidéo (MediaRecorder sur un canvas
-   * de composition : image 3D + habillage).
+   * Vidéo image par image avec WebCodecs (mediabunny) : 30 images/s
+   * garanties quelle que soit la puissance de la machine, MP4 H.264
+   * si le navigateur sait l'encoder, sinon WebM VP9.
+   */
+  async renderTourVideo({ keyframes, width = 1920, height = 1080, duration = 45, fps = 30, hourFrom, hourTo, codec, overlay, onProgress }) {
+    const mb = await import('mediabunny');
+    const restore = this._beginCapture(width, height);
+    this._offline = true;
+    const comp = document.createElement('canvas');
+    comp.width = width;
+    comp.height = height;
+    const ctx = comp.getContext('2d');
+    const isMp4 = codec === 'avc';
+    const output = new mb.Output({
+      format: isMp4 ? new mb.Mp4OutputFormat({ fastStart: 'in-memory' }) : new mb.WebMOutputFormat(),
+      target: new mb.BufferTarget(),
+    });
+    const source = new mb.CanvasSource(comp, { codec, quality: mb.QUALITY_VERY_HIGH ?? mb.QUALITY_HIGH, keyFrameInterval: 2 });
+    output.addVideoTrack(source, { frameRate: fps });
+    const curves = this._tourCurves(keyframes);
+    const state = { lastHour: null, syncEnv: true };
+    this._recording = { cancelled: false, offline: true };
+    const total = Math.round(duration * fps);
+    try {
+      await output.start();
+      if (hourFrom != null) { this.setTime(hourFrom, this.dayOfYear); this._updateEnvironment(); }
+      for (let i = 0; i < total; i++) {
+        if (this._recording.cancelled) throw new Error('cancelled');
+        const raw = i / (total - 1);
+        this._tourPose(curves, raw, hourFrom, hourTo, state);
+        this.fx.render();
+        ctx.drawImage(this.renderer.domElement, 0, 0);
+        overlay?.(ctx, raw, width, height, duration);
+        await source.add(i / fps, 1 / fps);
+        onProgress?.(raw);
+        if (i % 4 === 3) await new Promise((res) => setTimeout(res, 0)); // laisse l'interface respirer
+      }
+      await output.finalize();
+      return new Blob([output.target.buffer], { type: isMp4 ? 'video/mp4' : 'video/webm' });
+    } catch (e) {
+      if (output.state !== 'finalized' && output.state !== 'canceled') await output.cancel?.().catch(() => {});
+      throw e;
+    } finally {
+      this._recording = null;
+      this._offline = false;
+      restore();
+    }
+  }
+
+  /**
+   * Repli : enregistrement en temps réel (MediaRecorder) pour les
+   * navigateurs sans WebCodecs.
    */
   recordTour({ keyframes, width = 1920, height = 1080, duration = 45, hourFrom, hourTo, mime, overlay, onProgress }) {
     return new Promise((resolve, reject) => {
-      this.stopTour();
-      this._camAnim = null;
-      if (this.view === 'walk') this.setView('orbit');
-      this.transform.detach();
-      const st = this._snapshotState();
-      const r = this.renderer;
-      const prevSize = r.getSize(new THREE.Vector2());
-      const prevRatio = r.getPixelRatio();
-      const helpers = [this.selBox, this.selRing, this.transformHelper, this.measureGroup, this.ghost].filter(Boolean);
-      const vis = helpers.map((h) => h.visible);
-      helpers.forEach((h) => (h.visible = false));
-      this.labels.visible = false;
-      this.labelRenderer.domElement.style.visibility = 'hidden';
-      r.setPixelRatio(1);
-      r.setSize(width, height, false);
-      r.domElement.style.objectFit = 'contain';
-      this.fx.setSize(width, height);
-      this.camera.aspect = width / height;
-      this.camera.fov = 42;
-      this.camera.updateProjectionMatrix();
-      this.orbit.enabled = false;
-
+      const restore = this._beginCapture(width, height);
       const comp = document.createElement('canvas');
       comp.width = width;
       comp.height = height;
       const ctx = comp.getContext('2d');
       let rec;
       try {
-        const stream = comp.captureStream(30);
-        rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: width >= 1920 ? 16e6 : 9e6 });
+        rec = new MediaRecorder(comp.captureStream(30), { mimeType: mime, videoBitsPerSecond: width >= 1920 ? 16e6 : 9e6 });
       } catch (e) {
+        restore();
         reject(e);
         return;
       }
       const chunks = [];
       rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-      const finish = () => {
+      rec.onstop = () => {
         const R = this._recording;
         this._recording = null;
-        r.setPixelRatio(prevRatio);
-        r.setSize(prevSize.x, prevSize.y);
-        r.domElement.style.objectFit = '';
-        const s = r.getDrawingBufferSize(new THREE.Vector2());
-        this.fx.setSize(s.x, s.y);
-        this.camera.aspect = prevSize.x / prevSize.y;
-        helpers.forEach((h, i) => (h.visible = vis[i]));
-        this.labelRenderer.domElement.style.visibility = '';
-        this.orbit.enabled = this.view !== 'walk';
-        this._restoreState(st);
-        this.select(this.selectedId);
+        restore();
         if (R?.cancelled) reject(new Error('cancelled'));
         else resolve(new Blob(chunks, { type: mime.split(';')[0] }));
       };
-      rec.onstop = finish;
-      rec.onerror = (e) => { reject(e.error || e); };
-
-      const pts = keyframes.map((k) => new THREE.Vector3(...k.pos));
-      const looks = keyframes.map((k) => new THREE.Vector3(...k.look));
+      rec.onerror = (e) => reject(e.error || e);
       this._recording = {
-        path: new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5),
-        look: new THREE.CatmullRomCurve3(looks, false, 'centripetal', 0.5),
-        start: null, dur: duration * 1000, duration, ctx, rec, overlay, onProgress, hourFrom, hourTo, lastHour: null,
+        curves: this._tourCurves(keyframes), state: { lastHour: null },
+        start: null, dur: duration * 1000, duration, ctx, rec, overlay, onProgress, hourFrom, hourTo,
       };
       if (hourFrom != null) {
         this.setTime(hourFrom, this.dayOfYear);
@@ -1069,26 +1146,15 @@ export class StudioEngine {
     const R = this._recording;
     if (!R) return;
     R.cancelled = true;
-    if (R.rec.state !== 'inactive') R.rec.stop();
+    if (R.rec && R.rec.state !== 'inactive') R.rec.stop();
   }
 
   _recordFrame(now) {
     const R = this._recording;
+    if (R.offline) return; // rendu piloté par renderTourVideo
     if (R.start == null) R.start = now;
     const raw = Math.min(1, (now - R.start) / R.dur);
-    // départ et arrivée en douceur
-    const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
-    this.camera.position.copy(R.path.getPointAt(t));
-    this.camera.lookAt(R.look.getPointAt(t));
-    this.camera.updateMatrixWorld();
-    if (R.hourFrom != null && R.hourTo != null) {
-      const h = R.hourFrom + (R.hourTo - R.hourFrom) * raw;
-      if (R.lastHour == null || Math.abs(h - R.lastHour) > 0.03) {
-        R.lastHour = h;
-        this.setTime(h, this.dayOfYear);
-      }
-    }
-    this.night.update(this.camera, this._lightsLevel || 0);
+    this._tourPose(R.curves, raw, R.hourFrom, R.hourTo, R.state);
     this.fx.render();
     R.ctx.drawImage(this.renderer.domElement, 0, 0);
     R.overlay?.(R.ctx, raw, R.ctx.canvas.width, R.ctx.canvas.height, R.duration);

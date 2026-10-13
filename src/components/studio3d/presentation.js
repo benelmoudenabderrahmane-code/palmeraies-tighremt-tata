@@ -318,16 +318,40 @@ export function canvasToBlob(canvas, type = 'image/png', quality) {
   return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
 }
 
-/** Meilleur format vidéo enregistrable par ce navigateur */
+/**
+ * Meilleure méthode d'export vidéo disponible :
+ *  1. WebCodecs + MP4 H.264 (image par image, lisible partout)
+ *  2. WebCodecs + WebM VP9
+ *  3. MediaRecorder (temps réel) en dernier recours
+ */
+export async function detectVideoFormat(width, height) {
+  if (typeof window !== 'undefined' && 'VideoEncoder' in window) {
+    try {
+      const { canEncodeVideo, QUALITY_HIGH } = await import('mediabunny');
+      for (const [codec, ext, label] of [['avc', 'mp4', 'MP4 (H.264)'], ['vp9', 'webm', 'WebM (VP9)']]) {
+        if (await canEncodeVideo(codec, { width, height, quality: QUALITY_HIGH })) {
+          return { kind: 'webcodecs', codec, ext, label };
+        }
+      }
+    } catch { /* repli ci-dessous */ }
+  }
+  const mime = pickVideoMime();
+  if (!mime) return null;
+  const mp4 = mime.startsWith('video/mp4');
+  return { kind: 'recorder', mime, ext: mp4 ? 'mp4' : 'webm', label: mp4 ? 'MP4' : 'WebM' };
+}
+
+/** Format MediaRecorder (repli) : H.264 d'abord, puis WebM, puis MP4 générique (Safari) */
 export function pickVideoMime() {
   if (typeof MediaRecorder === 'undefined') return null;
   const list = [
     'video/mp4;codecs=avc1.640028',
     'video/mp4;codecs=avc1.4d0028',
-    'video/mp4',
+    'video/mp4;codecs=avc1',
     'video/webm;codecs=vp9',
     'video/webm;codecs=vp8',
     'video/webm',
+    'video/mp4',
   ];
   return list.find((m) => MediaRecorder.isTypeSupported(m)) || null;
 }

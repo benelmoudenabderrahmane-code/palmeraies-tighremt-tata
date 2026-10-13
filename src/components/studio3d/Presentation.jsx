@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { X, Images, Film, Download, LoaderCircle, Square, Info } from 'lucide-react';
 import {
   SHOTS, TOUR, ASSO, loadLogo, ensureFonts, drawCartouche, drawTag, drawVideoOverlay,
-  makeZip, canvasToBlob, pickVideoMime,
+  makeZip, canvasToBlob, detectVideoFormat,
 } from './presentation';
 
 const RES = {
@@ -31,8 +31,15 @@ export default function Presentation({ engine, onClose, notify }) {
   const [vRes, setVRes] = useState('1080');
   const [sunset, setSunset] = useState(true);
   const [video, setVideo] = useState(null); // { url, name, mime }
-  const mime = useRef(typeof window !== 'undefined' ? pickVideoMime() : null);
+  const [format, setFormat] = useState(undefined); // undefined = détection en cours
   const cancelRef = useRef(false);
+
+  useEffect(() => {
+    let alive = true;
+    const { w, h } = VRES[vRes];
+    detectVideoFormat(w, h).then((f) => alive && setFormat(f));
+    return () => { alive = false; };
+  }, [vRes]);
 
   useEffect(() => () => {
     results.forEach((r) => URL.revokeObjectURL(r.url));
@@ -102,32 +109,38 @@ export default function Presentation({ engine, onClose, notify }) {
   /* ------------------------------- vidéo -------------------------------- */
 
   const recordVideo = async () => {
-    if (!mime.current) return;
+    if (!format) return;
     if (video) URL.revokeObjectURL(video.url);
     setVideo(null);
     const logo = await loadLogo();
     await ensureFonts();
     const { w, h } = VRES[vRes];
-    setBusy({ label: 'Enregistrement de la visite… gardez cet onglet ouvert et visible.', progress: 0, video: true });
+    const realtime = format.kind === 'recorder';
+    setBusy({
+      label: realtime ? 'Enregistrement de la visite… gardez cet onglet ouvert et visible.' : 'Calcul de la vidéo image par image…',
+      progress: 0,
+      video: true,
+    });
+    const common = {
+      keyframes: TOUR,
+      width: w,
+      height: h,
+      duration: vDur,
+      hourFrom: sunset ? 16.25 : null,
+      hourTo: sunset ? 20.9 : null,
+      overlay: (ctx, t, cw, ch, d) => drawVideoOverlay(ctx, t, cw, ch, d, logo),
+      onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
+    };
     try {
-      const blob = await engine.recordTour({
-        keyframes: TOUR,
-        width: w,
-        height: h,
-        duration: vDur,
-        hourFrom: sunset ? 16.25 : null,
-        hourTo: sunset ? 20.9 : null,
-        mime: mime.current,
-        overlay: (ctx, t, cw, ch, d) => drawVideoOverlay(ctx, t, cw, ch, d, logo),
-        onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
-      });
-      const ext = mime.current.startsWith('video/mp4') ? 'mp4' : 'webm';
-      setVideo({ url: URL.createObjectURL(blob), name: `visite-sidi-ouaziz-${vRes}p.${ext}`, mime: mime.current, size: blob.size });
+      const blob = realtime
+        ? await engine.recordTour({ ...common, mime: format.mime })
+        : await engine.renderTourVideo({ ...common, codec: format.codec });
+      setVideo({ url: URL.createObjectURL(blob), name: `visite-sidi-ouaziz-${vRes}p.${format.ext}`, size: blob.size });
       notify('Vidéo prête.');
     } catch (e) {
       if (e?.message !== 'cancelled') {
         console.error(e);
-        notify('L’enregistrement a échoué sur ce navigateur.');
+        notify('L’export vidéo a échoué sur ce navigateur.');
       }
     }
     setBusy(null);
@@ -138,7 +151,6 @@ export default function Presentation({ engine, onClose, notify }) {
     engine.cancelRecording();
   };
 
-  const isMp4 = mime.current?.startsWith('video/mp4');
 
   return (
     <div className="s3d-modal" role="dialog" aria-modal="true" aria-label="Mode présentation" onKeyDown={(e) => e.stopPropagation()}>
@@ -207,13 +219,15 @@ export default function Presentation({ engine, onClose, notify }) {
 
         {tab === 'video' && (
           <div className="s3d-modal-body">
-            {!mime.current ? (
+            {format === null ? (
               <p className="s3d-warn"><Info size={16} /> Ce navigateur ne permet pas d’enregistrer de vidéo. Utilisez Chrome, Edge ou Safari récents.</p>
             ) : (
               <>
                 <p className="s3d-help">
                   Survol cinématographique du site avec titre d’ouverture, légendes des différentes zones et générique (coordonnées de l’association).
-                  L’enregistrement se fait en temps réel : gardez l’onglet visible pendant {vDur} secondes.
+                  {format?.kind === 'recorder'
+                    ? `Ce navigateur enregistre en temps réel : gardez l’onglet visible pendant ${vDur} secondes.`
+                    : 'La vidéo est calculée image par image (30 images/s) : la qualité ne dépend pas de la puissance de l’ordinateur.'}
                 </p>
                 <ol className="s3d-tourlist">
                   {TOUR.slice(0, -1).map((k, i) => <li key={i}>{k.caption}</li>)}
@@ -241,9 +255,11 @@ export default function Presentation({ engine, onClose, notify }) {
                   {busy?.video ? (
                     <button className="s3d-secondary" onClick={cancel}><Square size={14} /> Arrêter</button>
                   ) : (
-                    <button className="s3d-primary" onClick={recordVideo} disabled={!!busy}><Film size={16} /> Enregistrer la vidéo</button>
+                    <button className="s3d-primary" onClick={recordVideo} disabled={!!busy || !format}><Film size={16} /> Créer la vidéo</button>
                   )}
-                  <span className="s3d-format">Format : {isMp4 ? 'MP4 (H.264)' : 'WebM — lisible avec Chrome, Firefox ou VLC'}</span>
+                  <span className="s3d-format">
+                    Format : {format === undefined ? 'détection…' : format.ext === 'mp4' ? `${format.label} — lisible partout` : `${format.label} — lisible avec Chrome, Firefox ou VLC`}
+                  </span>
                 </div>
                 {video && (
                   <div className="s3d-video">
