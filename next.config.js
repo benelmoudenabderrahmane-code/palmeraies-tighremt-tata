@@ -61,7 +61,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com data:",
               "img-src 'self' data: blob: https://i.pravatar.cc https://picsum.photos https://images.unsplash.com",
-              "media-src 'self' blob:",
+              "media-src 'self'",
               `connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://challenges.cloudflare.com${dashboardOrigin ? ` ${dashboardOrigin}` : ''}`,
               "frame-src 'self' https://challenges.cloudflare.com https://maps.google.com https://www.google.com",
               "object-src 'none'",
