@@ -18,8 +18,10 @@ import PageTransition from '@/components/ui/PageTransition';
 export default function ConditionalShell({ children }) {
   const pathname = usePathname();
   const isAutopublish = pathname?.startsWith('/autopublish');
+  // Le Studio 3D est une application plein écran : pas de navigation du site.
+  const isStudio = pathname?.startsWith('/studio-3d');
 
-  if (isAutopublish) {
+  if (isAutopublish || isStudio) {
     return <>{children}</>;
   }
 

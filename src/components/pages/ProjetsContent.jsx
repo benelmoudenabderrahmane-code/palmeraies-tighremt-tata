@@ -1,6 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { C, FONT } from '@/lib/tokens';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
@@ -385,6 +386,7 @@ const PROJECTS = [
     desc: "L'association lance la réhabilitation du terrain de football de Sidi Oua'aziz : nivellement, marquage et mise en état de la surface de jeu pour offrir aux jeunes du douar un espace sportif digne et fonctionnel. Un projet à venir, porté par la mobilisation de nos bénévoles et le soutien de nos donateurs.",
     stats: [],
     budget: 8400,
+    cta: { href: '/studio-3d', label: 'Explorer la maquette 3D du projet' },
     gallery: [
       { src: '/images/tighremt/sidi-foot-g1.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 1" },
       { src: '/images/tighremt/sidi-foot-g2.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 2" },
@@ -653,6 +655,31 @@ function ProjectBlock({ project, index }) {
                 }}>
                   {project.budget.toLocaleString('fr-FR')} DH
                 </span>
+              </div>
+            )}
+
+            {/* Lien vers une ressource du projet (ex. maquette 3D) */}
+            {project.cta && (
+              <div style={{ marginTop: '1.25rem' }}>
+                <Link
+                  href={project.cta.href}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    padding: '0.75rem 1.2rem',
+                    borderRadius: '999px',
+                    background: C.greenDeep,
+                    color: '#fff',
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    letterSpacing: '0.02em',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {project.cta.label}
+                  <span aria-hidden="true">→</span>
+                </Link>
               </div>
             )}
           </div>
