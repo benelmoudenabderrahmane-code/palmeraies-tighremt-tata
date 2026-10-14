@@ -49,6 +49,7 @@ export default function Presentation({ engine, onClose, notify }) {
   const [sunset, setSunset] = useState(true);
   const [vSize, setVSize] = useState('standard');
   const [video, setVideo] = useState(null); // { url, name, mime }
+  const [packed, setPacked] = useState(null); // vidéo existante recompressée : { name, size, extras }
   const [format, setFormat] = useState(undefined); // undefined = détection en cours
   const cancelRef = useRef(false);
 
@@ -210,6 +211,39 @@ export default function Presentation({ engine, onClose, notify }) {
     setBusy(null);
   };
 
+  /** Compresse une vidéo déjà enregistrée (choisie sur l'appareil, rien n'est envoyé) */
+  const compressExisting = async (file) => {
+    if (!file) return;
+    const codec = format?.kind === 'webcodecs' ? format.codec : null;
+    if (!codec) {
+      notify('Ce navigateur ne sait pas compresser de vidéo. Utilisez Chrome ou Edge récents.');
+      return;
+    }
+    const ext = format.ext;
+    const base = file.name.replace(/\.[^.]+$/, '');
+    const result = { name: file.name, size: file.size, extras: [] };
+    setPacked(result);
+    cancelRef.current = false;
+    setBusy({ label: '', progress: 0 });
+    for (const t of LIGHT) {
+      if (cancelRef.current) break;
+      setBusy({ label: `Compression ${t.label} (${t.hint})… gardez cet onglet ouvert.`, progress: 0 });
+      try {
+        const small = await compressVideo(file, {
+          width: t.w, height: t.h, codec, bitrate: videoBitrate(t.w, t.h, 'leger'),
+          onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
+        });
+        result.extras = [...result.extras, { ...t, blob: small, size: small.size, name: `${base}-${t.id}.${ext}` }];
+        setPacked({ ...result });
+      } catch (e) {
+        console.error(e);
+        notify('Cette vidéo n’a pas pu être compressée (format non reconnu).');
+        break;
+      }
+    }
+    setBusy(null);
+  };
+
   const save = async (blob, name) => {
     try {
       await saveFile(blob, name);
@@ -360,6 +394,36 @@ export default function Presentation({ engine, onClose, notify }) {
                     </div>
                   </div>
                 )}
+                <div className="s3d-video">
+                  <h4 className="s3d-h">Compresser une vidéo déjà enregistrée</h4>
+                  <p className="s3d-help">
+                    Choisissez la vidéo dans vos Téléchargements : elle est compressée ici même, sur votre appareil
+                    (rien n’est envoyé sur Internet). Vous obtenez une version 1080p légère et une version 720p pour WhatsApp.
+                  </p>
+                  <label className="s3d-secondary" style={{ cursor: busy ? 'default' : 'pointer' }}>
+                    <Download size={16} style={{ transform: 'rotate(180deg)' }} /> Choisir la vidéo…
+                    <input
+                      id="pres-compress"
+                      type="file"
+                      accept="video/*"
+                      hidden
+                      disabled={!!busy}
+                      onChange={(e) => { compressExisting(e.target.files?.[0]); e.target.value = ''; }}
+                    />
+                  </label>
+                  {packed && (
+                    <>
+                      <span className="s3d-format">{packed.name} : {(packed.size / 1e6).toFixed(1)} Mo à l’origine</span>
+                      <div className="s3d-modal-actions">
+                        {packed.extras.map((x) => (
+                          <button key={x.id} type="button" className="s3d-primary" onClick={() => save(x.blob, x.name)}>
+                            <Download size={16} /> {x.label} · {x.hint} ({(x.size / 1e6).toFixed(1)} Mo)
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
