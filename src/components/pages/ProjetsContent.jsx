@@ -386,10 +386,7 @@ const PROJECTS = [
     desc: "L'association lance la réhabilitation du terrain de football de Sidi Oua'aziz : nivellement, marquage et mise en état de la surface de jeu pour offrir aux jeunes du douar un espace sportif digne et fonctionnel. Un projet à venir, porté par la mobilisation de nos bénévoles et le soutien de nos donateurs.",
     stats: [],
     budget: 8400,
-    // Lien vers le Studio 3D (projet séparé) : définir NEXT_PUBLIC_STUDIO_3D_URL sur Vercel
-    cta: process.env.NEXT_PUBLIC_STUDIO_3D_URL
-      ? { href: process.env.NEXT_PUBLIC_STUDIO_3D_URL, label: 'Explorer la maquette 3D du projet', external: true }
-      : null,
+    cta: { href: '/studio-3d', label: 'Explorer la maquette 3D du projet' },
     gallery: [
       { src: '/images/tighremt/sidi-foot-g1.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 1" },
       { src: '/images/tighremt/sidi-foot-g2.jpg',  alt: "Terrain de Sidi Oua'aziz — travaux d'aménagement 2" },
@@ -666,7 +663,6 @@ function ProjectBlock({ project, index }) {
               <div style={{ marginTop: '1.25rem' }}>
                 <Link
                   href={project.cta.href}
-                  {...(project.cta.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
