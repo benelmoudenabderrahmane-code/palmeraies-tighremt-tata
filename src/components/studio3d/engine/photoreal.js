@@ -1,10 +1,21 @@
 import * as THREE from 'three';
+import { gpuFence, gpuFenceDone, gpuWait } from './gpu';
 
 /*
  * Rendu photoréaliste par tracé de chemins (three-gpu-pathtracer) :
  * lumière qui rebondit, ombres douces, ciel physique. Utilisé pour les
  * planches fixes uniquement (quelques dizaines de secondes par image).
+ *
+ * L'image est calculée par tuiles d'environ 640 × 400 px, une à la fois :
+ * une tuile plus grande (ou plusieurs envoyées d'un coup) peut occuper la
+ * carte graphique plusieurs secondes et figer tout l'ordinateur.
  */
+
+const TILE_W = 640;
+const TILE_H = 400;
+// mode en direct : nombre de pixels tracés et échantillons avant pause
+const LIVE_PIXELS = { high: 1.2e6, low: 0.5e6 };
+const LIVE_MAX_SAMPLES = 256;
 
 /** Copie « à plat » des maillages visibles (instances développées) */
 function collectMeshes(roots) {
@@ -107,7 +118,7 @@ export async function renderPhotoreal(engine, { width, height, samples = 128, bo
   camera.updateProjectionMatrix();
 
   const pt = new WebGLPathTracer(r);
-  pt.tiles.set(3, 3);
+  pt.tiles.set(Math.ceil(width / TILE_W), Math.ceil(height / TILE_H));
   pt.bounces = bounces;
   pt.renderDelay = 0;
   pt.minSamples = 0;
@@ -124,13 +135,18 @@ export async function renderPhotoreal(engine, { width, height, samples = 128, bo
     pt.setScene(scene, camera); // construction du BVH (quelques secondes)
     pt._pathTracer.setSize(width, height);
     pt.reset();
-    let guard = 0;
+    // deux tuiles au plus dans la file de la carte graphique : elle reste
+    // occupée sans jamais bloquer l'affichage du reste de l'ordinateur
+    let pending = null;
     while (pt.samples < samples) {
       if (isCancelled?.()) throw new Error('cancelled');
       pt.renderSample();
       onProgress?.(Math.min(1, pt.samples / samples));
-      if (++guard % 3 === 0) await new Promise((res) => setTimeout(res, 0));
+      const fence = gpuFence(r);
+      if (pending) await gpuWait(r, pending);
+      pending = fence;
     }
+    if (pending) await gpuWait(r, pending);
     // tone mapping + sRGB via la passe de sortie du moteur
     r.setPixelRatio(1);
     r.setSize(width, height, false);
@@ -179,7 +195,10 @@ class LivePhotoreal {
     pt.minSamples = 2;
     pt.fadeDuration = 400;
     pt.dynamicLowRes = false;
-    pt.renderScale = engine.low ? 0.5 : 1;
+    // résolution plafonnée (les écrans haute définition dépassent 5 Mpx)
+    const buf = engine.renderer.getDrawingBufferSize(new THREE.Vector2());
+    const maxPx = engine.low ? LIVE_PIXELS.low : LIVE_PIXELS.high;
+    pt.renderScale = Math.min(1, Math.sqrt(maxPx / (buf.x * buf.y)));
     // tant que l'image n'est pas prête : rendu habituel du Studio
     pt.rasterizeSceneCallback = () => engine.fx.render();
     pt.setScene(this.scene, engine.camera); // construction du BVH (quelques secondes)
@@ -215,17 +234,25 @@ class LivePhotoreal {
   }
 
   render() {
+    const r = this.engine.renderer;
+    // la tuile précédente n'est pas finie : on n'en ajoute pas d'autre
+    if (!gpuFenceDone(r, this._fence)) return;
+    this._fence = null;
     const cam = this.engine.camera;
     cam.updateMatrixWorld();
     if (!cam.matrixWorld.equals(this._m) || !cam.projectionMatrix.equals(this._p)) {
       this._m.copy(cam.matrixWorld);
       this._p.copy(cam.projectionMatrix);
       this.pt.updateCamera();
+    } else if (this.pt.samples >= LIVE_MAX_SAMPLES) {
+      return; // image stabilisée : la carte graphique se repose
     }
     this.pt.renderSample();
+    this._fence = gpuFence(r);
   }
 
   dispose() {
+    if (this._fence) this.engine.renderer.getContext().deleteSync(this._fence);
     this.pt.dispose();
     this._targets.forEach((t) => t.dispose());
   }

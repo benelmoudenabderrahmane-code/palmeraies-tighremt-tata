@@ -26,7 +26,8 @@ export default function Presentation({ engine, onClose, notify }) {
   const [selected, setSelected] = useState(() => new Set(SHOTS.map((s) => s.id)));
   const [res, setRes] = useState('4k');
   const [cartouche, setCartouche] = useState(true);
-  const [quality, setQuality] = useState('photo'); // 'rapide' | 'photo' | 'max'
+  // tracé de rayons par défaut, sauf sur les petites configurations
+  const [quality, setQuality] = useState(() => (engine?.low ? 'rapide' : 'photo')); // 'rapide' | 'photo' | 'max'
   const [busy, setBusy] = useState(null); // { label, progress }
   const [results, setResults] = useState([]); // { id, title, url, blob, name }
   const [vDur, setVDur] = useState(45);

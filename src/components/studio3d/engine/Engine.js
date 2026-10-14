@@ -8,8 +8,11 @@ import { buildLandscape, buildPalmeraie, buildSky, sunPosition, sunVector } from
 import { PLAN_IMAGE, PX_PER_M, ORIGIN_PX, SITE, siteBounds } from './planData';
 import { PostFX } from './postfx';
 import { NightLights, buildStars } from './nightlights';
+import { isWeakGPU } from './gpu';
 
 const INSTANCED = new Set(['palmier', 'olivier', 'arbuste']);
+const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'pointerup', 'wheel', 'keydown', 'input', 'change'];
+const IDLE_FRAME_MS = 500;
 // vue d'ensemble par défaut : depuis le sud-est, terrain au centre, montagnes au fond
 const HOME = { pos: [165, 62, 175], target: [-12, 0, -18] };
 
@@ -36,8 +39,9 @@ export class StudioEngine {
     this._last = performance.now();
     this.bounds = siteBounds();
     this.center = new THREE.Vector3((this.bounds.minX + this.bounds.maxX) / 2, 0, (this.bounds.minZ + this.bounds.maxZ) / 2);
-    // qualité allégée sur mobile / petites configurations
-    this.low = cb.lowQuality ?? (window.innerWidth < 900 || (navigator.hardwareConcurrency || 8) <= 4);
+    // qualité allégée sur mobile / petites configurations (la carte
+    // graphique est vérifiée à la création du rendu)
+    this.low = cb.lowQuality ?? (window.innerWidth < 900 || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4);
     this._init();
   }
 
@@ -48,7 +52,8 @@ export class StudioEngine {
     const w = container.clientWidth, h = container.clientHeight;
 
     const r = (this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: false, powerPreference: 'high-performance' }));
-    r.setPixelRatio(Math.min(window.devicePixelRatio, this.low ? 1.25 : 2));
+    if (this.cb.lowQuality == null && isWeakGPU(r)) this.low = true;
+    r.setPixelRatio(Math.min(window.devicePixelRatio, this.low ? 1.25 : 1.5));
     r.setSize(w, h);
     r.outputColorSpace = THREE.SRGBColorSpace;
     r.toneMapping = THREE.ACESFilmicToneMapping;
@@ -167,6 +172,11 @@ export class StudioEngine {
     this._onKeyUp = (e) => this._key(e, false);
     window.addEventListener('keydown', this._onKeyDown);
     window.addEventListener('keyup', this._onKeyUp);
+    // toute action de l'utilisateur relance l'affichage à pleine cadence
+    this._onActivity = () => this.wake();
+    for (const t of ACTIVITY_EVENTS) window.addEventListener(t, this._onActivity, { capture: true, passive: true });
+    oc.addEventListener('change', this._onActivity);
+    this.wake();
 
     this.setTime(17, 105);
     this._running = true;
@@ -839,6 +849,11 @@ export class StudioEngine {
 
   /* ============================ boucle ============================ */
 
+  /** Affichage à pleine cadence pendant les 2 s qui suivent */
+  wake() {
+    this._activeUntil = performance.now() + 2000;
+  }
+
   _loop() {
     if (!this._running) return;
     this._raf = requestAnimationFrame(() => this._loop());
@@ -846,6 +861,13 @@ export class StudioEngine {
     const now = performance.now();
     const dt = Math.min((now - this._last) / 1000, 0.1);
     this._last = now;
+
+    // au repos, deux images par seconde suffisent : la carte graphique
+    // n'est plus sollicitée en continu quand rien ne bouge
+    const busy = now < this._activeUntil || this.tour || this._camAnim || this.view === 'walk'
+      || this._live || this._recording || this._envDirty || this.keys.size;
+    if (!busy && now - (this._lastDraw || 0) < IDLE_FRAME_MS) return;
+    this._lastDraw = now;
 
     if (this._envDirty && (!this._envT || now - this._envT > 250)) {
       this._envDirty = false;
@@ -917,6 +939,7 @@ export class StudioEngine {
   resize() {
     const w = this.container.clientWidth, h = this.container.clientHeight;
     if (!w || !h || this._recording) return;
+    this.wake();
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
@@ -1272,6 +1295,7 @@ export class StudioEngine {
     window.removeEventListener('resize', this._onResize);
     window.removeEventListener('keydown', this._onKeyDown);
     window.removeEventListener('keyup', this._onKeyUp);
+    for (const t of ACTIVITY_EVENTS) window.removeEventListener(t, this._onActivity, { capture: true });
     this._ro?.disconnect();
     const el = this.renderer.domElement;
     el.removeEventListener('pointerdown', this._pd);
