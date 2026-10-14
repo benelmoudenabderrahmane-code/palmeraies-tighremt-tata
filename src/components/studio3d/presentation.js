@@ -349,6 +349,18 @@ export async function compressVideo(blob, { width, height, bitrate, codec, onPro
   const mb = await import('mediabunny');
   const isMp4 = codec === 'avc';
   const input = new mb.Input({ source: new mb.BlobSource(blob), formats: mb.ALL_FORMATS });
+  // jamais d'agrandissement ni de débit supérieur à l'original
+  const track = await input.getPrimaryVideoTrack();
+  if (!track) throw new Error('aucune piste vidéo trouvée');
+  if (track.displayHeight && track.displayHeight < height) {
+    width = Math.round((track.displayWidth * height) / track.displayHeight) || width;
+    height = track.displayHeight;
+    width = Math.min(width, track.displayWidth);
+  }
+  const duration = await input.computeDuration().catch(() => 0);
+  if (duration > 0) bitrate = Math.min(bitrate, Math.round(((blob.size * 8) / duration) * 0.6));
+  width -= width % 2;
+  height -= height % 2;
   const output = new mb.Output({
     format: isMp4 ? new mb.Mp4OutputFormat({ fastStart: 'in-memory' }) : new mb.WebMOutputFormat(),
     target: new mb.BufferTarget(),

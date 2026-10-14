@@ -214,8 +214,10 @@ export default function Presentation({ engine, onClose, notify }) {
               width: t.w, height: t.h, codec: format.codec, bitrate: videoBitrate(t.w, t.h, 'leger'),
               onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
             });
-            main.extras = [...main.extras, { ...t, blob: small, size: small.size, name: `visite-sidi-ouaziz-${t.id}.${format.ext}` }];
-            setVideo({ ...main });
+            if (small.size < blob.size * 0.9) {
+              main.extras = [...main.extras, { ...t, blob: small, size: small.size, name: `visite-sidi-ouaziz-${t.id}.${format.ext}` }];
+              setVideo({ ...main });
+            }
           } catch (e) {
             console.error(e);
           }
@@ -255,8 +257,11 @@ export default function Presentation({ engine, onClose, notify }) {
           width: t.w, height: t.h, codec, bitrate: videoBitrate(t.w, t.h, 'leger'),
           onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
         });
-        result.extras = [...result.extras, { ...t, blob: small, size: small.size, name: `${base}-${t.id}.${ext}` }];
-        setPacked({ ...result });
+        // inutile de proposer une version qui ne serait pas plus légère
+        if (small.size < file.size * 0.9) {
+          result.extras = [...result.extras, { ...t, blob: small, size: small.size, name: `${base}-${t.id}.${ext}` }];
+          setPacked({ ...result });
+        }
       } catch (e) {
         console.error(e);
         notify(`Cette vidéo n’a pas pu être compressée : ${e?.message || e}`);
@@ -265,6 +270,7 @@ export default function Presentation({ engine, onClose, notify }) {
     }
     engine.setPaused?.(false);
     setBusy(null);
+    if (!cancelRef.current && !result.extras.length) notify('Cette vidéo est déjà légère : impossible de la réduire davantage sans perte visible.');
   };
 
   const save = async (blob, name) => {
