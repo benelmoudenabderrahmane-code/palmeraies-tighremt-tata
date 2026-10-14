@@ -147,3 +147,86 @@ export async function renderPhotoreal(engine, { width, height, samples = 128, bo
     bg.dispose();
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*  Mode photoréaliste « en direct » : l'image s'affine en continu     */
+/*  tant que la caméra est immobile (tracé de chemins progressif).     */
+/* ------------------------------------------------------------------ */
+
+export async function createLivePhotoreal(engine) {
+  const { WebGLPathTracer } = await import('three-gpu-pathtracer');
+  // laisse le navigateur afficher le message de préparation
+  await new Promise((res) => setTimeout(res, 50));
+  return new LivePhotoreal(engine, WebGLPathTracer);
+}
+
+class LivePhotoreal {
+  constructor(engine, WebGLPathTracer) {
+    this.engine = engine;
+    this.scene = new THREE.Scene();
+    this.meshes = collectMeshes([engine.world, engine.envGroup].filter((g) => g.visible));
+    this.lights = new THREE.Group();
+    this.scene.add(this.meshes, this.lights);
+    this._targets = [];
+    this._syncLighting();
+
+    const pt = (this.pt = new WebGLPathTracer(engine.renderer));
+    pt.tiles.set(2, 2);
+    pt.bounces = 4;
+    pt.filterGlossyFactor = 0.5;
+    pt.multipleImportanceSampling = true;
+    pt.renderDelay = 0;
+    pt.minSamples = 2;
+    pt.fadeDuration = 400;
+    pt.dynamicLowRes = false;
+    pt.renderScale = engine.low ? 0.5 : 1;
+    // tant que l'image n'est pas prête : rendu habituel du Studio
+    pt.rasterizeSceneCallback = () => engine.fx.render();
+    pt.setScene(this.scene, engine.camera); // construction du BVH (quelques secondes)
+
+    this._m = engine.camera.matrixWorld.clone();
+    this._p = engine.camera.projectionMatrix.clone();
+  }
+
+  /** Lumières (soleil / lune / éclairage public) et ciel actuels */
+  _syncLighting() {
+    const e = this.engine;
+    this.lights.clear();
+    for (const l of collectLights(e.scene)) this.lights.add(l);
+    this._targets.forEach((t) => t.dispose());
+    const bg = captureCube(e.renderer, e.sky);
+    e._updateEnvironment();
+    const env = captureCube(e.renderer, e._envScene, 256);
+    this._targets = [bg, env];
+    this.scene.background = bg.texture;
+    this.scene.environment = env.texture;
+  }
+
+  /** Appelé quand l'heure change : nouvelle lumière sans reconstruire la scène */
+  refreshLighting() {
+    this._syncLighting();
+    this.scene.updateMatrixWorld(true);
+    this.pt.updateLights();
+    this.pt.updateEnvironment();
+  }
+
+  get samples() {
+    return Math.floor(this.pt.samples);
+  }
+
+  render() {
+    const cam = this.engine.camera;
+    cam.updateMatrixWorld();
+    if (!cam.matrixWorld.equals(this._m) || !cam.projectionMatrix.equals(this._p)) {
+      this._m.copy(cam.matrixWorld);
+      this._p.copy(cam.projectionMatrix);
+      this.pt.updateCamera();
+    }
+    this.pt.renderSample();
+  }
+
+  dispose() {
+    this.pt.dispose();
+    this._targets.forEach((t) => t.dispose());
+  }
+}

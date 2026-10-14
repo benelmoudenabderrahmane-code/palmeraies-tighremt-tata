@@ -355,3 +355,10 @@ select.s3d-text option { background: #0f2618; }
   .s3d-tourlist { columns: 1; }
   .s3d-cta span { display: none; }
 }
+
+/* bouton photoréaliste */
+.s3d-pt { border: 1px solid var(--s3d-line) !important; }
+.s3d-pt.is-on { background: rgba(212,180,131,.18); border-color: var(--s3d-gold) !important; color: var(--s3d-gold); }
+.s3d-pt span { font-variant-numeric: tabular-nums; }
+@media (max-width: 1100px) { .s3d-actions .s3d-pt span { display: inline; } }
+@media (max-width: 560px) { .s3d-actions .s3d-pt span { display: none; } }

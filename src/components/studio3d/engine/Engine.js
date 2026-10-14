@@ -196,6 +196,8 @@ export class StudioEngine {
   /* ========================== entités ============================= */
 
   setEntities(list) {
+    if (this._live && this._lastList && list !== this._lastList) this.exitPhotoreal('Projet modifié : mode photoréaliste désactivé.');
+    this._lastList = list;
     const next = new Map(list.map((e) => [e.id, e]));
     let vegDirty = false;
     // suppressions
@@ -281,6 +283,7 @@ export class StudioEngine {
   /* ======================== visibilité ============================ */
 
   setLayers(layers) {
+    if (this._live) this.exitPhotoreal('Calques modifiés : mode photoréaliste désactivé.');
     this.layers = { ...layers };
     this.planOverlay.visible = !!layers.plan2d;
     this.envGroup.visible = layers.environnement !== false;
@@ -295,6 +298,7 @@ export class StudioEngine {
   }
 
   setMode(mode) {
+    if (this._live && mode !== this.mode) this.exitPhotoreal('Mode avant / après changé : mode photoréaliste désactivé.');
     this.mode = mode;
     this._applyVisibility();
     this._rebuildVegetation();
@@ -614,7 +618,7 @@ export class StudioEngine {
   }
 
   _click(ev) {
-    if (this.view === 'walk') return;
+    if (this.view === 'walk' || this._live) return;
     if (this.tool.startsWith('place:')) {
       const p = this._groundPoint();
       if (!p) return;
@@ -745,6 +749,10 @@ export class StudioEngine {
   /* ========================== soleil ============================== */
 
   setTime(hour, dayOfYear = this.dayOfYear ?? 105) {
+    if (this._live && !this._recording) {
+      clearTimeout(this._liveLightT);
+      this._liveLightT = setTimeout(() => this._live?.refreshLighting(), 250);
+    }
     this.hour = hour;
     this.dayOfYear = dayOfYear;
     const sp = sunPosition(SITE.lat, SITE.lon, dayOfYear, hour);
@@ -893,7 +901,10 @@ export class StudioEngine {
 
     // taille du gizmo de sélection au sol
     if (this._recording) this._recordFrame(now);
-    else {
+    else if (this._live) {
+      this._live.render();
+      this.labelRenderer.render(this.scene, this.camera);
+    } else {
       this.fx.render();
       this.labelRenderer.render(this.scene, this.camera);
     }
@@ -918,6 +929,7 @@ export class StudioEngine {
 
   /** Capture HD : rendu à la taille demandée → canvas (copie) */
   renderToCanvas(width = 3840, height = 2160) {
+    this.exitPhotoreal();
     const r = this.renderer;
     const prevSize = r.getSize(new THREE.Vector2());
     const prevRatio = r.getPixelRatio();
@@ -947,6 +959,35 @@ export class StudioEngine {
 
   screenshot(width = 3840, height = 2160) {
     return this.renderToCanvas(width, height).toDataURL('image/png');
+  }
+
+  /* ===================== photoréaliste en direct ================== */
+
+  async enterPhotoreal() {
+    if (this._live || this._liveLoading) return;
+    this._liveLoading = true;
+    this.stopTour();
+    this.transform.detach();
+    this.selBox.visible = false;
+    this.selRing.visible = false;
+    try {
+      const { createLivePhotoreal } = await import('./photoreal');
+      this._live = await createLivePhotoreal(this);
+    } finally {
+      this._liveLoading = false;
+    }
+  }
+
+  exitPhotoreal(reason) {
+    if (!this._live) return;
+    this._live.dispose();
+    this._live = null;
+    this.select(this.selectedId);
+    this.cb.onPhotorealExit?.(reason);
+  }
+
+  get photorealSamples() {
+    return this._live ? this._live.samples : null;
   }
 
   /* ========================== présentation ======================== */
@@ -994,6 +1035,7 @@ export class StudioEngine {
    * Beaucoup plus lent que renderStill, mais lumière physiquement juste.
    */
   async renderStillPhotoreal({ pos, target, hour, mode, fov = 42, width = 3840, height = 2160, samples = 128, onProgress, isCancelled, debug }) {
+    this.exitPhotoreal();
     const { renderPhotoreal } = await import('./photoreal');
     this.stopTour();
     this._camAnim = null;
@@ -1024,6 +1066,7 @@ export class StudioEngine {
 
   /** Prépare un rendu à taille fixe (vidéo) ; renvoie la fonction de remise en état */
   _beginCapture(width, height) {
+    this.exitPhotoreal();
     this.stopTour();
     this._camAnim = null;
     if (this.view === 'walk') this.setView('orbit');
@@ -1224,6 +1267,7 @@ export class StudioEngine {
 
   dispose() {
     this._running = false;
+    this._live?.dispose();
     cancelAnimationFrame(this._raf);
     window.removeEventListener('resize', this._onResize);
     window.removeEventListener('keydown', this._onKeyDown);

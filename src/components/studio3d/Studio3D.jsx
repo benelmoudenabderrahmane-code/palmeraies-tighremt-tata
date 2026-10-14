@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import {
   MousePointer2, RotateCw, Scaling, Ruler, Magnet, Box, Map as MapIcon, Footprints, Clapperboard,
   Undo2, Redo2, Upload, Camera, Layers, Library, ListTree, Trash2, Copy, Lock, LockOpen,
-  Eye, EyeOff, Sun, Moon, Focus, RefreshCcw, ArrowLeft, Info, Search, X, FileJson, Rotate3d, Pause, Presentation as PresentationIcon, Sparkles,
+  Eye, EyeOff, Sun, Moon, Focus, RefreshCcw, ArrowLeft, Info, Search, X, FileJson, Rotate3d, Pause, Presentation as PresentationIcon, Sparkles, Aperture, LoaderCircle,
 } from 'lucide-react';
 import { StudioEngine } from './engine/Engine';
 import { buildInitialEntities, polygonArea, SITE } from './engine/planData';
@@ -92,6 +92,8 @@ export default function Studio3D() {
   const [savedAt, setSavedAt] = useState(null);
   const [presenting, setPresenting] = useState(false);
   const [highQuality, setHighQuality] = useState(true);
+  const [photoreal, setPhotoreal] = useState('off'); // 'off' | 'loading' | 'on'
+  const [ptSamples, setPtSamples] = useState(0);
 
   const selected = useMemo(() => entities.find((e) => e.id === selectedId) || null, [entities, selectedId]);
   const notify = useCallback((msg) => {
@@ -114,6 +116,10 @@ export default function Studio3D() {
     onMeasures: setMeasures,
     onMeasurePreview: setMeasurePreview,
     ghostEntity,
+    onPhotorealExit: (reason) => {
+      setPhotoreal('off');
+      if (reason) notify(reason);
+    },
   };
 
   useEffect(() => {
@@ -128,6 +134,7 @@ export default function Studio3D() {
         onMeasures: (...a) => cbRef.current.onMeasures(...a),
         onMeasurePreview: (...a) => cbRef.current.onMeasurePreview(...a),
         ghostEntity: (...a) => cbRef.current.ghostEntity(...a),
+        onPhotorealExit: (...a) => cbRef.current.onPhotorealExit(...a),
       });
     } catch (err) {
       console.error(err);
@@ -349,7 +356,40 @@ export default function Studio3D() {
 
   /* ------------------------------ rendu ------------------------------ */
 
-  const tip = tool.startsWith('place:')
+  useEffect(() => {
+    if (photoreal !== 'on') return undefined;
+    const t = setInterval(() => setPtSamples(engineRef.current?.photorealSamples ?? 0), 500);
+    return () => clearInterval(t);
+  }, [photoreal]);
+
+  const togglePhotoreal = async () => {
+    const eng = engineRef.current;
+    if (!eng || photoreal === 'loading') return;
+    if (photoreal === 'on') {
+      eng.exitPhotoreal();
+      setPhotoreal('off');
+      return;
+    }
+    setTool('select');
+    setSelectedId(null);
+    setTouring(false);
+    if (view === 'walk') changeView('orbit');
+    setPhotoreal('loading');
+    notify('Préparation du rendu photoréaliste… (quelques secondes)');
+    try {
+      await eng.enterPhotoreal();
+      setPtSamples(0);
+      setPhotoreal('on');
+    } catch (e) {
+      console.error(e);
+      setPhotoreal('off');
+      notify('Le rendu photoréaliste n’est pas disponible sur cet appareil.');
+    }
+  };
+
+  const tip = photoreal === 'on'
+    ? `Photoréaliste · ${ptSamples} passe${ptSamples > 1 ? 's' : ''} — l’image s’affine quand la caméra est immobile · modifications désactivées`
+    : tool.startsWith('place:')
     ? `Cliquez sur le sol pour placer « ${CATALOG[tool.slice(6)]?.label} » · Échap pour terminer`
     : tool === 'measure'
       ? measurePreview != null ? `Distance : ${measurePreview.toFixed(2)} m — cliquez pour fixer` : 'Mesure : cliquez deux points au sol'
@@ -375,6 +415,10 @@ export default function Studio3D() {
           <IconBtn icon={Undo2} label="Annuler (Ctrl+Z)" onClick={() => dispatch({ type: 'undo' })} disabled={!state.past.length} />
           <IconBtn icon={Redo2} label="Rétablir (Ctrl+Y)" onClick={() => dispatch({ type: 'redo' })} disabled={!state.future.length} />
           <span className="s3d-sep" />
+          <button className={`s3d-btn s3d-pt ${photoreal === 'on' ? 'is-on' : ''}`} onClick={togglePhotoreal} disabled={photoreal === 'loading'} title="Afficher la vue en rendu photoréaliste (tracé de rayons)">
+            {photoreal === 'loading' ? <LoaderCircle size={16} className="spin" /> : <Aperture size={16} />}
+            <span>{photoreal === 'on' ? `Photoréaliste · ${ptSamples}` : 'Photoréaliste'}</span>
+          </button>
           <button className="s3d-cta" onClick={() => { setTool('select'); setPresenting(true); }} title="Planches 4K et vidéo pour le dossier">
             <PresentationIcon size={16} /> <span>Présentation</span>
           </button>
