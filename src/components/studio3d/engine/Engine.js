@@ -1144,7 +1144,7 @@ export class StudioEngine {
    * garanties quelle que soit la puissance de la machine, MP4 H.264
    * si le navigateur sait l'encoder, sinon WebM VP9.
    */
-  async renderTourVideo({ keyframes, width = 1920, height = 1080, duration = 45, fps = 30, hourFrom, hourTo, codec, overlay, onProgress }) {
+  async renderTourVideo({ keyframes, width = 1920, height = 1080, duration = 45, fps = 30, hourFrom, hourTo, codec, bitrate, overlay, onProgress }) {
     const mb = await import('mediabunny');
     const restore = this._beginCapture(width, height);
     this._offline = true;
@@ -1157,7 +1157,9 @@ export class StudioEngine {
       format: isMp4 ? new mb.Mp4OutputFormat({ fastStart: 'in-memory' }) : new mb.WebMOutputFormat(),
       target: new mb.BufferTarget(),
     });
-    const source = new mb.CanvasSource(comp, { codec, quality: mb.QUALITY_VERY_HIGH ?? mb.QUALITY_HIGH, keyFrameInterval: 2 });
+    // débit choisi (taille du fichier) ou très haute qualité par défaut
+    const quality = bitrate ? new mb.Quality(bitrate) : (mb.QUALITY_VERY_HIGH ?? mb.QUALITY_HIGH);
+    const source = new mb.CanvasSource(comp, { codec, quality, keyFrameInterval: bitrate ? 4 : 2 });
     output.addVideoTrack(source, { frameRate: fps });
     const curves = this._tourCurves(keyframes);
     const state = { lastHour: null, syncEnv: true };
@@ -1193,7 +1195,7 @@ export class StudioEngine {
    * Repli : enregistrement en temps réel (MediaRecorder) pour les
    * navigateurs sans WebCodecs.
    */
-  recordTour({ keyframes, width = 1920, height = 1080, duration = 45, hourFrom, hourTo, mime, overlay, onProgress }) {
+  recordTour({ keyframes, width = 1920, height = 1080, duration = 45, hourFrom, hourTo, mime, bitrate, overlay, onProgress }) {
     return new Promise((resolve, reject) => {
       const restore = this._beginCapture(width, height);
       const comp = document.createElement('canvas');
@@ -1202,7 +1204,7 @@ export class StudioEngine {
       const ctx = comp.getContext('2d');
       let rec;
       try {
-        rec = new MediaRecorder(comp.captureStream(30), { mimeType: mime, videoBitsPerSecond: width >= 1920 ? 16e6 : 9e6 });
+        rec = new MediaRecorder(comp.captureStream(30), { mimeType: mime, videoBitsPerSecond: bitrate || (width >= 1920 ? 16e6 : 9e6) });
       } catch (e) {
         restore();
         reject(e);

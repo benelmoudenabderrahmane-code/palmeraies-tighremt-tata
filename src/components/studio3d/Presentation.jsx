@@ -17,6 +17,15 @@ const VRES = {
   '720': { w: 1280, h: 720, label: '720p (plus léger)' },
 };
 
+/** Taille du fichier vidéo : débit en bits par pixel et par image */
+const VSIZE = {
+  leger: { label: 'Léger — WhatsApp, e-mail', bpp: 0.035 },
+  standard: { label: 'Standard', bpp: 0.08 },
+  max: { label: 'Haute qualité', bpp: 0.22 },
+};
+const videoBitrate = (w, h, size) => Math.min(40e6, Math.round(w * h * 30 * VSIZE[size].bpp));
+const estimateMB = (w, h, size, dur) => Math.max(1, Math.round((videoBitrate(w, h, size) * dur) / 8 / 1e6));
+
 /**
  * Mode présentation : génère les planches (images avec cartouche) et la
  * vidéo de la visite, prêtes à joindre au dossier.
@@ -32,6 +41,7 @@ export default function Presentation({ engine, onClose, notify }) {
   const [vDur, setVDur] = useState(45);
   const [vRes, setVRes] = useState('1080');
   const [sunset, setSunset] = useState(true);
+  const [vSize, setVSize] = useState('standard');
   const [video, setVideo] = useState(null); // { url, name, mime }
   const [format, setFormat] = useState(undefined); // undefined = détection en cours
   const cancelRef = useRef(false);
@@ -143,6 +153,7 @@ export default function Presentation({ engine, onClose, notify }) {
       video: true,
     });
     const common = {
+      bitrate: videoBitrate(w, h, vSize),
       keyframes: TOUR,
       width: w,
       height: h,
@@ -280,6 +291,13 @@ export default function Presentation({ engine, onClose, notify }) {
                   <label>Définition
                     <select className="s3d-text" value={vRes} onChange={(e) => setVRes(e.target.value)} disabled={!!busy}>
                       {Object.entries(VRES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                    </select>
+                  </label>
+                  <label>Taille du fichier
+                    <select id="pres-vsize" className="s3d-text" value={vSize} onChange={(e) => setVSize(e.target.value)} disabled={!!busy}>
+                      {Object.entries(VSIZE).map(([k, v]) => (
+                        <option key={k} value={k}>{v.label} (≈ {estimateMB(VRES[vRes].w, VRES[vRes].h, k, vDur)} Mo)</option>
+                      ))}
                     </select>
                   </label>
                   <label className="s3d-check">
