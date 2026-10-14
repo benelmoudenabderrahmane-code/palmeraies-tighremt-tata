@@ -6,6 +6,7 @@ import {
   SHOTS, TOUR, ASSO, loadLogo, ensureFonts, drawCartouche, drawTag, drawVideoOverlay,
   makeZip, canvasToBlob, detectVideoFormat,
 } from './presentation';
+import { saveFile } from './saveFile';
 
 const RES = {
   '4k': { w: 3840, h: 2160, label: '4K · 3840 × 2160' },
@@ -102,8 +103,8 @@ export default function Presentation({ engine, onClose, notify }) {
     setBusy({ label: 'Préparation de l’archive…', progress: 1 });
     const files = await Promise.all(results.map(async (r) => ({ name: r.name, data: new Uint8Array(await r.blob.arrayBuffer()) })));
     files.push({ name: 'LISEZ-MOI.txt', data: new TextEncoder().encode(readme(results)) });
-    download(makeZip(files), 'planches-sidi-ouaziz.zip');
     setBusy(null);
+    await save(makeZip(files), 'planches-sidi-ouaziz.zip');
   };
 
   /* ------------------------------- vidéo -------------------------------- */
@@ -135,7 +136,7 @@ export default function Presentation({ engine, onClose, notify }) {
       const blob = realtime
         ? await engine.recordTour({ ...common, mime: format.mime })
         : await engine.renderTourVideo({ ...common, codec: format.codec });
-      setVideo({ url: URL.createObjectURL(blob), name: `visite-sidi-ouaziz-${vRes}p.${format.ext}`, size: blob.size });
+      setVideo({ blob, url: URL.createObjectURL(blob), name: `visite-sidi-ouaziz-${vRes}p.${format.ext}`, size: blob.size });
       notify('Vidéo prête.');
     } catch (e) {
       if (e?.message !== 'cancelled') {
@@ -144,6 +145,14 @@ export default function Presentation({ engine, onClose, notify }) {
       }
     }
     setBusy(null);
+  };
+
+  const save = async (blob, name) => {
+    try {
+      await saveFile(blob, name);
+    } catch {
+      notify('Enregistrement impossible ici.');
+    }
   };
 
   const cancel = () => {
@@ -206,11 +215,11 @@ export default function Presentation({ engine, onClose, notify }) {
             {results.length > 0 && (
               <div className="s3d-results">
                 {results.map((r) => (
-                  <a key={r.id} href={r.url} download={r.name} className="s3d-result" title={`Télécharger ${r.name}`}>
+                  <button type="button" key={r.id} onClick={() => save(r.blob, r.name)} className="s3d-result" title={`Télécharger ${r.name}`}>
                     <img src={r.url} alt={r.title} />
                     <span>{r.title}</span>
                     <Download size={14} />
-                  </a>
+                  </button>
                 ))}
               </div>
             )}
@@ -264,7 +273,7 @@ export default function Presentation({ engine, onClose, notify }) {
                 {video && (
                   <div className="s3d-video">
                     <video src={video.url} controls playsInline />
-                    <a className="s3d-primary" href={video.url} download={video.name}><Download size={16} /> Télécharger ({(video.size / 1e6).toFixed(1)} Mo)</a>
+                    <button type="button" className="s3d-primary" onClick={() => save(video.blob, video.name)}><Download size={16} /> Télécharger ({(video.size / 1e6).toFixed(1)} Mo)</button>
                   </div>
                 )}
               </>
@@ -297,13 +306,4 @@ function readme(results) {
     `Contact : ${ASSO.email} · ${ASSO.site}`,
     '',
   ].join('\r\n');
-}
-
-function download(blob, name) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
 }

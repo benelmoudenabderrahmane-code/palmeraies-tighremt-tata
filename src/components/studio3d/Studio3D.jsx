@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import Link from 'next/link';
 import {
   MousePointer2, RotateCw, Scaling, Ruler, Magnet, Box, Map as MapIcon, Footprints, Clapperboard,
   Undo2, Redo2, Upload, Camera, Layers, Library, ListTree, Trash2, Copy, Lock, LockOpen,
@@ -13,6 +12,7 @@ import {
   CATALOG, CATEGORIES, PLAN_FIELDS, STATUS, LAYERS, DEFAULT_LAYERS, newEntity, ghostEntity,
 } from './catalog';
 import Presentation from './Presentation';
+import { saveFile, canSave } from './saveFile';
 import './studio3d.css';
 
 const STORAGE_KEY = 'studio3d-sidi-ouaziz-v1';
@@ -66,6 +66,7 @@ export default function Studio3D() {
   const mountRef = useRef(null);
   const engineRef = useRef(null);
   const fileRef = useRef(null);
+  const resetArmed = useRef(false);
   const [state, dispatch] = useReducer(reducer, null, () => ({ past: [], entities: buildInitialEntities(), future: [] }));
   const { entities } = state;
   const [selectedId, setSelectedId] = useState(null);
@@ -208,7 +209,7 @@ export default function Studio3D() {
 
   const exportJSON = () => {
     const blob = new Blob([JSON.stringify({ version: 1, site: SITE, exportedAt: new Date().toISOString(), entities }, null, 2)], { type: 'application/json' });
-    download(blob, 'projet-sidi-ouaziz.json');
+    saveFile(blob, 'projet-sidi-ouaziz.json').catch(() => notify('Enregistrement impossible ici.'));
   };
 
   const importJSON = (file) => {
@@ -227,21 +228,26 @@ export default function Studio3D() {
     reader.readAsText(file);
   };
 
-  const screenshot = () => {
-    const url = engineRef.current?.screenshot(3840, 2160);
-    if (!url) return;
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `sidi-ouaziz-${String(hour).padStart(2, '0')}h-4k.png`;
-    a.click();
-    notify('Capture 4K enregistrée.');
+  const screenshot = async () => {
+    const canvas = engineRef.current?.renderToCanvas(3840, 2160);
+    if (!canvas) return;
+    const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
+    try {
+      if (await saveFile(blob, `sidi-ouaziz-${String(Math.floor(hour)).padStart(2, '0')}h-4k.png`)) notify('Capture 4K enregistrée.');
+    } catch {
+      notify('Enregistrement impossible ici.');
+    }
   };
 
   const exportGLB = async () => {
+    if (!(await canSave('modele.glb'))) {
+      notify('L’export .glb n’est pas disponible sur cette page. Utilisez la version en ligne du Studio.');
+      return;
+    }
     notify('Préparation du modèle 3D…');
     try {
       const blob = await engineRef.current.exportGLB();
-      download(blob, 'sidi-ouaziz.glb');
+      await saveFile(blob, 'sidi-ouaziz.glb');
       notify('Modèle .glb exporté (Blender, SketchUp, etc.).');
     } catch (e) {
       console.error(e);
@@ -250,7 +256,14 @@ export default function Studio3D() {
   };
 
   const resetProject = () => {
-    if (!window.confirm('Revenir au plan d’origine ? Les modifications non exportées seront perdues.')) return;
+    // confirmation en deux clics (les boîtes de dialogue peuvent être bloquées)
+    if (!resetArmed.current) {
+      resetArmed.current = true;
+      setTimeout(() => { resetArmed.current = false; }, 5000);
+      notify('Cliquez encore une fois pour revenir au plan d’origine (vos modifications seront perdues).');
+      return;
+    }
+    resetArmed.current = false;
     dispatch({ type: 'load', entities: buildInitialEntities() });
     setSelectedId(null);
     notify('Plan d’origine rechargé.');
@@ -351,7 +364,7 @@ export default function Studio3D() {
       {/* ------------------------------ barre haute ------------------------------ */}
       <header className="s3d-top">
         <div className="s3d-brand">
-          <Link href="/projets" className="s3d-back" title="Retour au site"><ArrowLeft size={16} /></Link>
+          <a href="/projets" className="s3d-back" title="Retour au site"><ArrowLeft size={16} /></a>
           <img src="/logo.png" alt="" width={30} height={30} />
           <div>
             <div className="s3d-title">Studio 3D <em>Sidi Ouaziz</em></div>
@@ -768,13 +781,4 @@ function fmt(n) {
 function fmtHour(h) {
   const hh = Math.floor(h), mm = Math.round((h - hh) * 60);
   return `${String(hh).padStart(2, '0')}h${String(mm).padStart(2, '0')}`;
-}
-
-function download(blob, name) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }

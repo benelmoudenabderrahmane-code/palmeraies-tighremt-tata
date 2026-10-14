@@ -336,7 +336,7 @@ select.s3d-text option { background: #0f2618; }
 .s3d .spin { animation: s3dspin 0.9s linear infinite; }
 .s3d-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 16px; }
 .s3d-result {
-  display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; padding: 6px; border-radius: 10px;
+  display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; padding: 6px; border-radius: 10px; text-align: left;
   background: var(--s3d-panel-2); color: var(--s3d-text); text-decoration: none; font-size: 11.5px; border: 1px solid rgba(255,255,255,.05);
 }
 .s3d-result img { grid-column: 1 / -1; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; }
