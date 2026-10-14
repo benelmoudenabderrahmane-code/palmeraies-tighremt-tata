@@ -115,13 +115,13 @@ export const textures = {
       // gazon : touffes, variations de teinte et brins
       const S = 512;
       const [c, g] = canvas(S);
-      g.fillStyle = '#4a7430';
+      g.fillStyle = '#566d36';
       g.fillRect(0, 0, S, S);
       const r = rng(4);
       for (let i = 0; i < 140; i++) {
         const x = r() * S, y = r() * S, rad = 20 + r() * 60;
         const gr = g.createRadialGradient(x, y, 0, x, y, rad);
-        gr.addColorStop(0, r() > 0.5 ? 'rgba(98,140,52,0.35)' : 'rgba(46,82,30,0.35)');
+        gr.addColorStop(0, r() > 0.5 ? 'rgba(122,138,70,0.35)' : 'rgba(52,74,32,0.35)');
         gr.addColorStop(1, 'rgba(0,0,0,0)');
         g.fillStyle = gr;
         // motif répété sans couture
@@ -132,7 +132,7 @@ export const textures = {
       for (let i = 0; i < 42000; i++) {
         const x = r() * S, y = r() * S;
         const l = 22 + r() * 30;
-        g.strokeStyle = `hsl(${78 + r() * 34}, ${38 + r() * 30}%, ${l}%)`;
+        g.strokeStyle = `hsl(${68 + r() * 32}, ${26 + r() * 22}%, ${l}%)`;
         g.globalAlpha = 0.5 + r() * 0.4;
         g.lineWidth = 0.8 + r() * 0.8;
         g.beginPath();
@@ -145,17 +145,25 @@ export const textures = {
     }),
   grassTuft: () =>
     cached('grassTuft', () => {
-      const [c, g] = canvas(128);
-      g.clearRect(0, 0, 128, 128);
+      // touffe : brins fins et effilés, plus clairs à la pointe
+      const S = 256;
+      const [c, g] = canvas(S);
+      g.clearRect(0, 0, S, S);
       const r = rng(15);
-      for (let i = 0; i < 70; i++) {
-        const x = 20 + r() * 88, h = 50 + r() * 75, bend = (r() - 0.5) * 30;
-        g.strokeStyle = `hsl(${78 + r() * 26}, ${38 + r() * 22}%, ${32 + r() * 22}%)`;
-        g.lineWidth = 1.5 + r() * 2;
+      for (let i = 0; i < 150; i++) {
+        const x = 40 + r() * 176, h = 90 + r() * 160, bend = (r() - 0.5) * 70;
+        const hue = 66 + r() * 30, sat = 24 + r() * 22, light = 24 + r() * 22;
+        const grad = g.createLinearGradient(0, S, 0, S - h);
+        grad.addColorStop(0, `hsl(${hue}, ${sat}%, ${light * 0.6}%)`);
+        grad.addColorStop(1, `hsl(${hue - 8}, ${sat + 6}%, ${light + 14}%)`);
+        g.fillStyle = grad;
+        const w = 2 + r() * 2.5;
         g.beginPath();
-        g.moveTo(x, 128);
-        g.quadraticCurveTo(x + bend * 0.3, 128 - h * 0.6, x + bend, 128 - h);
-        g.stroke();
+        g.moveTo(x - w, S);
+        g.quadraticCurveTo(x + bend * 0.3 - w * 0.5, S - h * 0.6, x + bend, S - h);
+        g.quadraticCurveTo(x + bend * 0.3 + w * 0.5, S - h * 0.6, x + w, S);
+        g.closePath();
+        g.fill();
       }
       const t = new THREE.CanvasTexture(c);
       t.colorSpace = THREE.SRGBColorSpace;
@@ -259,30 +267,106 @@ export const textures = {
       }
       return finish(c, 1);
     }),
+  palmBark: () =>
+    cached('palmBark', () => {
+      // stipe de dattier : bases de palmes coupées en quinconce, 4 × 4
+      // cellules de teintes et de tailles légèrement différentes
+      const S = 512, N = 4;
+      const [c, g] = canvas(S);
+      g.fillStyle = '#7a6b5a';
+      g.fillRect(0, 0, S, S);
+      const r = rng(31);
+      const cw = S / N, ch = S / N;
+      const tones = [];
+      for (let i = 0; i < N * N; i++) tones.push([0.86 + r() * 0.28, (r() - 0.5) * 0.12, 0.9 + r() * 0.12]);
+      const shade = (hex, k) => {
+        const col = new THREE.Color(hex).multiplyScalar(k);
+        return `rgb(${Math.min(255, col.r * 255) | 0},${Math.min(255, col.g * 255) | 0},${Math.min(255, col.b * 255) | 0})`;
+      };
+      const cell = (cx, cy, k) => {
+        const [tone, jit, sz] = tones[k];
+        const w = cw * 0.5 * sz, h = ch * 0.52 * sz;
+        const grad = g.createLinearGradient(cx, cy - h, cx, cy + h);
+        grad.addColorStop(0, shade('#c2b29a', tone));
+        grad.addColorStop(0.5, shade('#a99780', tone));
+        grad.addColorStop(1, shade('#8d7b66', tone));
+        g.fillStyle = grad;
+        g.beginPath();
+        g.moveTo(cx + jit * cw, cy - h);
+        g.quadraticCurveTo(cx + w * 0.9, cy - h * 0.3, cx + w, cy + h * 0.05);
+        g.lineTo(cx, cy + h);
+        g.lineTo(cx - w, cy + h * 0.05);
+        g.quadraticCurveTo(cx - w * 0.9, cy - h * 0.3, cx + jit * cw, cy - h);
+        g.closePath();
+        g.fill();
+        // fibres et fissures
+        g.save();
+        g.clip();
+        for (let i = 0; i < 90; i++) {
+          const x = cx + (r() - 0.5) * w * 2, y = cy + (r() - 0.5) * h * 2;
+          g.strokeStyle = r() > 0.55 ? 'rgba(52,40,30,0.45)' : 'rgba(186,168,140,0.3)';
+          g.lineWidth = 0.8 + r() * 1.4;
+          g.beginPath();
+          g.moveTo(x, y);
+          g.lineTo(x + (r() - 0.5) * 5, y + 6 + r() * 14);
+          g.stroke();
+        }
+        g.restore();
+        // bord supérieur coupé (arête claire)
+        g.strokeStyle = 'rgba(196,178,150,0.45)';
+        g.lineWidth = 2;
+        g.beginPath();
+        g.moveTo(cx - w, cy + h * 0.05);
+        g.quadraticCurveTo(cx - w * 0.9, cy - h * 0.3, cx + jit * cw, cy - h);
+        g.quadraticCurveTo(cx + w * 0.9, cy - h * 0.3, cx + w, cy + h * 0.05);
+        g.stroke();
+      };
+      for (let j = -1; j <= N; j++) {
+        for (let i = -1; i <= N; i++) {
+          const k = (((j % N) + N) % N) * N + (((i % N) + N) % N);
+          cell(i * cw + (j % 2 ? cw / 2 : 0) + cw / 2, j * ch + ch / 2, k);
+        }
+      }
+      // poussière / patine irrégulière
+      for (let i = 0; i < 2500; i++) {
+        g.fillStyle = r() > 0.5 ? 'rgba(40,32,24,0.12)' : 'rgba(200,185,160,0.1)';
+        g.fillRect(r() * S, r() * S, 1 + r() * 3, 1 + r() * 3);
+      }
+      return finish(c, 1);
+    }),
   frond: () =>
     cached('frond', () => {
-      // palme : rachis + folioles, avec transparence (alphaTest)
-      const [c, g] = canvas(256);
-      g.clearRect(0, 0, 256, 256);
+      // palme : rachis + folioles serrées en V, teinte vert glauque
+      const S = 512;
+      const [c, g] = canvas(S);
+      g.clearRect(0, 0, S, S);
       const r = rng(12);
       g.lineCap = 'round';
-      for (let i = 0; i < 46; i++) {
-        const t = i / 46;
-        const y = 8 + t * 240;
-        const len = 105 * Math.sin(Math.PI * (0.12 + t * 0.85)) + 8;
-        const hue = 85 + r() * 18, light = 26 + r() * 14;
-        g.strokeStyle = `hsl(${hue}, 38%, ${light}%)`;
-        g.lineWidth = 3.2 - t * 1.5;
+      const n = 64;
+      for (let i = 0; i < n; i++) {
+        const t = i / n;
+        const y = 14 + t * 490;
+        const len = 215 * Math.sin(Math.PI * (0.1 + t * 0.86)) + 14;
         for (const side of [-1, 1]) {
+          const hue = 78 + r() * 16, sat = 20 + r() * 12, light = 30 + r() * 16;
+          g.strokeStyle = `hsl(${hue}, ${sat}%, ${light}%)`;
+          g.lineWidth = 6.5 - t * 3;
           g.beginPath();
-          g.moveTo(128, y);
-          g.quadraticCurveTo(128 + side * len * 0.5, y - 6, 128 + side * len, y - 18 - r() * 8);
+          g.moveTo(S / 2, y);
+          g.quadraticCurveTo(S / 2 + side * len * 0.5, y - 14, S / 2 + side * len, y - 34 - r() * 18);
+          g.stroke();
+          // nervure claire
+          g.strokeStyle = `hsla(${hue}, ${sat}%, ${light + 14}%, 0.5)`;
+          g.lineWidth = 1.2;
+          g.beginPath();
+          g.moveTo(S / 2, y);
+          g.quadraticCurveTo(S / 2 + side * len * 0.5, y - 14, S / 2 + side * len * 0.95, y - 32);
           g.stroke();
         }
       }
-      g.strokeStyle = '#6d6a3a';
-      g.lineWidth = 4;
-      g.beginPath(); g.moveTo(128, 0); g.lineTo(128, 256); g.stroke();
+      g.strokeStyle = '#7a7445';
+      g.lineWidth = 7;
+      g.beginPath(); g.moveTo(S / 2, 0); g.lineTo(S / 2, S); g.stroke();
       const t = new THREE.CanvasTexture(c);
       t.colorSpace = THREE.SRGBColorSpace;
       t.anisotropy = 8;

@@ -3,6 +3,7 @@ import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import { textures, normalsFor } from './textures';
 import { planarUV } from './geo';
 import { vegetationParts } from './vegetation';
+import { addTerrainDetail } from './atmosphere';
 
 /* ----------------------------- soleil ------------------------------ */
 
@@ -67,6 +68,16 @@ function ridged(x, y, oct = 5) {
 
 /* ---------------------------- paysage ------------------------------ */
 
+const sstep = THREE.MathUtils.smoothstep;
+
+/** Emprise de la palmeraie de Tighremt (0..1), à l'ouest du site */
+export function palmeraieWeight(x, z, center) {
+  const edge = center.x - 125 + Math.sin(z * 0.006) * 25;
+  const inX = sstep(x, edge - 600, edge - 540) * (1 - sstep(x, edge - 10, edge + 4));
+  const inZ = 1 - sstep(Math.abs(z - center.z), 590, 660);
+  return inX * inZ * sstep(fbm(x * 0.015, z * 0.015), 0.3, 0.42);
+}
+
 /**
  * Sol désertique + reliefs (Anti-Atlas) autour du site.
  * center : centre du site, flat : rayon de la zone plane.
@@ -77,37 +88,48 @@ export function buildLandscape(center, flat = 240, low = false) {
 
   // sol proche (plat, texturé) : variations à grande échelle en couleurs
   // de sommets pour éviter l'effet de répétition de la texture
-  const groundGeo = new THREE.PlaneGeometry(1400, 1400, low ? 70 : 140, low ? 70 : 140);
+  const groundGeo = new THREE.PlaneGeometry(3600, 3600, low ? 140 : 320, low ? 140 : 320);
   groundGeo.rotateX(-Math.PI / 2);
   groundGeo.translate(center.x, 0, center.z);
   planarUV(groundGeo, 9);
   {
     const p = groundGeo.attributes.position;
     const col = new Float32Array(p.count * 3);
-    const base = new THREE.Color('#e2cfb6'), dark = new THREE.Color('#b6977a'), grey = new THREE.Color('#cfc6ba'), red = new THREE.Color('#d9ab88');
+    const base = new THREE.Color('#e0cbb0'), dark = new THREE.Color('#b08f72'), grey = new THREE.Color('#cbc2b6'), red = new THREE.Color('#d6a682');
+    const soil = new THREE.Color('#8c7457'), field = new THREE.Color('#6f7c43'), fieldDry = new THREE.Color('#a39a5c');
     const c = new THREE.Color();
     for (let i = 0; i < p.count; i++) {
       const x = p.getX(i), z = p.getZ(i);
       const n1 = fbm(x * 0.006, z * 0.006, 4), n2 = fbm(x * 0.025 + 40, z * 0.025, 3);
-      c.copy(base).lerp(dark, THREE.MathUtils.smoothstep(n1, 0.45, 0.75) * 0.7).lerp(n2 > 0.5 ? grey : red, Math.abs(n2 - 0.5) * 0.9);
+      c.copy(base).lerp(dark, sstep(n1, 0.45, 0.75) * 0.7).lerp(n2 > 0.5 ? grey : red, Math.abs(n2 - 0.5) * 0.9);
+      // palmeraie : terre irriguée plus sombre et petites parcelles cultivées
+      const w = palmeraieWeight(x, z, center);
+      if (w > 0) {
+        c.lerp(soil, w * 0.85);
+        const plot = Math.floor(x / 22) * 7.31 + Math.floor(z / 16) * 3.17;
+        const cult = (Math.sin(plot) * 43758.5453) % 1;
+        if (Math.abs(cult) > 0.45) c.lerp(Math.abs(cult) > 0.8 ? fieldDry : field, w * 0.75);
+      }
       col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
     }
     groundGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   }
-  const ground = new THREE.Mesh(groundGeo, new THREE.MeshStandardMaterial({ map: textures.desert(), normalMap: normalsFor('desert', 4), normalScale: new THREE.Vector2(0.9, 0.9), vertexColors: true, roughness: 1 }));
+  const ground = new THREE.Mesh(groundGeo, addTerrainDetail(new THREE.MeshStandardMaterial({ map: textures.desert(), normalMap: normalsFor('desert', 4), normalScale: new THREE.Vector2(0.9, 0.9), vertexColors: true, roughness: 1 }), 'ground'));
   ground.receiveShadow = true;
   ground.name = 'sol';
   group.add(ground);
 
-  // reliefs rocheux de l'Anti-Atlas
-  const size = 3600, seg = low ? 160 : 300;
+  // reliefs rocheux de l'Anti-Atlas : crêtes ridées, gauchissement du
+  // domaine (plis), bancs en gradins, puis détail fin
+  const size = 3600, seg = low ? 180 : 440;
   const geo = new THREE.PlaneGeometry(size, size, seg, seg);
   geo.rotateX(-Math.PI / 2);
   const pos = geo.attributes.position;
   const colors = new Float32Array(pos.count * 3);
-  const rockDark = new THREE.Color('#5e3a28'), rock = new THREE.Color('#8c5638'), rockLight = new THREE.Color('#b47a52'), scree = new THREE.Color('#c39a74');
+  const rockDark = new THREE.Color('#3f3029'), rock = new THREE.Color('#6b4f3f'), rockLight = new THREE.Color('#8f6c55'), rust = new THREE.Color('#8b5636'), scree = new THREE.Color('#a08268'), foot = new THREE.Color('#ad9378');
   const tmp = new THREE.Color();
   const heights = new Float32Array(pos.count);
+  const STEP = 13;
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i) + center.x, z = pos.getZ(i) + center.z;
     const dx = x - center.x, dz = z - center.z;
@@ -115,12 +137,20 @@ export function buildLandscape(center, flat = 240, low = false) {
     const ang = Math.atan2(dz, dx); // 0 = est
     // la palmeraie occupe l'ouest : reliefs plus bas et plus lointains de ce côté
     const westFactor = 0.18 + 0.82 * (0.5 + 0.5 * Math.cos(ang));
-    const rise = THREE.MathUtils.smoothstep(d, flat + 40 + (1 - westFactor) * 500, flat + 420 + (1 - westFactor) * 600);
-    let h = ridged(x * 0.0024, z * 0.0024, 6) * 420 + fbm(x * 0.012, z * 0.012) * 50;
+    const rise = sstep(d, flat + 40 + (1 - westFactor) * 500, flat + 420 + (1 - westFactor) * 600);
+    const wx = x + (fbm(x * 0.003, z * 0.003) - 0.5) * 260, wz = z + (fbm(x * 0.003 + 17, z * 0.003 + 5) - 0.5) * 260;
+    let h = ridged(wx * 0.0024, wz * 0.0024, 6) * 430 + fbm(x * 0.012, z * 0.012) * 50;
     h *= rise;
     // la montagne au pied du site, à l'est (cf. photos du dossier)
-    const eastHill = Math.exp(-(((dx - 300) / 150) ** 2) - ((dz + 20) / 300) ** 2) * 150 * (0.55 + ridged(x * 0.01, z * 0.01));
-    h += eastHill * THREE.MathUtils.smoothstep(d, flat - 30, flat + 120);
+    const eastHill = Math.exp(-(((dx - 300) / 150) ** 2) - ((dz + 20) / 300) ** 2) * 150 * (0.55 + ridged(wx * 0.01, wz * 0.01));
+    h += eastHill * sstep(d, flat - 30, flat + 120);
+    // bancs rocheux en gradins (couches sédimentaires)
+    if (h > 4) {
+      const t = h / STEP, f = t - Math.floor(t);
+      const terr = (Math.floor(t) + sstep(f, 0.35, 0.95)) * STEP;
+      h = THREE.MathUtils.lerp(h, terr, 0.5 * sstep(h, 4, 30));
+      h += ridged(x * 0.035, z * 0.035, 3) * 9 * sstep(h, 6, 40);
+    }
     h = Math.max(0, h - 1);
     heights[i] = h;
     pos.setX(i, x);
@@ -131,15 +161,17 @@ export function buildLandscape(center, flat = 240, low = false) {
   const nor = geo.attributes.normal;
   for (let i = 0; i < pos.count; i++) {
     const h = heights[i];
+    const x = pos.getX(i), z = pos.getZ(i);
     const slope = 1 - nor.getY(i); // 0 = plat
-    const n = fbm(pos.getX(i) * 0.02, pos.getZ(i) * 0.02, 3);
-    tmp.copy(scree).lerp(rock, THREE.MathUtils.smoothstep(h, 2, 60));
-    tmp.lerp(rockDark, THREE.MathUtils.smoothstep(slope, 0.15, 0.55) * 0.8);
-    tmp.lerp(rockLight, Math.max(0, n - 0.5) * 1.2);
+    const n = fbm(x * 0.02, z * 0.02, 3), m = fbm(x * 0.004 + 9, z * 0.004, 3);
+    tmp.copy(foot).lerp(scree, sstep(h, 1, 14)).lerp(rock, sstep(h, 10, 70));
+    tmp.lerp(rust, sstep(m, 0.5, 0.7) * 0.5 * sstep(h, 8, 40));
+    tmp.lerp(rockDark, sstep(slope, 0.18, 0.6) * 0.75);
+    tmp.lerp(rockLight, Math.max(0, n - 0.52) * 1.3);
     colors[i * 3] = tmp.r; colors[i * 3 + 1] = tmp.g; colors[i * 3 + 2] = tmp.b;
   }
   geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  const mountains = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95 }));
+  const mountains = new THREE.Mesh(geo, addTerrainDetail(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.93 }), 'rock'));
   mountains.receiveShadow = true;
   mountains.castShadow = true;
   mountains.name = 'reliefs';
@@ -153,44 +185,57 @@ export function buildLandscape(center, flat = 240, low = false) {
 /** Palmeraie de Tighremt en arrière-plan, à l'ouest du site */
 export function buildPalmeraie(center, density = 1) {
   const parts = vegetationParts().palmierLow;
-  const pts = [];
-  // bande de palmeraie nord-sud, à l'ouest du site (cf. vue satellite)
-  for (let i = 0; i < 5200 * density; i++) {
-    const z = center.z - 650 + Math.random() * 1300;
-    const edge = center.x - 125 + Math.sin(z * 0.006) * 25;
-    const x = edge - Math.pow(Math.random(), 0.8) * 560;
-    if (fbm(x * 0.015, z * 0.015) < 0.36) continue;
-    pts.push([x, z, 0.85 + Math.random() * 0.55, Math.random() * Math.PI * 2]);
+  const pts = [], shoots = [];
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  // bande de palmeraie nord-sud, à l'ouest du site (cf. vue satellite) :
+  // palmiers serrés, de tailles variées, et rejets au pied
+  const tries = Math.round(16000 * density);
+  for (let i = 0; i < tries; i++) {
+    const z = center.z - 660 + rnd() * 1320;
+    const x = center.x - 130 - rnd() * 620;
+    const w = palmeraieWeight(x, z, center);
+    if (rnd() > w) continue;
+    const age = rnd();
+    pts.push([x, z, 0.55 + age * 0.95, rnd() * Math.PI * 2]);
+    if (rnd() < 0.35) shoots.push([x + (rnd() - 0.5) * 3, z + (rnd() - 0.5) * 3, 0.35 + rnd() * 0.3, rnd() * Math.PI * 2]);
   }
   const group = new THREE.Group();
   group.name = 'palmeraie';
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3();
-  const up = new THREE.Vector3(0, 1, 0);
-  for (const part of parts) {
-    const im = new THREE.InstancedMesh(part.geo, part.mat, pts.length);
-    pts.forEach(([x, z, sc, r], i) => {
-      q.setFromAxisAngle(up, r);
-      s.setScalar(sc);
-      p.set(x, 0, z);
-      im.setMatrixAt(i, m4.compose(p, q, s));
-    });
-    im.castShadow = true;
-    im.receiveShadow = true;
-    group.add(im);
+  const e = new THREE.Euler();
+  // deux lots : les palmiers proches du site portent des ombres, les
+  // lointains non (hors du champ des ombres : rendu deux fois plus léger)
+  const near = pts.filter(([x, z]) => Math.hypot(x - center.x, z - center.z) < 260);
+  const far = pts.filter(([x, z]) => Math.hypot(x - center.x, z - center.z) >= 260);
+  for (const [set, cast] of [[near, true], [far, false]]) {
+    if (!set.length) continue;
+    for (const part of parts) {
+      const im = new THREE.InstancedMesh(part.geo, part.mat, set.length);
+      set.forEach(([x, z, sc, r], i) => {
+        e.set(Math.sin(r * 7) * 0.05, r, Math.cos(r * 5) * 0.05, 'YXZ');
+        q.setFromEuler(e);
+        s.set(sc * (0.9 + 0.1 * Math.sin(r * 3)), sc, sc * (0.9 + 0.1 * Math.sin(r * 3)));
+        p.set(x, 0, z);
+        im.setMatrixAt(i, m4.compose(p, q, s));
+      });
+      im.castShadow = cast;
+      im.receiveShadow = true;
+      group.add(im);
+    }
   }
-  // sous-bois vert de l'oasis
-  const under = new THREE.InstancedMesh(
-    new THREE.IcosahedronGeometry(1.6, 0),
-    new THREE.MeshStandardMaterial({ color: '#4f6b2c', roughness: 1, flatShading: true }),
-    pts.length
-  );
-  pts.forEach(([x, z, sc, r], i) => {
-    q.setFromAxisAngle(up, r);
-    s.set(sc * 2.2, sc * 0.9, sc * 2.2);
-    p.set(x + 2, 0.4, z + 1);
-    under.setMatrixAt(i, m4.compose(p, q, s));
+  // rejets (jeunes palmiers en touffe au pied des dattiers)
+  const crown = parts[1];
+  const sh = new THREE.InstancedMesh(crown.geo, crown.mat, shoots.length);
+  shoots.forEach(([x, z, sc, r], i) => {
+    q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), r);
+    s.setScalar(sc);
+    p.set(x, -8.4 * sc + 0.3, z);
+    sh.setMatrixAt(i, m4.compose(p, q, s));
   });
-  group.add(under);
+  sh.castShadow = false;
+  sh.receiveShadow = true;
+  group.add(sh);
   return group;
 }
 

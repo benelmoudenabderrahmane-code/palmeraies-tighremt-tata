@@ -3,11 +3,13 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { buildEntity, mats } from './builders';
-import { vegetationParts, vegetationMesh, VEG_RADIUS, VEG_HEIGHT } from './vegetation';
+import { vegetationParts, vegetationMesh, VEG_RADIUS, VEG_HEIGHT, windUniforms } from './vegetation';
 import { buildLandscape, buildPalmeraie, buildSky, sunPosition, sunVector } from './environment';
 import { PLAN_IMAGE, PX_PER_M, ORIGIN_PX, SITE, siteBounds } from './planData';
 import { PostFX } from './postfx';
 import { NightLights, buildStars } from './nightlights';
+import { installHeightFog, buildClouds } from './atmosphere';
+import { buildDesertDetails } from './scatter';
 
 const INSTANCED = new Set(['palmier', 'olivier', 'arbuste']);
 // vue d'ensemble par défaut : depuis le sud-est, terrain au centre, montagnes au fond
@@ -65,7 +67,8 @@ export class StudioEngine {
     container.appendChild(lr.domElement);
 
     const scene = (this.scene = new THREE.Scene());
-    scene.fog = new THREE.Fog('#d9c9b4', 900, 3200);
+    installHeightFog();
+    scene.fog = new THREE.FogExp2('#cfc6b8', 0.00026);
 
     this.camera = new THREE.PerspectiveCamera(42, w / h, 0.5, 5000);
     this.camera.position.set(HOME.pos[0], HOME.pos[1], HOME.pos[2]);
@@ -83,6 +86,8 @@ export class StudioEngine {
     // ciel & lumière
     this.sky = buildSky();
     scene.add(this.sky);
+    this.clouds = buildClouds();
+    scene.add(this.clouds);
     this.hemi = new THREE.HemisphereLight('#cfe3ff', '#8a6a4a', 0.6);
     scene.add(this.hemi);
     const sun = (this.sun = new THREE.DirectionalLight('#fff1dc', 3));
@@ -111,6 +116,7 @@ export class StudioEngine {
     this.envGroup.add(buildLandscape(this.center, 240, this.low));
     this.palmeraie = buildPalmeraie(this.center, this.low ? 0.4 : 1);
     this.envGroup.add(this.palmeraie);
+    this.envGroup.add(buildDesertDetails(this.center, this.low ? 0.4 : 1));
     scene.add(this.envGroup);
     this.ground = this.envGroup.getObjectByName('sol');
 
@@ -776,8 +782,11 @@ export class StudioEngine {
     this.hemi.intensity = 0.15 + 0.55 * day;
     this.hemi.color.set('#cfe3ff').lerp(new THREE.Color('#2a3a66'), 1 - day);
     this.renderer.toneMappingExposure = 0.35 + 0.25 * day;
-    const fogCol = new THREE.Color('#d9c9b4').lerp(new THREE.Color('#f0b28a'), golden * 0.5).lerp(new THREE.Color('#1c2236'), 1 - day);
+    // brume aérienne : gris-beige poussiéreux le jour, dorée au couchant
+    const fogCol = new THREE.Color('#cfc6b8').lerp(new THREE.Color('#e9b088'), golden * 0.6).lerp(new THREE.Color('#1a2034'), 1 - day);
     this.scene.fog.color.copy(fogCol);
+    this.scene.fog.density = 0.00026 + golden * 0.0001;
+    this.clouds.update(dir, day, golden * day);
     // nuit : clair de lune, étoiles, éclairage public, halo
     const night = 1 - THREE.MathUtils.smoothstep(elev, -0.12, 0.04);
     this._nightLevel = night;
@@ -887,6 +896,8 @@ export class StudioEngine {
       this.orbit.update();
     }
 
+    windUniforms.uTime.value = now / 1000;
+
     // eau animée (deux directions de houle)
     const w = mats().water;
     if (w.normalMap) { w.normalMap.offset.set((now * 0.000018) % 1, (now * 0.000011) % 1); }
@@ -898,6 +909,7 @@ export class StudioEngine {
       this.night.update(this.camera, this._lightsLevel || 0);
     }
     this.stars.position.copy(this.camera.position);
+    this.clouds.uniforms.uTime.value = now / 1000;
 
     // taille du gizmo de sélection au sol
     if (this._recording) this._recordFrame(now);
@@ -1308,8 +1320,13 @@ function polyCentroid(pts) {
 }
 
 const _q = new THREE.Quaternion(), _s = new THREE.Vector3(), _p = new THREE.Vector3(), _up = new THREE.Vector3(0, 1, 0);
+const _eul = new THREE.Euler();
 function composeMatrix(e) {
-  _q.setFromAxisAngle(_up, e.rotation || 0);
+  // légère inclinaison naturelle propre à chaque arbre (déterministe)
+  const h = Math.sin(e.position[0] * 12.9898 + e.position[1] * 78.233) * 43758.5453;
+  const r1 = h - Math.floor(h), r2 = (h * 7.13) - Math.floor(h * 7.13);
+  _eul.set((r1 - 0.5) * 0.09, e.rotation || 0, (r2 - 0.5) * 0.09, 'YXZ');
+  _q.setFromEuler(_eul);
   _s.setScalar(e.scale || 1);
   _p.set(e.position[0], 0, e.position[1]);
   return new THREE.Matrix4().compose(_p, _q, _s);

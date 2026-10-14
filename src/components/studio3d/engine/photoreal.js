@@ -34,6 +34,7 @@ function collectMeshes(roots) {
     root.updateMatrixWorld(true);
     root.traverseVisible((o) => {
       if (!o.isMesh || o.isSprite) return;
+      if (o.userData.noPathTrace) return; // détails trop nombreux (cailloux)
       const mats = [].concat(o.material);
       if (mats.some((m) => m.isShaderMaterial || m.isPointsMaterial || m.isSpriteMaterial || m.isLineBasicMaterial)) return;
       if (o.material.depthTest === false) return; // aides de sélection
@@ -64,7 +65,7 @@ function collectLights(scene) {
   return out;
 }
 
-/** Capture une scène (ciel) en carte cubique */
+/** Capture une scène (ou des objets : ciel, nuages) en carte cubique */
 function captureCube(renderer, object, size = 512) {
   const rt = new THREE.WebGLCubeRenderTarget(size, { type: THREE.FloatType });
   const cam = new THREE.CubeCamera(0.1, 20000, rt);
@@ -72,11 +73,12 @@ function captureCube(renderer, object, size = 512) {
     cam.update(renderer, object);
     return rt;
   }
+  const objs = [].concat(object).filter(Boolean);
+  const saved = objs.map((o) => [o, o.parent, o.position.clone()]);
   const s = new THREE.Scene();
-  const parent = object.parent;
-  s.add(object);
+  objs.forEach((o) => { s.add(o); o.position.set(0, 0, 0); });
   cam.update(renderer, s);
-  if (parent) parent.add(object);
+  saved.forEach(([o, parent, p]) => { o.position.copy(p); if (parent) parent.add(o); });
   return rt;
 }
 
@@ -94,7 +96,7 @@ export async function renderPhotoreal(engine, { width, height, samples = 128, bo
   // arrière-plan : ciel physique ; éclairage : dôme en dégradé + disque
   // solaire modéré (le disque du shader Sky dépasse la précision des
   // textures flottantes et ruine l'échantillonnage)
-  const bg = captureCube(r, engine.sky);
+  const bg = captureCube(r, [engine.sky, engine.clouds]);
   engine._updateEnvironment();
   const env = captureCube(r, engine._envScene, 256);
   scene.background = debug.noEnv ? new THREE.Color('#88aaff') : bg.texture;
@@ -134,7 +136,7 @@ export async function renderPhotoreal(engine, { width, height, samples = 128, bo
     // tone mapping + sRGB via la passe de sortie du moteur
     r.setPixelRatio(1);
     r.setSize(width, height, false);
-    engine.fx.output.render(r, null, pt.target);
+    engine.fx.present(pt.target);
     const out = document.createElement('canvas');
     out.width = width;
     out.height = height;
@@ -194,7 +196,7 @@ class LivePhotoreal {
     this.lights.clear();
     for (const l of collectLights(e.scene)) this.lights.add(l);
     this._targets.forEach((t) => t.dispose());
-    const bg = captureCube(e.renderer, e.sky);
+    const bg = captureCube(e.renderer, [e.sky, e.clouds]);
     e._updateEnvironment();
     const env = captureCube(e.renderer, e._envScene, 256);
     this._targets = [bg, env];

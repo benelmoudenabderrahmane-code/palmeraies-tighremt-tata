@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { textures, normalsFor } from './textures';
+import { addWind } from './vegetation';
 import {
   arcStrip, boxUV, flatShape, insetPolygon, lineStrip, mergeGeometries,
   planarUV, polylineWall, roundedRect, shapeFrom, slab,
@@ -46,7 +47,7 @@ export function mats() {
     }),
     poolFloor: std({ color: '#3d7f86', roughness: 0.7 }),
     windowGlow: new THREE.MeshStandardMaterial({ color: '#26343c', roughness: 0.15, metalness: 0.5, emissive: '#ffc77a', emissiveIntensity: 0 }),
-    tuft: new THREE.MeshStandardMaterial({ map: textures.grassTuft(), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.95 }),
+    tuft: addWind(new THREE.MeshStandardMaterial({ map: textures.grassTuft(), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.95 }), { pivotY: 0, pivotX: 0, amount: 0.5 }),
     net: new THREE.MeshStandardMaterial({ map: netTexture(), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.8 }),
     fence: new THREE.MeshStandardMaterial({ map: fenceTexture(), transparent: true, depthWrite: false, side: THREE.DoubleSide, roughness: 0.6, metalness: 0.4 }),
     sign: std({ color: '#133d20', roughness: 0.6 }),
@@ -408,15 +409,14 @@ let tuftGeo = null;
 /** Touffes d'herbe instanciées (deux plans croisés) sur une parcelle */
 function grassTufts(poly) {
   if (!tuftGeo) {
-    const a = new THREE.PlaneGeometry(0.6, 0.32);
-    a.translate(0, 0.16, 0);
-    const b = a.clone().rotateY(Math.PI / 2);
-    tuftGeo = mergeGeometries([a, b]);
+    const a = new THREE.PlaneGeometry(0.5, 0.34);
+    a.translate(0, 0.17, 0);
+    tuftGeo = mergeGeometries([0, 1, 2].map((k) => a.clone().rotateY((k * Math.PI) / 3)));
   }
   const xs = poly.map((p) => p[0]), zs = poly.map((p) => p[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
   const area = (maxX - minX) * (maxZ - minZ);
-  const n = Math.min(700, Math.round(area * 0.7));
+  const n = Math.min(1400, Math.round(area * 1.3));
   const pts = [];
   let seed = Math.abs(Math.round(minX * 131 + minZ * 17)) + 1;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -429,10 +429,10 @@ function grassTufts(poly) {
   const col = new THREE.Color();
   pts.forEach(([x, z, s, r], i) => {
     q.setFromAxisAngle(up, r);
-    sc.set(s, s * (0.8 + (s % 0.3)), s);
+    sc.set(s * 0.8, s * (0.7 + (s % 0.4)), s * 0.8);
     p.set(x, 0.1, z);
     im.setMatrixAt(i, m4.compose(p, q, sc));
-    im.setColorAt(i, col.setHSL(0.22 + (s % 0.1) * 0.3, 0.3, 0.82 + (s % 0.15)));
+    im.setColorAt(i, col.setHSL(0.2 + (s % 0.1) * 0.3, 0.25, 0.78 + (s % 0.2)));
   });
   im.count = pts.length;
   im.castShadow = false;
