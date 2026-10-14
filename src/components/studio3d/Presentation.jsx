@@ -26,6 +26,24 @@ const VSIZE = {
 const videoBitrate = (w, h, size) => Math.min(40e6, Math.round(w * h * 30 * VSIZE[size].bpp));
 const estimateMB = (w, h, size, dur) => Math.max(1, Math.round((videoBitrate(w, h, size) * dur) / 8 / 1e6));
 
+/** Pourcentage, images calculées et temps restant estimé */
+function ProgressInfo({ busy }) {
+  const [, tick] = useState(0);
+  const startRef = useRef({ label: null, t: 0 });
+  if (startRef.current.label !== busy.label) startRef.current = { label: busy.label, t: Date.now() };
+  useEffect(() => {
+    const id = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const p = Math.max(0, Math.min(1, busy.progress || 0));
+  const elapsed = (Date.now() - startRef.current.t) / 1000;
+  const fmt = (sec) => (sec >= 60 ? `${Math.floor(sec / 60)} min ${String(Math.round(sec % 60)).padStart(2, '0')} s` : `${Math.max(1, Math.round(sec))} s`);
+  const parts = [`${(p * 100).toFixed(p < 0.1 ? 1 : 0)} %`];
+  if (busy.frames) parts.push(`image ${Math.round(p * busy.frames)} / ${busy.frames}`);
+  parts.push(p > 0.005 && elapsed > 3 ? `environ ${fmt((elapsed * (1 - p)) / p)} restantes` : `en cours depuis ${fmt(elapsed)}`);
+  return <div className="lbl">{parts.join(' · ')}</div>;
+}
+
 /** Versions allégées proposées en plus de la vidéo principale */
 const LIGHT = [
   { id: '1080-leger', label: '1080p léger', hint: 'e-mail, Drive', w: 1920, h: 1080 },
@@ -164,6 +182,7 @@ export default function Presentation({ engine, onClose, notify }) {
       label: realtime ? 'Enregistrement de la visite… gardez cet onglet ouvert et visible.' : 'Calcul de la vidéo image par image…',
       progress: 0,
       video: true,
+      frames: realtime ? 0 : Math.round(vDur * 30),
     });
     const common = {
       bitrate: videoBitrate(w, h, vSize),
@@ -184,11 +203,12 @@ export default function Presentation({ engine, onClose, notify }) {
       setVideo(main);
       // versions allégées (recompression rapide, sans refaire le rendu)
       if (!realtime) {
+        engine.setPaused?.(true);
         const targets = LIGHT.filter((t) => t.h <= h && !(t.h === h && vSize === 'leger'));
         for (let i = 0; i < targets.length; i++) {
           if (cancelRef.current) break;
           const t = targets[i];
-          setBusy((b) => (b ? { ...b, label: `Version allégée ${t.label} (${t.hint})…`, progress: 0 } : b));
+          setBusy((b) => (b ? { ...b, label: `Version allégée ${t.label} (${t.hint})…`, progress: 0, frames: 0 } : b));
           try {
             const small = await compressVideo(blob, {
               width: t.w, height: t.h, codec: format.codec, bitrate: videoBitrate(t.w, t.h, 'leger'),
@@ -200,12 +220,13 @@ export default function Presentation({ engine, onClose, notify }) {
             console.error(e);
           }
         }
+        engine.setPaused?.(false);
       }
       notify('Vidéo prête.');
     } catch (e) {
       if (e?.message !== 'cancelled') {
         console.error(e);
-        notify('L’export vidéo a échoué sur ce navigateur.');
+        notify(`L’export vidéo a échoué : ${e?.message || e}`);
       }
     }
     setBusy(null);
@@ -225,6 +246,7 @@ export default function Presentation({ engine, onClose, notify }) {
     setPacked(result);
     cancelRef.current = false;
     setBusy({ label: '', progress: 0 });
+    engine.setPaused?.(true);
     for (const t of LIGHT) {
       if (cancelRef.current) break;
       setBusy({ label: `Compression ${t.label} (${t.hint})… gardez cet onglet ouvert.`, progress: 0 });
@@ -237,10 +259,11 @@ export default function Presentation({ engine, onClose, notify }) {
         setPacked({ ...result });
       } catch (e) {
         console.error(e);
-        notify('Cette vidéo n’a pas pu être compressée (format non reconnu).');
+        notify(`Cette vidéo n’a pas pu être compressée : ${e?.message || e}`);
         break;
       }
     }
+    engine.setPaused?.(false);
     setBusy(null);
   };
 
@@ -432,6 +455,7 @@ export default function Presentation({ engine, onClose, notify }) {
         {busy && (
           <div className="s3d-progress">
             <div className="lbl">{busy.label}</div>
+            <ProgressInfo busy={busy} />
             <div className="bar"><span style={{ width: `${Math.round((busy.progress || 0) * 100)}%` }} /></div>
             {!busy.video && <button className="s3d-link" onClick={cancel}>Annuler</button>}
           </div>

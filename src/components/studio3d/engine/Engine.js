@@ -848,10 +848,15 @@ export class StudioEngine {
 
   /* ============================ boucle ============================ */
 
+  /** Suspend l'affichage 3D (libère la carte graphique pour la compression vidéo) */
+  setPaused(v) {
+    this._paused = !!v;
+  }
+
   _loop() {
     if (!this._running) return;
     this._raf = requestAnimationFrame(() => this._loop());
-    if (this._offline) return; // rendu vidéo image par image en cours
+    if (this._offline || this._paused) return; // rendu vidéo ou compression en cours
     const now = performance.now();
     const dt = Math.min((now - this._last) / 1000, 0.1);
     this._last = now;

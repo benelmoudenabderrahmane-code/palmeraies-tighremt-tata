@@ -359,7 +359,10 @@ export async function compressVideo(blob, { width, height, bitrate, codec, onPro
     video: { width, height, fit: 'contain', codec, quality: new mb.Quality(bitrate), keyFrameInterval: 4, forceTranscode: true },
     showWarnings: false,
   });
-  if (!conversion.isValid) throw new Error('conversion impossible');
+  if (!conversion.isValid) {
+    const why = conversion.discardedTracks.map((d) => d.reason).join(', ');
+    throw new Error(`format non pris en charge par ce navigateur${why ? ` (${why})` : ''}`);
+  }
   if (onProgress) conversion.onProgress = (p) => onProgress(p);
   await conversion.execute();
   return new Blob([output.target.buffer], { type: isMp4 ? 'video/mp4' : 'video/webm' });
