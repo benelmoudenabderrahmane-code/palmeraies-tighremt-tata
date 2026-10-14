@@ -1163,7 +1163,7 @@ export class StudioEngine {
       target: new mb.BufferTarget(),
     });
     // débit choisi (taille du fichier) ou très haute qualité par défaut
-    const quality = bitrate ? new mb.Quality(bitrate) : (mb.QUALITY_VERY_HIGH ?? mb.QUALITY_HIGH);
+    const quality = bitrate ? new mb.Quality({ bitrate: Math.round(bitrate) }) : (mb.QUALITY_VERY_HIGH ?? mb.QUALITY_HIGH);
     const source = new mb.CanvasSource(comp, { codec, quality, keyFrameInterval: bitrate ? 4 : 2 });
     output.addVideoTrack(source, { frameRate: fps });
     const curves = this._tourCurves(keyframes);

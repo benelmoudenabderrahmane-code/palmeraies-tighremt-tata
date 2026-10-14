@@ -368,7 +368,7 @@ export async function compressVideo(blob, { width, height, bitrate, codec, onPro
   const conversion = await mb.Conversion.init({
     input,
     output,
-    video: { width, height, fit: 'contain', codec, quality: new mb.Quality(bitrate), keyFrameInterval: 4, forceTranscode: true },
+    video: { width, height, fit: 'contain', codec, quality: new mb.Quality({ bitrate: Math.round(bitrate) }), keyFrameInterval: 4, forceTranscode: true },
     showWarnings: false,
   });
   if (!conversion.isValid) {
