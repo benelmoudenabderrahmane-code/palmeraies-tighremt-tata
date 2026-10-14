@@ -249,27 +249,40 @@ export default function Presentation({ engine, onClose, notify }) {
     cancelRef.current = false;
     setBusy({ label: '', progress: 0 });
     engine.setPaused?.(true);
+    let failure = null;
     for (const t of LIGHT) {
       if (cancelRef.current) break;
-      setBusy({ label: `Compression ${t.label} (${t.hint})… gardez cet onglet ouvert.`, progress: 0 });
-      try {
-        const small = await compressVideo(file, {
-          width: t.w, height: t.h, codec, bitrate: videoBitrate(t.w, t.h, 'leger'),
-          onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
-        });
-        // inutile de proposer une version qui ne serait pas plus légère
-        if (small.size < file.size * 0.9) {
-          result.extras = [...result.extras, { ...t, blob: small, size: small.size, name: `${base}-${t.id}.${ext}` }];
-          setPacked({ ...result });
+      const opts = {
+        width: t.w, height: t.h, codec, bitrate: videoBitrate(t.w, t.h, 'leger'),
+        onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
+      };
+      let small = null;
+      // une nouvelle tentative si l'encodeur du navigateur échoue ponctuellement
+      for (let attempt = 0; attempt < 2 && !small && !cancelRef.current; attempt++) {
+        setBusy({ label: `Compression ${t.label} (${t.hint})${attempt ? ', nouvel essai' : ''}… gardez cet onglet ouvert.`, progress: 0 });
+        try {
+          small = await compressVideo(file, opts);
+        } catch (e) {
+          console.error(e);
+          failure = e;
+          await new Promise((res) => setTimeout(res, 500));
         }
-      } catch (e) {
-        console.error(e);
-        notify(`Cette vidéo n’a pas pu être compressée : ${e?.message || e}`);
-        break;
+      }
+      if (!small) break;
+      failure = null;
+      console.info('[compression]', t.id, file.size, '→', small.size);
+      // inutile de proposer une version qui ne serait pas plus légère
+      if (small.size < file.size * 0.9) {
+        result.extras = [...result.extras, { ...t, blob: small, size: small.size, name: `${base}-${t.id}.${ext}` }];
+        setPacked({ ...result });
       }
     }
     engine.setPaused?.(false);
     setBusy(null);
+    if (failure) {
+      notify(`Cette vidéo n’a pas pu être compressée : ${failure?.message || failure}`);
+      return;
+    }
     if (!cancelRef.current && !result.extras.length) notify('Cette vidéo est déjà légère : impossible de la réduire davantage sans perte visible.');
   };
 
