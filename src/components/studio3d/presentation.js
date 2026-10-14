@@ -341,6 +341,30 @@ export async function detectVideoFormat(width, height) {
   return { kind: 'recorder', mime, ext: mp4 ? 'mp4' : 'webm', label: mp4 ? 'MP4' : 'WebM' };
 }
 
+/**
+ * Recompresse une vidéo dans le navigateur (WebCodecs) : redimensionnement
+ * et débit réduit, sans refaire le rendu 3D. Renvoie un Blob.
+ */
+export async function compressVideo(blob, { width, height, bitrate, codec, onProgress }) {
+  const mb = await import('mediabunny');
+  const isMp4 = codec === 'avc';
+  const input = new mb.Input({ source: new mb.BlobSource(blob), formats: mb.ALL_FORMATS });
+  const output = new mb.Output({
+    format: isMp4 ? new mb.Mp4OutputFormat({ fastStart: 'in-memory' }) : new mb.WebMOutputFormat(),
+    target: new mb.BufferTarget(),
+  });
+  const conversion = await mb.Conversion.init({
+    input,
+    output,
+    video: { width, height, fit: 'contain', codec, quality: new mb.Quality(bitrate), keyFrameInterval: 4, forceTranscode: true },
+    showWarnings: false,
+  });
+  if (!conversion.isValid) throw new Error('conversion impossible');
+  if (onProgress) conversion.onProgress = (p) => onProgress(p);
+  await conversion.execute();
+  return new Blob([output.target.buffer], { type: isMp4 ? 'video/mp4' : 'video/webm' });
+}
+
 /** Format MediaRecorder (repli) : H.264 d'abord, puis WebM, puis MP4 générique (Safari) */
 export function pickVideoMime() {
   if (typeof MediaRecorder === 'undefined') return null;

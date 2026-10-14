@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { X, Images, Film, Download, LoaderCircle, Square, Info } from 'lucide-react';
 import {
   SHOTS, TOUR, ASSO, loadLogo, ensureFonts, drawCartouche, drawTag, drawVideoOverlay,
-  makeZip, canvasToBlob, detectVideoFormat,
+  makeZip, canvasToBlob, detectVideoFormat, compressVideo,
 } from './presentation';
 import { saveFile } from './saveFile';
 
@@ -26,6 +26,12 @@ const VSIZE = {
 const videoBitrate = (w, h, size) => Math.min(40e6, Math.round(w * h * 30 * VSIZE[size].bpp));
 const estimateMB = (w, h, size, dur) => Math.max(1, Math.round((videoBitrate(w, h, size) * dur) / 8 / 1e6));
 
+/** Versions allégées proposées en plus de la vidéo principale */
+const LIGHT = [
+  { id: '1080-leger', label: '1080p léger', hint: 'e-mail, Drive', w: 1920, h: 1080 },
+  { id: '720-whatsapp', label: '720p', hint: 'WhatsApp', w: 1280, h: 720 },
+];
+
 /**
  * Mode présentation : génère les planches (images avec cartouche) et la
  * vidéo de la visite, prêtes à joindre au dossier.
@@ -45,6 +51,11 @@ export default function Presentation({ engine, onClose, notify }) {
   const [video, setVideo] = useState(null); // { url, name, mime }
   const [format, setFormat] = useState(undefined); // undefined = détection en cours
   const cancelRef = useRef(false);
+
+  useEffect(() => {
+    // outil de test (?debug)
+    if (typeof window !== 'undefined' && window.__studio) window.__compressVideo = compressVideo;
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -147,6 +158,7 @@ export default function Presentation({ engine, onClose, notify }) {
     await ensureFonts();
     const { w, h } = VRES[vRes];
     const realtime = format.kind === 'recorder';
+    cancelRef.current = false;
     setBusy({
       label: realtime ? 'Enregistrement de la visite… gardez cet onglet ouvert et visible.' : 'Calcul de la vidéo image par image…',
       progress: 0,
@@ -167,7 +179,27 @@ export default function Presentation({ engine, onClose, notify }) {
       const blob = realtime
         ? await engine.recordTour({ ...common, mime: format.mime })
         : await engine.renderTourVideo({ ...common, codec: format.codec });
-      setVideo({ blob, url: URL.createObjectURL(blob), name: `visite-sidi-ouaziz-${vRes}p.${format.ext}`, size: blob.size });
+      const main = { blob, url: URL.createObjectURL(blob), name: `visite-sidi-ouaziz-${vRes}p.${format.ext}`, size: blob.size, extras: [] };
+      setVideo(main);
+      // versions allégées (recompression rapide, sans refaire le rendu)
+      if (!realtime) {
+        const targets = LIGHT.filter((t) => t.h <= h && !(t.h === h && vSize === 'leger'));
+        for (let i = 0; i < targets.length; i++) {
+          if (cancelRef.current) break;
+          const t = targets[i];
+          setBusy((b) => (b ? { ...b, label: `Version allégée ${t.label} (${t.hint})…`, progress: 0 } : b));
+          try {
+            const small = await compressVideo(blob, {
+              width: t.w, height: t.h, codec: format.codec, bitrate: videoBitrate(t.w, t.h, 'leger'),
+              onProgress: (p) => setBusy((b) => (b ? { ...b, progress: p } : b)),
+            });
+            main.extras = [...main.extras, { ...t, blob: small, size: small.size, name: `visite-sidi-ouaziz-${t.id}.${format.ext}` }];
+            setVideo({ ...main });
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
       notify('Vidéo prête.');
     } catch (e) {
       if (e?.message !== 'cancelled') {
@@ -318,7 +350,14 @@ export default function Presentation({ engine, onClose, notify }) {
                 {video && (
                   <div className="s3d-video">
                     <video src={video.url} controls playsInline />
-                    <button type="button" className="s3d-primary" onClick={() => save(video.blob, video.name)}><Download size={16} /> Télécharger ({(video.size / 1e6).toFixed(1)} Mo)</button>
+                    <div className="s3d-modal-actions">
+                      <button type="button" className="s3d-primary" onClick={() => save(video.blob, video.name)}><Download size={16} /> Télécharger {VRES[vRes].label} ({(video.size / 1e6).toFixed(1)} Mo)</button>
+                      {video.extras?.map((x) => (
+                        <button key={x.id} type="button" className="s3d-secondary" onClick={() => save(x.blob, x.name)}>
+                          <Download size={16} /> {x.label} · {x.hint} ({(x.size / 1e6).toFixed(1)} Mo)
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </>
