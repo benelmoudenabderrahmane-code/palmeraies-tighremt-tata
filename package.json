@@ -21,6 +21,7 @@
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.2",
     "@paper-design/shaders-react": "^0.0.72",
+    "@pmndrs/assets": "1.7.0",
     "@tailwindcss/postcss": "^4.2.2",
     "@tailwindcss/vite": "^4.2.2",
     "clsx": "^2.1.1",
@@ -41,7 +42,9 @@
     "react-leaflet": "^5.0.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "three-gpu-pathtracer": "0.0.24",
+    "three-mesh-bvh": "0.9.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

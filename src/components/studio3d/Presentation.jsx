@@ -26,6 +26,7 @@ export default function Presentation({ engine, onClose, notify }) {
   const [selected, setSelected] = useState(() => new Set(SHOTS.map((s) => s.id)));
   const [res, setRes] = useState('4k');
   const [cartouche, setCartouche] = useState(true);
+  const [quality, setQuality] = useState('photo'); // 'rapide' | 'photo' | 'max'
   const [busy, setBusy] = useState(null); // { label, progress }
   const [results, setResults] = useState([]); // { id, title, url, blob, name }
   const [vDur, setVDur] = useState(45);
@@ -74,10 +75,27 @@ export default function Presentation({ engine, onClose, notify }) {
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext('2d');
+      const samples = quality === 'max' ? 512 : 160;
+      const parts = shot.diptych ? 2 : 1;
+      const render = async (opts, part) => {
+        if (quality === 'rapide') return engine.renderStill(opts);
+        return engine.renderStillPhotoreal({
+          ...opts,
+          samples,
+          isCancelled: () => cancelRef.current,
+          onProgress: (p) => setBusy((b) => (b ? { ...b, progress: (i + (part + p) / parts) / list.length } : b)),
+        }).catch((e) => {
+          if (e?.message === 'cancelled') return null;
+          console.error(e);
+          notify('Le rendu photoréaliste a échoué sur cet appareil : essayez le rendu « Rapide ».');
+          return null;
+        });
+      };
       if (shot.diptych) {
         const half = Math.round(w / 2);
-        const a = engine.renderStill({ ...shot, mode: 'avant', width: half, height: h });
-        const b = engine.renderStill({ ...shot, mode: 'apres', width: w - half, height: h });
+        const a = await render({ ...shot, mode: 'avant', width: half, height: h }, 0);
+        const b = a && await render({ ...shot, mode: 'apres', width: w - half, height: h }, 1);
+        if (!a || !b) break;
         ctx.drawImage(a, 0, 0);
         ctx.drawImage(b, half, 0);
         ctx.fillStyle = '#f3ecdf';
@@ -86,7 +104,9 @@ export default function Presentation({ engine, onClose, notify }) {
         drawTag(ctx, 48 * u, 48 * u, 'AUJOURD’HUI', u, false);
         drawTag(ctx, half + 48 * u, 48 * u, 'DEMAIN · PROJET', u, true);
       } else {
-        ctx.drawImage(engine.renderStill({ ...shot, width: w, height: h }), 0, 0);
+        const img = await render({ ...shot, width: w, height: h }, 0);
+        if (!img) break;
+        ctx.drawImage(img, 0, 0);
       }
       if (cartouche) drawCartouche(ctx, w, h, { title: shot.title, caption: shot.caption, index: i + 1, total: list.length, logo });
       const blob = await canvasToBlob(canvas);
@@ -196,6 +216,13 @@ export default function Presentation({ engine, onClose, notify }) {
               <label>Définition
                 <select className="s3d-text" value={res} onChange={(e) => setRes(e.target.value)} disabled={!!busy}>
                   {Object.entries(RES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </label>
+              <label>Rendu
+                <select id="pres-quality" className="s3d-text" value={quality} onChange={(e) => setQuality(e.target.value)} disabled={!!busy}>
+                  <option value="rapide">Rapide (aperçu, quelques secondes)</option>
+                  <option value="photo">Photoréaliste (tracé de rayons, ~1 min / planche)</option>
+                  <option value="max">Photoréaliste maximal (plusieurs min / planche)</option>
                 </select>
               </label>
               <label className="s3d-check">

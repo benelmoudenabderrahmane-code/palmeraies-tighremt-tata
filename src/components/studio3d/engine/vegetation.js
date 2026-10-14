@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { mergeGeometries } from './geo';
-import { textures } from './textures';
+import { textures, normalsFor } from './textures';
 
 /*
  * Végétation instanciée : chaque essence est décrite par plusieurs
@@ -71,7 +71,7 @@ let parts = null;
 
 export function vegetationParts() {
   if (parts) return parts;
-  const barkMat = new THREE.MeshStandardMaterial({ map: textures.bark(), roughness: 0.95 });
+  const barkMat = new THREE.MeshStandardMaterial({ map: textures.bark(), normalMap: normalsFor('bark', 4), roughness: 0.95 });
   const frondMat = new THREE.MeshStandardMaterial({
     map: textures.frond(),
     alphaTest: 0.45,

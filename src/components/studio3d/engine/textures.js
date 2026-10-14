@@ -22,6 +22,43 @@ function canvas(size) {
   return [c, c.getContext('2d')];
 }
 
+/** Carte de normales dérivée de la luminance d'un canvas (relief) */
+export function normalFromCanvas(src, strength = 2) {
+  const w = src.width, h = src.height;
+  const data = src.getContext('2d').getImageData(0, 0, w, h).data;
+  const lum = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) lum[i] = (data[i * 4] * 0.3 + data[i * 4 + 1] * 0.59 + data[i * 4 + 2] * 0.11) / 255;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  const img = g.createImageData(w, h);
+  const at = (x, y) => lum[((y + h) % h) * w + ((x + w) % w)];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const dx = (at(x + 1, y) - at(x - 1, y)) * strength;
+      const dy = (at(x, y + 1) - at(x, y - 1)) * strength;
+      const l = Math.hypot(dx, dy, 1);
+      const i = (y * w + x) * 4;
+      img.data[i] = (-dx / l * 0.5 + 0.5) * 255;
+      img.data[i + 1] = (-dy / l * 0.5 + 0.5) * 255;
+      img.data[i + 2] = (1 / l * 0.5 + 0.5) * 255;
+      img.data[i + 3] = 255;
+    }
+  }
+  g.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.anisotropy = 8;
+  return t;
+}
+
+const normalCache = new Map();
+/** Normales associées à une texture couleur du cache */
+export function normalsFor(key, strength) {
+  if (!normalCache.has(key)) normalCache.set(key, normalFromCanvas(textures[key]().image, strength));
+  return normalCache.get(key);
+}
+
 function finish(c, repeat = 1, srgb = true) {
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;

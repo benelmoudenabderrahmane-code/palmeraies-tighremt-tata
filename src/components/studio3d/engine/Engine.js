@@ -989,6 +989,39 @@ export class StudioEngine {
     return canvas;
   }
 
+  /**
+   * Rendu photoréaliste (tracé de chemins) d'une vue fixe → canvas.
+   * Beaucoup plus lent que renderStill, mais lumière physiquement juste.
+   */
+  async renderStillPhotoreal({ pos, target, hour, mode, fov = 42, width = 3840, height = 2160, samples = 128, onProgress, isCancelled, debug }) {
+    const { renderPhotoreal } = await import('./photoreal');
+    this.stopTour();
+    this._camAnim = null;
+    const st = this._snapshotState();
+    const r = this.renderer;
+    const prevSize = r.getSize(new THREE.Vector2());
+    const prevRatio = r.getPixelRatio();
+    this._offline = true;
+    try {
+      if (mode && mode !== this.mode) this.setMode(mode);
+      this.setTime(hour ?? this.hour, this.dayOfYear);
+      this.camera.fov = fov;
+      this.camera.position.set(...pos);
+      this.camera.lookAt(new THREE.Vector3(...target));
+      this.camera.updateMatrixWorld();
+      this.night.update(this.camera, this._lightsLevel || 0);
+      return await renderPhotoreal(this, { width, height, samples, onProgress, isCancelled, debug });
+    } finally {
+      r.setPixelRatio(prevRatio);
+      r.setSize(prevSize.x, prevSize.y);
+      const s = r.getDrawingBufferSize(new THREE.Vector2());
+      this.fx.setSize(s.x, s.y);
+      this.camera.aspect = prevSize.x / prevSize.y;
+      this._offline = false;
+      this._restoreState(st);
+    }
+  }
+
   /** Prépare un rendu à taille fixe (vidéo) ; renvoie la fonction de remise en état */
   _beginCapture(width, height) {
     this.stopTour();

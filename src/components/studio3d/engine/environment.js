@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
-import { textures } from './textures';
+import { textures, normalsFor } from './textures';
 import { planarUV } from './geo';
 import { vegetationParts } from './vegetation';
 
@@ -94,7 +94,7 @@ export function buildLandscape(center, flat = 240, low = false) {
     }
     groundGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   }
-  const ground = new THREE.Mesh(groundGeo, new THREE.MeshStandardMaterial({ map: textures.desert(), vertexColors: true, roughness: 1 }));
+  const ground = new THREE.Mesh(groundGeo, new THREE.MeshStandardMaterial({ map: textures.desert(), normalMap: normalsFor('desert', 4), normalScale: new THREE.Vector2(0.9, 0.9), vertexColors: true, roughness: 1 }));
   ground.receiveShadow = true;
   ground.name = 'sol';
   group.add(ground);

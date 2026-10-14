@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { textures } from './textures';
+import { textures, normalsFor } from './textures';
 import {
   arcStrip, boxUV, flatShape, insetPolygon, lineStrip, mergeGeometries,
   planarUV, polylineWall, roundedRect, shapeFrom, slab,
@@ -17,17 +17,18 @@ let M = null;
 export function mats() {
   if (M) return M;
   const std = (o) => new THREE.MeshStandardMaterial({ roughness: 0.85, ...o });
+  const nm = (key, k = 1) => ({ normalMap: normalsFor(key, 3), normalScale: new THREE.Vector2(k, k) });
   M = {
-    gravel: std({ map: textures.gravel(), roughness: 0.95 }),
-    sand: std({ map: textures.sand(), roughness: 1 }),
-    grass: std({ map: textures.grass(), roughness: 0.95 }),
+    gravel: std({ map: textures.gravel(), ...nm('gravel', 0.8), roughness: 0.95 }),
+    sand: std({ map: textures.sand(), ...nm('sand', 0.6), roughness: 1 }),
+    grass: std({ map: textures.grass(), ...nm('grass', 0.6), roughness: 0.95 }),
     turf: std({ map: textures.turf(), roughness: 0.9 }),
-    earthPitch: std({ map: textures.earthPitch(), roughness: 1 }),
+    earthPitch: std({ map: textures.earthPitch(), ...nm('earthPitch', 0.5), roughness: 1 }),
     soil: std({ color: '#7a5a3d', roughness: 1 }),
-    curb: std({ map: textures.concrete(), color: '#f1ede4', roughness: 0.7 }),
+    curb: std({ map: textures.concrete(), ...nm('concrete', 0.4), color: '#f1ede4', roughness: 0.7 }),
     concrete: std({ map: textures.concrete(), roughness: 0.8 }),
-    pise: std({ map: textures.pise(), roughness: 0.95 }),
-    wall: std({ map: textures.wall(), roughness: 0.95 }),
+    pise: std({ map: textures.pise(), ...nm('pise', 0.7), roughness: 0.95 }),
+    wall: std({ map: textures.wall(), ...nm('wall', 1.2), roughness: 0.95 }),
     line: new THREE.MeshBasicMaterial({ color: '#f8f8f2', polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }),
     lineStd: std({ color: '#f6f6f0', roughness: 0.6 }),
     white: std({ color: '#f4f4f1', roughness: 0.4, metalness: 0.1 }),
