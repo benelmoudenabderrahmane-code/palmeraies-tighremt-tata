@@ -11,7 +11,7 @@ import { buildInitialEntities, polygonArea, SITE } from './engine/planData';
 import {
   CATALOG, CATEGORIES, PLAN_FIELDS, STATUS, LAYERS, DEFAULT_LAYERS, newEntity, ghostEntity,
 } from './catalog';
-import Presentation from './Presentation';
+import Presentation from './Presentation.jsx';
 import { saveFile, canSave } from './saveFile';
 import './studio3d.css';
 
